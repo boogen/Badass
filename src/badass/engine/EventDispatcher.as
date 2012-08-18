@@ -1,6 +1,6 @@
-package engine {
+package badass.engine {
 	import flash.utils.Dictionary;
-	import events.Event;
+	import badass.events.Event;
 	/**
 	 * ...
 	 * @author Marcin Bugala

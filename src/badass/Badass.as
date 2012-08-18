@@ -1,10 +1,10 @@
-package {
-	import engine.Context;
-	import engine.MovieClip;
-	import engine.Layer;
-	import engine.Sprite;
-	import events.TouchPhase;
-	import events.TouchProcessor;
+package badass {
+	import badass.engine.Context;
+	import badass.engine.MovieClip;
+	import badass.engine.Layer;
+	import badass.engine.Sprite;
+	import badass.events.TouchPhase;
+	import badass.events.TouchProcessor;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
@@ -13,8 +13,9 @@ package {
 	import flash.ui.MultitouchInputMode;
 	import flash.utils.getTimer;
 	import flash.text.TextField;
-	import tweens.Tween;
-	import tweens.Tweener;
+	import badass.tweens.Tween;
+	import badass.tweens.Tweener;
+	
 	
 	public class Badass {
 		private var _context:Context;

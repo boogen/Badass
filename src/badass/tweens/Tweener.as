@@ -1,10 +1,10 @@
-package tweens 
+package badass.tweens 
 {
 	///////////////////////////////
 	/** from Starling Framework **/
 	//////////////////////////////
 	
-	import events.Event;
+	import badass.events.Event;
 	
 	public class Tweener
 	{

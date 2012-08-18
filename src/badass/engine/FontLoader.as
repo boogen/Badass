@@ -1,4 +1,4 @@
-package engine {
+package badass.engine {
     import flash.net.URLLoader;
     import flash.net.URLRequest;
     import flash.events.Event;

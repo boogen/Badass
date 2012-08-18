@@ -1,6 +1,6 @@
-package tweens {
-	import events.Event;
-	import engine.EventDispatcher;
+package badass.tweens {
+	import badass.events.Event;
+	import badass.engine.EventDispatcher;
 	
 	/**
 	 * ...

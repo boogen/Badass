@@ -1,4 +1,4 @@
-package engine {
+package badass.engine {
     import flash.utils.ByteArray;
     
     public class MovieClip extends Sprite {

@@ -1,5 +1,5 @@
-package events {
-	import engine.EventDispatcher;
+package badass.events {
+	import badass.engine.EventDispatcher;
 	/**
 	 * ...
 	 * @author Marcin Bugala

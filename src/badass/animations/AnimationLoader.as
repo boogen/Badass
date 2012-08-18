@@ -1,4 +1,4 @@
-package animations {
+package badass.animations {
 	
 	import avmplus.getQualifiedClassName;
 	import flash.display.Bitmap;

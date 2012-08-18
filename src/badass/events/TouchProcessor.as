@@ -1,6 +1,6 @@
-package events {
-	import engine.DisplayObject;
-	import engine.Layer;
+package badass.events {
+	import badass.engine.DisplayObject;
+	import badass.engine.Layer;
 	
 	/**
 	 * ...

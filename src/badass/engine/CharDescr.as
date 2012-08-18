@@ -1,4 +1,4 @@
-package engine {
+package badass.engine {
     
     public class CharDescr {
 	public var srcX:Number;

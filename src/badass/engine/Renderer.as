@@ -1,4 +1,4 @@
-package engine {
+package badass.engine {
     import flash.events.*;
 
     import com.adobe.utils.*;
@@ -9,7 +9,7 @@ package engine {
     import flash.display.Stage;
     import flash.display.Stage3D;
     import flash.display.BitmapData;
-    import engine.DisplayObject;
+    import badass.engine.DisplayObject;
     import flash.utils.Dictionary;
     import flash.utils.ByteArray;
     import flash.utils.Endian;

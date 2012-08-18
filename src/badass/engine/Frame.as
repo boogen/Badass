@@ -1,4 +1,4 @@
-package engine {
+package badass.engine {
     import flash.display.BitmapData;
     import flash.geom.Point;
 
