@@ -35,6 +35,10 @@ package badass.events {
 				}
 			}
 			
+			if (_touches && _touches.length) {
+				return _touches[0];
+			}
+			
 			return null;
 		}
 	

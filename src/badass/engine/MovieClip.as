@@ -6,10 +6,11 @@ package badass.engine {
 	private var _animationSpeed:int;
 	private var _frameNr:int;
 	private var _playing:Boolean;
+	public var ready:Boolean;
 
 	public function MovieClip() {
 	    super();
-	    _animationSpeed = 1;
+	    _animationSpeed = 4;
 	}
 
 
@@ -32,11 +33,15 @@ package badass.engine {
 	}
 
 
-	override public function render(layer:Layer):void {
-	    if (visible) {
+	override public function render(layer:badass.engine.Layer):void {
+	    if (visible && _frames && _frames.length) {
 		var currentFrame:int = (_frameNr / _animationSpeed) % _frames.length;
 		_frame = _frames[currentFrame];
+		this.x -= _frame.offset.x;
+		this.y -= _frame.offset.y;
 		super.render(layer);
+		this.x += _frame.offset.x;
+		this.y += _frame.offset.y;		
 		if (_playing) {
 		    _frameNr++;
 		}

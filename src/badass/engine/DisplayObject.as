@@ -19,13 +19,15 @@ package badass.engine {
 		public var rotation:Number;
 		private var _color:uint;
 		
-		protected var _frame:Frame;		
+		protected var _frame:Frame;
+		public var index:int;
 		
 		public function DisplayObject() {
 			
 			_x = 0.0;
 			_y = 0.0;
 			_z = 0.0;
+			index = 0;
 			_scaleX = 1.0;
 			_scaleY = 1.0;
 			_alpha = 1.0;
@@ -45,7 +47,7 @@ package badass.engine {
 		public function get globalX():Number {
 			var value:Number = _x;
 			if (_parent) {
-				value += _parent.x;
+				value += _parent.globalX;
 			}
 			return value;
 		}
@@ -61,7 +63,7 @@ package badass.engine {
 		public function get globalY():Number {
 			var value:Number = _y;
 			if (_parent) {
-				value += _parent.y;
+				value += _parent.globalY;
 			}
 			return value;
 		}
@@ -141,7 +143,7 @@ package badass.engine {
 			if (!_children.length) {
 				return 0;
 			}
-			var minX:Number = Number.POSITIVE_INFINITY;
+			var minX:Number = x; // Number.POSITIVE_INFINITY;
 			var maxX:Number = Number.NEGATIVE_INFINITY;
 			
 			for (var i:int = 0; i < _children.length; ++i) {
@@ -163,7 +165,7 @@ package badass.engine {
 			if (!_children.length) {
 				return 0;
 			}
-			var minY:Number = Number.POSITIVE_INFINITY;
+			var minY:Number = y; // Number.POSITIVE_INFINITY;
 			var maxY:Number = Number.NEGATIVE_INFINITY;
 			
 			for (var i:int = 0; i < _children.length; ++i) {
@@ -179,6 +181,10 @@ package badass.engine {
 			}
 			
 			return maxY - minY;
+		}
+		
+		public function get bottom():Number {
+			return globalY + height;
 		}
 		
 		public function get alpha():Number {
@@ -209,21 +215,14 @@ package badass.engine {
 		public function set touchable(value:Boolean):void {
 			_touchable = value;
 		}
-				
-		
-		public function tick(dt:Number):void {
-			for (var i:int = 0; i < _children.length; ++i) {
-				_children[i].tick(dt);
-			}
-		}
 		
 		public function writeToByteArray(ba:ByteArray):void {
 		}
 		
-		public function render(layer:Layer):void {
+		public function render(layer:badass.engine.Layer):void {
 			if (visible) {
-				for each (var child:DisplayObject in _children) {
-					child.render(layer);
+				for (var i:int = _children.length - 1; i >= 0; --i) {
+					_children[i].render(layer);
 				}
 			}
 		}
@@ -242,8 +241,10 @@ package badass.engine {
 			child.parent = this;
 			if (pos >= _children.length) {
 				_children.push(child);
+				child.index = index + 1;
 			} else {
-				_children.splice(pos, 0, [child]);
+				
+				_children.splice(pos, 0, child);
 			}
 		}
 		
@@ -251,10 +252,20 @@ package badass.engine {
 			child.parent = null;
 			for (var i:int = 0; i < _children.length; ++i) {
 				if (_children[i] == child) {
-					_children.splice(i, 1);
+					removeChildAt(i);
 					return;
 				}
 			}
+		}
+		
+		public function removeChildAt(index:int):void {
+			if (index < _children.length) {
+				_children.splice(index, 1);
+			}
+		}
+		
+		public function removeChildren(startIndex:int = 0):void {
+			_children.splice(startIndex, _children.length - startIndex);
 		}
 		
 		public function get numChildren():int {
@@ -281,12 +292,22 @@ package badass.engine {
 			var gX:Number = globalX;
 			var gY:Number = globalY;
 			
-			if (pX >= gX && pX <= gX + width * scaleX &&
-				pY >= gY && pY <= gY + height *scaleY) {
+			if (pX >= gX && pX <= gX + width * scaleX && pY >= gY && pY <= gY + height * scaleY) {
 				return this;
 			}
 			
 			return null;
+		}
+		
+		// TODO
+		public function get clipTop():Number
+		{
+			return 0;
+		}
+		
+		public function set clipTop(value:Number):void 
+		{
+			
 		}
 	
 	}

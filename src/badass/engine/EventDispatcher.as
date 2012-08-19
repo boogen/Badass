@@ -27,14 +27,15 @@ package badass.engine {
 						break;
 					}
 				}
+			}
 				
-				if (!event.stopsImmediatePropagation) {
-					var displayObject:DisplayObject = this as DisplayObject;
-					if (displayObject && displayObject.parent) {
-						displayObject.parent.dispatchEvent(event);
-					}
+			if (!event.stopsImmediatePropagation) {
+				var displayObject:DisplayObject = this as DisplayObject;
+				if (displayObject && displayObject.parent) {
+					displayObject.parent.dispatchEvent(event);
 				}
 			}
+			
 		}
 		
 		public function addEventListener(type:String, observer:Function):void {

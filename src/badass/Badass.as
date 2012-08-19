@@ -15,10 +15,10 @@ package badass {
 	import flash.text.TextField;
 	import badass.tweens.Tween;
 	import badass.tweens.Tweener;
-	
+	import badass.engine.Context;
 	
 	public class Badass {
-		private var _context:Context;
+		private var _context:badass.engine.Context;
 		private var _zombie:MovieClip;
 		private var _tf:flash.text.TextField;
 		private var _time:int;
@@ -26,15 +26,16 @@ package badass {
 		private var _tweener:Tweener;
 		private var _touchProcessor:TouchProcessor;
 		private var _lastTime:int;
-		private var _layers:Vector.<Layer>;
+		private var _layers:Vector.<badass.engine.Layer>;
 		private var _leftMouseDown:Boolean;
 		private var _stageWidth:int = 640;
 		private var _stageHeight:int = 960;
 		private var _stage:Object;
+		public var mainLoop:Function;
 		
 		public function Badass(stage:Object):void {
-			_layers = new Vector.<Layer>;
-			_context = new Context();
+			_layers = new Vector.<badass.engine.Layer>;
+			_context = new badass.engine.Context();
 			_context.renderer.setViewport(_stageWidth, _stageHeight);
 			_context.renderer.init(stage);
 			
@@ -55,12 +56,20 @@ package badass {
 			_stage = stage;
 		}
 		
+		public function set color(value:int):void {
+			_context.renderer.color = value;
+		}
+		
 		public function addTween(t:Tween):void {
 			_tweener.add(t);
 		}
 		
-		public function getLayer():Layer {
-			var result:Layer = new Layer();
+		public function removeTweens(target:Object):void {
+			_tweener.removeTweens(target);
+		}
+		
+		public function getLayer():badass.engine.Layer {
+			var result:badass.engine.Layer = new badass.engine.Layer();
 			_layers.push(result);
 			
 			return result;
@@ -126,6 +135,9 @@ package badass {
 		
 		private function onEnterFrame(e:Object):void {
 			tick();
+			if (mainLoop != null) {
+				mainLoop();
+			}
 		}
 		
 		public function tick():void {
@@ -142,7 +154,7 @@ package badass {
 			_tweener.advanceTime(dt / 1000.0);
 			_context.renderer.beginFrame();
 			
-			for (var i:int = 0; i < _layers.length; ++i) {
+			for (var i:int = 9; i < _layers.length; ++i) {
 				_layers[i].draw(_context.renderer);
 			}
 			_context.renderer.endFrame();

@@ -5,14 +5,15 @@ package badass.engine {
 	private var _text:String;
 	private var _font:FontLoader;
 	private var _letters:Vector.<Sprite>;
+	public var hAlign:String;
 
-	public function TextField(c:Context, text:String, f:String) {
-	    super(c);
+	public function TextField(width:int, height:int, text:String, f:String="Verdana",
+                                  fontSize:Number=12, color:uint=0x0, bold:Boolean=false) {	    
 	    _text = text;
 	    _letters = new Vector.<Sprite>();
 	    var font:FontLoader = new FontLoader();
 	    font.addEventListener(Event.COMPLETE, onFontLoaded);
-	    font.load(f);
+	  //  font.load(f);
 	}
 
 	public function get text():String {
@@ -47,6 +48,7 @@ package badass.engine {
 	    for (i = 0; i < n; ++i) {
 		var charid:int = _text.charCodeAt(i);
 		var ch:CharDescr = _font.getChar(charid);
+				
 
 		if (ch) {
 		    var u1:Number = ch.srcX / _font.scalew;
@@ -61,12 +63,12 @@ package badass.engine {
 			w += 10;
 		    }*/
 
-		    var s:Sprite = new Sprite(_context);
-		    s.setTexture(_font.bitmapData);
+		    var s:Sprite = new Sprite();
+		    s.setTexture(new Frame(_font.bitmapData));
 		    s.x = dx + ch.xOff;
 		    s.y = ch.yOff;
-		    s.u = u1;
-		    s.v = v1;
+		    s.uLeft = u1;
+		    s.vTop = v1;
 		    s.width = ch.srcW;
 		    s.height = ch.srcH;
 

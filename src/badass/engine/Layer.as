@@ -15,8 +15,8 @@ package badass.engine {
 	private var _drawCalls:Dictionary;
 	
 	private const _vertexSize:int = 5;
-	private var _vertexCount:int = 20;
-	private var _indexSize:int = 6 * 5;	
+	private var _vertexCount:int = 2 * 20;
+	private var _indexSize:int = 2 * 6 * 5;	
 	
 	private var _vertexBuffer:VertexBuffer3D;
 	private var _indexBuffer:IndexBuffer3D;
@@ -35,32 +35,45 @@ package badass.engine {
 	}
 
 	public function draw(renderer:Renderer):void {
+		if (!visible) {
+			return;
+		}
 		_context3D = renderer.getContext3D();
 		_renderer = renderer;
 		_drawCalls = new Dictionary();
-		for each (var child:DisplayObject in _children) {
-			child.render(this);
+		var i:int;
+		for (i = _children.length - 1; i >= 0; --i) {		
+			_children[i].render(this);
 		}
 		
 		var count:int = 0;		
 		_byteArray.position = 0;
 		var batches:Vector.<DisplayObject>;
-		for each (batches in _drawCalls) {					
-			for (var i:int = 0; i < batches.length; ++i) {
-				batches[i].writeToByteArray(_byteArray);						
+		var indexLayer:Dictionary;
+		for each (indexLayer in _drawCalls) {
+			for each (batches in indexLayer) {					
+				for (i = 0; i < batches.length; ++i) {
+					batches[i].writeToByteArray(_byteArray);						
+				}
 			}
 		}
 		
 	   if (_byteArray.position > 0) {
 		checkSize();
+	    _context3D.setVertexBufferAt(0, _vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+	    _context3D.setVertexBufferAt(1, _vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
+		_context3D.setVertexBufferAt(2, _vertexBuffer, 4, Context3DVertexBufferFormat.FLOAT_1);			
+		
 		_vertexBuffer.uploadFromByteArray(_byteArray, 0, 0, _byteArray.position / (4 * _vertexSize));
 
-		 for (var key:Object in _drawCalls) {
-			var texture:Texture = key as Texture;
-			batches = _drawCalls[texture];
-			_context3D.setTextureAt(0, texture);
-			_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
-			count += batches.length * 6;
+		for each (indexLayer in _drawCalls) {
+			for (var key:Object in indexLayer) {
+				var texture:Texture = key as Texture;
+				batches = indexLayer[texture];
+				_context3D.setTextureAt(0, texture);
+				_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
+				count += batches.length * 6;
+			}
 		}
 		
 	   }		  
@@ -114,12 +127,15 @@ package badass.engine {
 	
 	public function addBatch(d:DisplayObject):void {
 		var texture:Texture = _renderer.getTexture(d.frame);
-
-		if (!_drawCalls[texture]) {
-		   _drawCalls[texture] = new Vector.<DisplayObject>();
+		
+		if (!_drawCalls[d.index]) {
+			_drawCalls[d.index] = new Dictionary();
+		}
+		if (!_drawCalls[d.index][texture]) {
+		   _drawCalls[d.index][texture] = new Vector.<DisplayObject>();
 		}
 
-		_drawCalls[texture].push(d);
+		_drawCalls[d.index][texture].push(d);
 	}    
 	}
 }

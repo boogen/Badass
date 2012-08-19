@@ -22,7 +22,7 @@ package badass.events {
 		
 		private var _layers:Vector.<Layer>;
 		
-		public function TouchProcessor(layers:Vector.<Layer>) {
+		public function TouchProcessor(layers:Vector.<badass.engine.Layer>) {
 			_layers = layers;
 			_queue = new Vector.<Array>();
 			_lastTaps = new Vector.<Touch>();

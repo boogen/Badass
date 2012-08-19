@@ -100,6 +100,11 @@ package badass.tweens {
 			}
 		}
 		
+		// TODO
+		public function set delay(value:Number):void {
+			_delay = value;
+		}
+		
 		public function get target():Object {
 			return _target;
 		}
@@ -118,7 +123,7 @@ package badass.tweens {
 		
 		public function get onCompleteArgs():Array {
 			return _onCompleteArgs;
-		}		
+		}
 	}
 
 }

@@ -1,4 +1,5 @@
 package badass.engine {
+	import flash.events.IOErrorEvent;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
     import flash.events.Event;
@@ -41,7 +42,13 @@ package badass.engine {
 	private function loadSpriteSheet(name:String):void {
 	    var spritesheetLoader:Loader = new Loader();
 	    spritesheetLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
+		spritesheetLoader.addEventListener(IOErrorEvent.IO_ERROR, loadingIoError);
 	    spritesheetLoader.load(new URLRequest("assets/" + name + ".png"));
+	}
+	
+	private function loadingIoError(e:IOErrorEvent):void 
+	{
+		trace("error");
 	}
 
 	private function onSpriteSheetLoaded(e:Event):void {
