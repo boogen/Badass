@@ -12,7 +12,7 @@ package badass.engine {
     public class Layer extends DisplayObject {
 
 	private var _byteArray:ByteArray;
-	private var _drawCalls:Dictionary;
+	private var _drawCalls:Array;
 	
 	private const _vertexSize:int = 5;
 	private var _vertexCount:int = 2 * 20;
@@ -40,7 +40,7 @@ package badass.engine {
 		}
 		_context3D = renderer.getContext3D();
 		_renderer = renderer;
-		_drawCalls = new Dictionary();
+		_drawCalls = new Array();
 		var i:int;
 		for (i = _children.length - 1; i >= 0; --i) {		
 			_children[i].render(this);
@@ -50,10 +50,10 @@ package badass.engine {
 		_byteArray.position = 0;
 		var batches:Vector.<DisplayObject>;
 		var indexLayer:Dictionary;
-		for each (indexLayer in _drawCalls) {
-			for each (batches in indexLayer) {					
-				for (i = 0; i < batches.length; ++i) {
-					batches[i].writeToByteArray(_byteArray);						
+		for (i = 0; i < _drawCalls.length; ++i) {
+			for each (batches in _drawCalls[i]) {					
+				for (var j:int = 0; j < batches.length; ++j) {
+					batches[j].writeToByteArray(_byteArray);						
 				}
 			}
 		}
@@ -66,10 +66,10 @@ package badass.engine {
 		
 		_vertexBuffer.uploadFromByteArray(_byteArray, 0, 0, _byteArray.position / (4 * _vertexSize));
 
-		for each (indexLayer in _drawCalls) {
-			for (var key:Object in indexLayer) {
+		for (i = 0; i < _drawCalls.length; ++i) {
+			for (var key:Object in _drawCalls[i]) {
 				var texture:Texture = key as Texture;
-				batches = indexLayer[texture];
+				batches = _drawCalls[i][texture];
 				_context3D.setTextureAt(0, texture);
 				_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
 				count += batches.length * 6;

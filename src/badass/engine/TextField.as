@@ -1,5 +1,8 @@
 package badass.engine {
     import flash.events.Event;
+	import flash.geom.Rectangle;
+	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 
     public class TextField extends DisplayObject {
 	private var _text:String;
@@ -7,13 +10,19 @@ package badass.engine {
 	private var _letters:Vector.<Sprite>;
 	public var hAlign:String;
 
-	public function TextField(width:int, height:int, text:String, f:String="Verdana",
+
+	public function TextField(w:int, h:int, text:String, f:String="Verdana",
                                   fontSize:Number=12, color:uint=0x0, bold:Boolean=false) {	    
 	    _text = text;
-	    _letters = new Vector.<Sprite>();
-	    var font:FontLoader = new FontLoader();
-	    font.addEventListener(Event.COMPLETE, onFontLoaded);
-	  //  font.load(f);
+	    _letters = new Vector.<Sprite>();		
+	    var font:FontLoader = FontManager.getFont("verdanaSmall");
+		if (font.loaded) {
+			_font  = font;
+			createLetters();
+		}
+		else {
+			font.addEventListener(Event.COMPLETE, onFontLoaded);
+		}
 	}
 
 	public function get text():String {
@@ -21,10 +30,12 @@ package badass.engine {
 	}
 
 	public function set text(value:String):void {
-	    _text = value;
-	    if (_font) {
-		createLetters();
-	    }
+		if (_text != value) {
+			_text = value;
+			if (_font) {
+			createLetters();
+			}
+		}
 	}
 
 	override public function set color(value:uint):void {
@@ -55,7 +66,7 @@ package badass.engine {
 		    var v1:Number = ch.srcY / _font.scaleh;
 
 		    var u2:Number = u1 + ch.srcW / _font.scalew;
-		    var v2:Number = v1 + ch.srcH / _font.scaleh;
+		    var v2:Number = v1 + ch.srcH / _font.scaleh; 
 
 		    var a:Number = ch.xAdv;
 		    var w:Number = ch.srcW;
@@ -64,13 +75,11 @@ package badass.engine {
 		    }*/
 
 		    var s:Sprite = new Sprite();
-		    s.setTexture(new Frame(_font.bitmapData));
+			var frame:Frame = new Frame(_font.bitmapData);
+			frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
+		    s.setTexture(frame);
 		    s.x = dx + ch.xOff;
 		    s.y = ch.yOff;
-		    s.uLeft = u1;
-		    s.vTop = v1;
-		    s.width = ch.srcW;
-		    s.height = ch.srcH;
 
 		    s.color = color;
 		    _letters.push(s);

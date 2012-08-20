@@ -5,6 +5,9 @@ package badass.engine {
 	
 	public class Sprite extends DisplayObject {
 		
+		private var _pivotX:Number = 0;
+		private var _pivotY:Number = 0;
+		
 		public function Sprite() {
 		}
 		
@@ -18,7 +21,7 @@ package badass.engine {
 		
 		public function set uRight(value:Number):void {
 			_frame.uRight = value;
-		}		
+		}
 		
 		public function set vTop(value:Number):void {
 			_frame.vTop = value;
@@ -39,8 +42,7 @@ package badass.engine {
 		override public function get width():Number {
 			if (_frame) {
 				return _frame.width;
-			}
-			else {
+			} else {
 				return super.width;
 			}
 			
@@ -50,8 +52,7 @@ package badass.engine {
 		override public function get height():Number {
 			if (_frame) {
 				return _frame.height;
-			}
-			else {
+			} else {
 				return super.height;
 			}
 			
@@ -66,21 +67,31 @@ package badass.engine {
 			return _frame.textureHeight;
 		}
 		
+		override protected function collision(pX:Number, pY:Number):Boolean {
+			var gX:Number = globalX;
+			var gY:Number = globalY;
+			
+			if (pX >= gX && pX <= gX + width * scaleX && pY >= gY && pY <= gY + height * scaleY) {
+				return true;
+			}
+			
+			return false;
+		}
+		
 		override public function writeToByteArray(ba:ByteArray):void {
 			if (_frame && visible) {
 				var w:Number = width * scaleX;
 				var h:Number = height * scaleY;
 				
-				var gx:Number = globalX;
-				var gy:Number = globalY;
-					
+				var gx:Number = globalX + _pivotX;
+				var gy:Number = globalY + _pivotY;
+				
 				var s:Number;
 				var c:Number;
 				if (rotation != 0) {
 					s = Math.sin(rotation);
 					c = Math.cos(rotation);
-				}
-				else {
+				} else {
 					s = 0;
 					c = 1;
 				}
@@ -116,30 +127,26 @@ package badass.engine {
 				ba.writeFloat(_frame.vBottom);
 				ba.writeFloat(a);
 				
+					
 			}
 		}
 		
 		// TODO
-		public function set pivotX(value:Number):void 
-		{
-			
+		public function set pivotX(value:Number):void {
+			_pivotX = value
 		}
 		
-		public function get pivotX():Number
-		{
-			return 0.0;
+		public function get pivotX():Number {
+			return _pivotX;
 		}
 		
-		public function set pivotY(value:Number):void 
-		{
-			
+		public function set pivotY(value:Number):void {
+			_pivotY = value;
 		}
 		
-		public function get pivotY():Number
-		{
-			return 0.0;
+		public function get pivotY():Number {
+			return _pivotY;
 		}
-				
 		
 		override public function render(layer:badass.engine.Layer):void {
 			if (visible) {

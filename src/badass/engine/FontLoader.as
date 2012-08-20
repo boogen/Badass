@@ -9,7 +9,7 @@ package badass.engine {
     import flash.events.EventDispatcher;
     import flash.display.Loader;
 
-    public class FontLoader extends EventDispatcher {
+    public class FontLoader extends EventDispatcher {		
 	private var _name:String;
 	public var bitmapData:BitmapData;
 
@@ -27,8 +27,8 @@ package badass.engine {
 	public var chars:Dictionary;
 	public var fx_file:String;
 
-
-
+	public var loaded:Boolean = false;
+	
 	public function FontLoader() {
 	    chars = new Dictionary();
 	    def_char = new CharDescr();
@@ -43,7 +43,7 @@ package badass.engine {
 	    var spritesheetLoader:Loader = new Loader();
 	    spritesheetLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
 		spritesheetLoader.addEventListener(IOErrorEvent.IO_ERROR, loadingIoError);
-	    spritesheetLoader.load(new URLRequest("assets/" + name + ".png"));
+	    spritesheetLoader.load(new URLRequest(name + ".png"));
 	}
 	
 	private function loadingIoError(e:IOErrorEvent):void 
@@ -56,7 +56,7 @@ package badass.engine {
 
 	    var fntLoader:URLLoader = new URLLoader();
 	    fntLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
-	    fntLoader.load(new URLRequest("assets/" + _name + ".fnt"));
+	    fntLoader.load(new URLRequest(_name + ".fnt"));
 	}
 
 	private function onDescriptionLoaded(e:Event):void {
@@ -81,6 +81,7 @@ package badass.engine {
 		
 	    }
 
+		loaded = true;
 	    dispatchEvent(new Event(Event.COMPLETE));
 	}
 

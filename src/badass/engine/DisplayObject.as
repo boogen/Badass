@@ -20,7 +20,7 @@ package badass.engine {
 		private var _color:uint;
 		
 		protected var _frame:Frame;
-		public var index:int;
+		private var _index:int;
 		
 		public function DisplayObject() {
 			
@@ -38,6 +38,17 @@ package badass.engine {
 			
 			rotation = 0.0;
 			color = 0xFFFFFF;
+		}
+		
+		public function set index(value:int):void {
+			_index = value;
+			for each (var child:DisplayObject in _children) {
+				child.index = _index + 1;
+			}
+		}
+		
+		public function get index():int {
+			return _index;
 		}
 		
 		public function get frame():Frame {
@@ -234,7 +245,13 @@ package badass.engine {
 		public function addChildAt(child:DisplayObject, pos:int):void {
 			for (var i:int = 0; i < _children.length; ++i) {
 				if (child == _children[i]) {
-					return;
+					if (i == pos) {
+						return;
+					}
+					else {
+						removeChildAt(i);
+						break;
+					}
 				}
 			}
 			
@@ -249,6 +266,9 @@ package badass.engine {
 		}
 		
 		public function removeChild(child:DisplayObject):void {
+			if (!child) {
+				return;
+			}
 			child.parent = null;
 			for (var i:int = 0; i < _children.length; ++i) {
 				if (_children[i] == child) {
@@ -289,25 +309,24 @@ package badass.engine {
 				}
 			}
 			
-			var gX:Number = globalX;
-			var gY:Number = globalY;
-			
-			if (pX >= gX && pX <= gX + width * scaleX && pY >= gY && pY <= gY + height * scaleY) {
+			if (collision(pX, pY)) {
 				return this;
 			}
 			
 			return null;
 		}
 		
+		protected function collision(pX:Number, pY:Number):Boolean {
+			return false;
+		}
+		
 		// TODO
-		public function get clipTop():Number
-		{
+		public function get clipTop():Number {
 			return 0;
 		}
 		
-		public function set clipTop(value:Number):void 
-		{
-			
+		public function set clipTop(value:Number):void {
+		
 		}
 	
 	}

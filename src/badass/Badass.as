@@ -3,6 +3,7 @@ package badass {
 	import badass.engine.MovieClip;
 	import badass.engine.Layer;
 	import badass.engine.Sprite;
+	import badass.engine.TextField;
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
 	import flash.events.Event;
@@ -12,7 +13,6 @@ package badass {
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
 	import flash.utils.getTimer;
-	import flash.text.TextField;
 	import badass.tweens.Tween;
 	import badass.tweens.Tweener;
 	import badass.engine.Context;
@@ -20,9 +20,8 @@ package badass {
 	public class Badass {
 		private var _context:badass.engine.Context;
 		private var _zombie:MovieClip;
-		private var _tf:flash.text.TextField;
 		private var _time:int;
-		private var _fps:int;
+		public var fps:int;
 		private var _tweener:Tweener;
 		private var _touchProcessor:TouchProcessor;
 		private var _lastTime:int;
@@ -32,6 +31,7 @@ package badass {
 		private var _stageHeight:int = 960;
 		private var _stage:Object;
 		public var mainLoop:Function;
+		public var tf:TextField;
 		
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
@@ -44,10 +44,7 @@ package badass {
 			
 			_lastTime = getTimer();
 			stage.frameRate = 60;
-			
-			_tf = new flash.text.TextField();
-			_tf.x = 200;
-			stage.addChild(_tf);
+		
 			
 			for each (var touchEventType:String in touchEventTypes)
 				stage.addEventListener(touchEventType, onTouch, false, 0, true);
@@ -145,8 +142,10 @@ package badass {
 			var dt:int = t - _lastTime;
 			_lastTime = t;
 			if (t > _time + 1000) {
-				_tf.text = _fps.toString();
-				_fps = 0;
+				if (tf) {
+					tf.text = fps.toString();
+				}
+				fps = 0;
 				_time = t;
 			}
 			
@@ -158,7 +157,7 @@ package badass {
 				_layers[i].draw(_context.renderer);
 			}
 			_context.renderer.endFrame();
-			_fps++;
+			fps++;
 		}
 	
 	}
