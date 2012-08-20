@@ -126,7 +126,7 @@ package badass.engine {
 	
 	
 	public function addBatch(d:DisplayObject):void {
-		var texture:Texture = _renderer.getTexture(d.frame);
+		var texture:Texture = d.frame.texture.nativeTexture;
 		
 		if (!_drawCalls[d.index]) {
 			_drawCalls[d.index] = new Dictionary();

@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.textures.BadassTexture;
 	import flash.events.*;
 	
 	import com.adobe.utils.*;
@@ -24,8 +25,6 @@ package badass.engine {
 		
 		private var _ready:Boolean = false;
 		
-		private var _textures:Dictionary;
-		
 		private var indexes:Vector.<uint>;
 		private var lengths:Vector.<uint>;
 		private var textures:Vector.<Texture>;
@@ -35,8 +34,6 @@ package badass.engine {
 		private var b:Number = 1;
 		
 		public function Renderer() {
-			_textures = new Dictionary();
-			
 			textures = new Vector.<Texture>();
 		}
 		
@@ -47,6 +44,10 @@ package badass.engine {
 		public function setViewport(w:int, h:int):void {
 			_viewportWidth = w;
 			_viewportHeight = h;
+		}
+		
+		public function createTexture(bitmapData:BitmapData):BadassTexture {
+			return new BadassTexture(_context3D, bitmapData);
 		}
 		
 		public function set color(value:int):void {
@@ -88,7 +89,7 @@ package badass.engine {
 			_viewportHeight = height;
 			if (_context3D) {
 				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
-				_projectionMatrix = createWorldMatrix(_viewportWidth / 2, _viewportHeight / 2);
+				_projectionMatrix = createWorldMatrix(_viewportWidth, _viewportHeight);
 			}
 		}
 		
@@ -132,17 +133,6 @@ package badass.engine {
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
-		}
-		
-		public function getTexture(frame:Frame):Texture {
-			if (!_textures[frame.texture]) {
-				var texture:flash.display3D.textures.Texture = _context3D.createTexture(frame.textureWidth, frame.textureHeight, Context3DTextureFormat.BGRA, false);
-				texture.uploadFromBitmapData(frame.texture);
-				_textures[frame.texture] = texture;
-			}
-			
-			return _textures[frame.texture];
-		
 		}
 		
 		public function beginFrame():void {

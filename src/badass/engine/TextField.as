@@ -75,7 +75,7 @@ package badass.engine {
 		    }*/
 
 		    var s:Sprite = new Sprite();
-			var frame:Frame = new Frame(_font.bitmapData);
+			var frame:Frame = new Frame(_font.texture);
 			frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
 		    s.setTexture(frame);
 		    s.x = dx + ch.xOff;

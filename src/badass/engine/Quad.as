@@ -16,10 +16,10 @@ package badass.engine {
 				_colors[c] = new BitmapData(1, 1, false, c);
 			}
 			
-			var f:Frame = new Frame(_colors[c]);
+	/*		var f:Frame = new Frame(_colors[c]);
 			f.width = w;
 			f.height = h;
-			setTexture(f);
+			setTexture(f);*/
 		}
 	
 	}

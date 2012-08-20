@@ -1,10 +1,11 @@
 package badass.engine {
+	import badass.textures.BadassTexture;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	public class Frame {
-		private var _texture:BitmapData;
+		private var _texture:BadassTexture;
 		
 		public var uLeft:Number;
 		public var vTop:Number;
@@ -14,17 +15,11 @@ package badass.engine {
 		private var _height:Number;
 		public var index:int;
 		public var offset:Point;
-		public var textureWidth:Number;
-		public var textureHeight:Number;
 		
-		public function Frame(texture:BitmapData) {
+		public function Frame(texture:BadassTexture) {
 			_texture = texture;
-			width = _texture.width;
-			height = _texture.height;
-			
-			textureWidth = badass.engine.Utils.powerOfTwo(_texture.width);
-			textureHeight = badass.engine.Utils.powerOfTwo(_texture.height);
-			
+			_width = texture.width;
+			_height = texture.height;
 			uLeft = 0.0;
 			uRight = _texture.width / textureWidth;
 			vTop = 0.0;
@@ -60,8 +55,16 @@ package badass.engine {
 			vBottom = uRight + _height / textureHeight;
 		}
 		
-		public function get texture():BitmapData {
+		public function get texture():BadassTexture {
 			return _texture;
+		}
+		
+		public function get textureWidth():Number {
+			return _texture.textureWidth;
+		}
+		
+		public function get textureHeight():Number {		
+			return _texture.textureHeight;
 		}
 	
 	}

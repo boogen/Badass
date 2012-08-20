@@ -1,6 +1,7 @@
 package badass {
 	import badass.engine.Context;
 	import badass.engine.EventDispatcher;
+	import badass.engine.FontManager;
 	import badass.engine.MovieClip;
 	import badass.engine.Layer;
 	import badass.engine.Sprite;
@@ -8,6 +9,8 @@ package badass {
 	import badass.events.ResizeEvent;
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
+	import badass.textures.BadassTexture;
+	import flash.display.BitmapData;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
@@ -40,6 +43,7 @@ package badass {
 			_context = new badass.engine.Context();
 			_context.renderer.init(stage);
 			
+			FontManager.init(_context);
 			_tweener = new Tweener();
 			_touchProcessor = new TouchProcessor(_layers);
 			
@@ -101,6 +105,10 @@ package badass {
 			return Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
 		}
 		
+		public function createTexture(bitmapData:BitmapData):BadassTexture {
+			return _context.renderer.createTexture(bitmapData);
+		}
+		
 		private function onTouch(event:Event):void {
 			var globalX:Number;
 			var globalY:Number;
@@ -120,7 +128,7 @@ package badass {
 				}
 			} else {
 				var touchEvent:TouchEvent = event as TouchEvent;
-				globalX =  touchEvent.stageX;
+				globalX = touchEvent.stageX;
 				globalY = touchEvent.stageY;
 				touchID = touchEvent.touchPointID;
 			}
@@ -148,7 +156,7 @@ package badass {
 			}
 			
 			// enqueue touch in touch processor         
-			_touchProcessor.enqueue(touchID, phase, globalX / 2, globalY / 2);
+			_touchProcessor.enqueue(touchID, phase, globalX, globalY);
 		}
 		
 		private function onEnterFrame(e:Object):void {

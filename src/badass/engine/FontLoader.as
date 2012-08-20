@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.textures.BadassTexture;
 	import flash.events.IOErrorEvent;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
@@ -8,10 +9,11 @@ package badass.engine {
     import flash.utils.Dictionary;
     import flash.events.EventDispatcher;
     import flash.display.Loader;
+	import badass.engine.Context;
 
     public class FontLoader extends EventDispatcher {		
 	private var _name:String;
-	public var bitmapData:BitmapData;
+	public var texture:BadassTexture;
 
 	public var font_height:int;
 	public var base:int;
@@ -28,10 +30,12 @@ package badass.engine {
 	public var fx_file:String;
 
 	public var loaded:Boolean = false;
+	private var _context:badass.engine.Context;
 	
-	public function FontLoader() {
+	public function FontLoader(context:badass.engine.Context) {
 	    chars = new Dictionary();
 	    def_char = new CharDescr();
+		_context = context;
 	}
 
 	public function load(fontname:String):void {
@@ -52,7 +56,9 @@ package badass.engine {
 	}
 
 	private function onSpriteSheetLoaded(e:Event):void {
-	    bitmapData = (e.target.content as Bitmap).bitmapData;
+	    var bitmapData:BitmapData = (e.target.content as Bitmap).bitmapData;
+		
+		texture = _context.renderer.createTexture(bitmapData);
 
 	    var fntLoader:URLLoader = new URLLoader();
 	    fntLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
