@@ -18,7 +18,7 @@ package badass.engine {
 		
 		private var _context3D:Context3D;
 		private var _viewportWidth:Number = 640;
-		private var _viewportHeight:Number = 480;
+		private var _viewportHeight:Number = 960;
 		private var _projectionMatrix:Matrix3D;
 		private var _shaderProgram:Program3D;
 		
@@ -58,7 +58,7 @@ package badass.engine {
 		}
 		
 		public function init(stage:Object):void {
-			
+			setViewport(stage.fullScreenWidth, stage.fullScreenHeight);
 			var stage3DAvailable:Boolean = ApplicationDomain.currentDomain.hasDefinition("flash.display.Stage3D");
 			if (stage3DAvailable) {
 				stage.stage3Ds[0].addEventListener(flash.events.Event.CONTEXT3D_CREATE, onContext3DCreated);
@@ -75,7 +75,6 @@ package badass.engine {
 		
 		private function onContext3DCreated(e:Object):void {
 			var stage3D:Stage3D = e.target as Stage3D;
-			
 			_context3D = stage3D.context3D;
 			_context3D.enableErrorChecking = false;
 			
@@ -84,13 +83,28 @@ package badass.engine {
 		
 		}
 		
+		public function resize(width:int, height:int):void {
+			_viewportWidth = width;
+			_viewportHeight = height;
+			if (_context3D) {
+				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
+				_projectionMatrix = createWorldMatrix(_viewportWidth / 2, _viewportHeight / 2);
+			}
+		}
+		
+		public function get viewportWidth():int {
+			return _viewportWidth;
+		}
+		
+		public function get viewportHeight():int {
+			return _viewportHeight;
+		}
+		
 		private function continueInit():void {
-			_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
-			
+			resize(_viewportWidth, _viewportHeight);
 			initShaders();
 			
 			_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
-			_projectionMatrix = createWorldMatrix(_viewportWidth, _viewportHeight);
 			
 			_context3D.setProgram(_shaderProgram);
 			_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);

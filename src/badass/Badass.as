@@ -1,11 +1,15 @@
 package badass {
 	import badass.engine.Context;
+	import badass.engine.EventDispatcher;
 	import badass.engine.MovieClip;
 	import badass.engine.Layer;
 	import badass.engine.Sprite;
 	import badass.engine.TextField;
+	import badass.events.ResizeEvent;
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
@@ -17,7 +21,7 @@ package badass {
 	import badass.tweens.Tweener;
 	import badass.engine.Context;
 	
-	public class Badass {
+	public class Badass extends EventDispatcher {
 		private var _context:badass.engine.Context;
 		private var _zombie:MovieClip;
 		private var _time:int;
@@ -27,8 +31,6 @@ package badass {
 		private var _lastTime:int;
 		private var _layers:Vector.<badass.engine.Layer>;
 		private var _leftMouseDown:Boolean;
-		private var _stageWidth:int = 640;
-		private var _stageHeight:int = 960;
 		private var _stage:Object;
 		public var mainLoop:Function;
 		public var tf:TextField;
@@ -36,21 +38,40 @@ package badass {
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
 			_context = new badass.engine.Context();
-			_context.renderer.setViewport(_stageWidth, _stageHeight);
 			_context.renderer.init(stage);
 			
 			_tweener = new Tweener();
 			_touchProcessor = new TouchProcessor(_layers);
 			
 			_lastTime = getTimer();
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
 			stage.frameRate = 60;
-		
 			
 			for each (var touchEventType:String in touchEventTypes)
 				stage.addEventListener(touchEventType, onTouch, false, 0, true);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(Event.RESIZE, onResize);
 			_stage = stage;
+		}
+		
+		private function onResize(e:Event):void {
+			var stage:Object = e.target;
+			_context.renderer.resize(stage.fullScreenWidth, stage.fullScreenHeight);
+			dispatchEvent(new ResizeEvent(badass.events.Event.RESIZE, stage.stageWidth, stage.stageHeight));
+		}
+		
+		public function setViewport(width:int, height:int):void {
+			_context.renderer.resize(width, height);
+		}
+		
+		public function get stageWidth():int {
+			return _context.renderer.viewportWidth;
+		}
+		
+		public function get stageHeight():int {
+			return _context.renderer.viewportHeight;
 		}
 		
 		public function set color(value:int):void {
@@ -99,7 +120,7 @@ package badass {
 				}
 			} else {
 				var touchEvent:TouchEvent = event as TouchEvent;
-				globalX = touchEvent.stageX;
+				globalX =  touchEvent.stageX;
 				globalY = touchEvent.stageY;
 				touchID = touchEvent.touchPointID;
 			}
@@ -127,7 +148,7 @@ package badass {
 			}
 			
 			// enqueue touch in touch processor         
-			_touchProcessor.enqueue(touchID, phase, globalX, globalY);
+			_touchProcessor.enqueue(touchID, phase, globalX / 2, globalY / 2);
 		}
 		
 		private function onEnterFrame(e:Object):void {

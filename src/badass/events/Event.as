@@ -12,6 +12,7 @@ package badass.events {
         public static const REMOVED_FROM_STAGE:String = "REMOVED_FROM_STAGE";
         public static const COMPLETE:String = "COMPLETE";
 		public static const TWEEN_END:String = "TWEEN_END";
+		public static const RESIZE:String = "RESIZE";
 		
 		
 		public var type:String;
