@@ -1,5 +1,6 @@
 package badass {
 	import badass.engine.Context;
+	import badass.engine.DisplayListLayer;
 	import badass.engine.EventDispatcher;
 	import badass.engine.FontManager;
 	import badass.engine.MovieClip;
@@ -90,8 +91,14 @@ package badass {
 			_tweener.removeTweens(target);
 		}
 		
-		public function getLayer():badass.engine.Layer {
-			var result:badass.engine.Layer = new badass.engine.Layer();
+		public function getLayer(displayListMode:Boolean):badass.engine.Layer {			
+			var result:badass.engine.Layer;
+			if (displayListMode) {
+				result = new DisplayListLayer();
+			}
+			else {
+				result = new badass.engine.Layer();
+			}
 			_layers.push(result);
 			
 			return result;

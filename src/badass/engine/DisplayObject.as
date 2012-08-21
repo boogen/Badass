@@ -21,6 +21,7 @@ package badass.engine {
 		
 		protected var _frame:Frame;
 		private var _index:int;
+		private var _displayIndex:int;
 		
 		public function DisplayObject() {
 			
@@ -40,15 +41,27 @@ package badass.engine {
 			color = 0xFFFFFF;
 		}
 		
+		public function get renderIndex():int {
+			return _index + _displayIndex;
+		}
+		
 		public function set index(value:int):void {
 			_index = value;
-			for each (var child:DisplayObject in _children) {
-				child.index = _index + 1;
-			}
 		}
 		
 		public function get index():int {
 			return _index;
+		}
+		
+		public function get displayIndex():int {
+			return _displayIndex;
+		}
+		
+		public function set displayIndex(value:int):void {
+			_displayIndex = value;
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].displayIndex = _displayIndex + 1;
+			}
 		}
 		
 		public function get frame():Frame {
@@ -247,8 +260,7 @@ package badass.engine {
 				if (child == _children[i]) {
 					if (i == pos) {
 						return;
-					}
-					else {
+					} else {
 						removeChildAt(i);
 						break;
 					}
@@ -256,13 +268,13 @@ package badass.engine {
 			}
 			
 			child.parent = this;
+			child.displayIndex = displayIndex + 1;
 			if (pos >= _children.length) {
 				_children.push(child);
-				child.index = index + 1;
 			} else {
-				
 				_children.splice(pos, 0, child);
 			}
+		
 		}
 		
 		public function removeChild(child:DisplayObject):void {
@@ -278,9 +290,9 @@ package badass.engine {
 			}
 		}
 		
-		public function removeChildAt(index:int):void {
+		public function removeChildAt(i:int):void {
 			if (index < _children.length) {
-				_children.splice(index, 1);
+				_children.splice(i, 1);
 			}
 		}
 		

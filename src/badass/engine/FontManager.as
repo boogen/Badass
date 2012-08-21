@@ -7,7 +7,7 @@ package badass.engine {
 	 */
 	public class FontManager {
 		private static var _fonts:Dictionary = new Dictionary();
-		private static var _context:Context;
+		private static var _context:badass.engine.Context;
 		
 		public static function init(context:badass.engine.Context):void {
 			_context = context;
