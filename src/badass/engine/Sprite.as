@@ -7,6 +7,7 @@ package badass.engine {
 		
 		private var _pivotX:Number = 0;
 		private var _pivotY:Number = 0;
+		private var _clipTop:Number = 0;
 		
 		public function Sprite() {
 		}
@@ -37,6 +38,16 @@ package badass.engine {
 		
 		public function set height(value:Number):void {
 			_frame.height = value;
+		}
+		
+		override public function set clipTop(value:Number):void {
+			_clipTop = value;
+			_frame.vTop = value;
+			_frame.height = (1 - value) * _frame.baseHeight;
+		}
+		
+		override public function get clipTop():Number {
+			return _clipTop;
 		}
 		
 		override public function get width():Number {
@@ -106,7 +117,7 @@ package badass.engine {
 				ba.writeFloat(gx + p + w / 2);
 				ba.writeFloat(gy + q + h / 2);
 				ba.writeFloat(_frame.uLeft);
-				ba.writeFloat(_frame.vTop);
+				ba.writeFloat(_frame.vTop + _clipTop);
 				ba.writeFloat(a);
 				
 				ba.writeFloat(gx - u + w / 2);
@@ -127,11 +138,9 @@ package badass.engine {
 				ba.writeFloat(_frame.vBottom);
 				ba.writeFloat(a);
 				
-					
 			}
 		}
 		
-		// TODO
 		public function set pivotX(value:Number):void {
 			_pivotX = value
 		}

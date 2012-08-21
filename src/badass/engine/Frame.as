@@ -15,11 +15,16 @@ package badass.engine {
 		private var _height:Number;
 		public var index:int;
 		public var offset:Point;
+		public var baseWidth:int;
+		public var baseHeight:int;
 		
 		public function Frame(texture:BadassTexture) {
 			_texture = texture;
 			_width = texture.width;
 			_height = texture.height;
+			baseWidth = _width;
+			baseHeight = _height;
+			
 			uLeft = 0.0;
 			uRight = _texture.width / textureWidth;
 			vTop = 0.0;

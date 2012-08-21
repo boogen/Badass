@@ -23,30 +23,22 @@ package badass.engine {
 		}
 		
 		override public function addBatch(d:DisplayObject):void {
-			if (!_displayList[d.renderIndex]) {
-				_displayList[d.renderIndex] = new Array();
-			}
-			
-			_displayList[d.renderIndex].push(d);
+			_displayList.push(d);
 		}
 		
 		override protected function fillByteArray():void {
-			for each (var layer:Array in _displayList) {				
-				for (var i:int = layer.length - 1; i >= 0; --i) {
-					layer[i].writeToByteArray(_byteArray);
-				}				
+			for (var i:int = 0; i < _displayList.length; ++i) {
+				_displayList[i].writeToByteArray(_byteArray);
 			}
 		}
 		
 		override protected function renderDrawCalls():void {
 			var count:int = 0;
-			for each (var layer:Array in _displayList) {				
-				for (var i:int = layer.length - 1; i >= 0; --i) {
-					var texture:Texture = layer[i].frame.texture.nativeTexture;
-					_context3D.setTextureAt(0, texture);
-					_context3D.drawTriangles(_indexBuffer, count,  2);
-					count += 6;					
-				}
+			for (var i:int = 0; i < _displayList.length; ++i) {
+				var texture:Texture = _displayList[i].frame.texture.nativeTexture;
+				_context3D.setTextureAt(0, texture);
+				_context3D.drawTriangles(_indexBuffer, count,  2);
+				count += 6;					
 			}			
 		}
 	}

@@ -245,7 +245,7 @@ package badass.engine {
 		
 		public function render(layer:badass.engine.Layer):void {
 			if (visible) {
-				for (var i:int = _children.length - 1; i >= 0; --i) {
+				for (var i:int = 0; i < _children.length; ++i) {
 					_children[i].render(layer);
 				}
 			}
@@ -332,7 +332,6 @@ package badass.engine {
 			return false;
 		}
 		
-		// TODO
 		public function get clipTop():Number {
 			return 0;
 		}
