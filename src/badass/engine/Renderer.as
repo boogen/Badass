@@ -1,5 +1,6 @@
 package badass.engine {
 	import badass.textures.BadassTexture;
+	import badass.types.BlendType;
 	import flash.events.*;
 	
 	import com.adobe.utils.*;
@@ -32,6 +33,8 @@ package badass.engine {
 		private var r:Number = 1;
 		private var g:Number = 1;
 		private var b:Number = 1;
+		
+		private var _blendType:String;
 		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
@@ -105,12 +108,24 @@ package badass.engine {
 			resize(_viewportWidth, _viewportHeight);
 			initShaders();
 			
-			_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
+			setBlendType(BlendType.NONE);			
 			
 			_context3D.setProgram(_shaderProgram);
 			_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
 			_ready = true;
 		
+		}
+		
+		public function setBlendType(value:String):void {
+			if (_blendType != value) {
+					_blendType = value;
+					if (_blendType == BlendType.NONE) {
+						_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO)
+					}
+					else if (_blendType == BlendType.ONE_MINUS_SOURCE_ALPHA) {
+						_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
+					}
+			}
 		}
 		
 		private function createWorldMatrix(viewWidth:Number, viewHeight:Number):Matrix3D {

@@ -9,7 +9,8 @@ package badass.engine {
 		
 		private var _displayList:Array;
 		
-		public function DisplayListLayer() {
+		public function DisplayListLayer(blendType:String) {
+			super(blendType)
 			_displayList = new Array();
 		}
 		

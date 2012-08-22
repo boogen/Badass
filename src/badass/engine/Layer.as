@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.types.BlendType;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.display3D.IndexBuffer3D;
@@ -27,11 +28,15 @@ package badass.engine {
 		private var _renderer:Renderer;
 		private var _lastAlpha:Number;
 		
-		public function Layer() {
+		private var _blendType:String;
+		
+		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA) {
 			super();
+			_blendType = blendType;
 			_byteArray = new ByteArray();
 			_byteArray.endian = Endian.LITTLE_ENDIAN;
 		}
+
 		
 		public function draw(renderer:Renderer):void {
 			if (!visible) {
@@ -39,6 +44,7 @@ package badass.engine {
 			}
 			_context3D = renderer.getContext3D();
 			_renderer = renderer;
+			_renderer.setBlendType(_blendType);
 			clearContainer();
 			var i:int;
 			for (i = _children.length - 1; i >= 0; --i) {

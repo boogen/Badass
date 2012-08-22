@@ -25,7 +25,7 @@ package badass.textures {
 			_textureHeight = badass.engine.Utils.powerOfTwo(bitmapData.height);
 			_nativeTexture = context.createTexture(_textureWidth, _textureHeight, Context3DTextureFormat.BGRA, false);
 			_nativeTexture.uploadFromBitmapData(bitmapData);
-			bitmapData.dispose();
+			bitmapData.dispose();		
 		
 		}
 		

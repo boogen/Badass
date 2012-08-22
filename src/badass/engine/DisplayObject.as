@@ -189,7 +189,7 @@ package badass.engine {
 			if (!_children.length) {
 				return 0;
 			}
-			var minY:Number = y; // Number.POSITIVE_INFINITY;
+			var minY:Number = y;
 			var maxY:Number = Number.NEGATIVE_INFINITY;
 			
 			for (var i:int = 0; i < _children.length; ++i) {

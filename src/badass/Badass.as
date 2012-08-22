@@ -91,13 +91,13 @@ package badass {
 			_tweener.removeTweens(target);
 		}
 		
-		public function getLayer(displayListMode:Boolean):badass.engine.Layer {			
+		public function getLayer(displayListMode:Boolean, blendType:String):badass.engine.Layer {			
 			var result:badass.engine.Layer;
 			if (displayListMode) {
-				result = new DisplayListLayer();
+				result = new DisplayListLayer(blendType);
 			}
 			else {
-				result = new badass.engine.Layer();
+				result = new badass.engine.Layer(blendType);
 			}
 			_layers.push(result);
 			
@@ -190,7 +190,7 @@ package badass {
 			_context.renderer.beginFrame();
 			
 			for (var i:int = 9; i < _layers.length; ++i) {
-				_layers[i].draw(_context.renderer);
+				_layers[i].draw(_context.renderer);				
 			}
 			_context.renderer.endFrame();
 			fps++;
