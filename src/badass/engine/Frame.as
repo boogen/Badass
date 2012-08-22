@@ -57,7 +57,7 @@ package badass.engine {
 		
 		public function set height(value:Number):void {
 			_height = value;
-			vBottom = uRight + _height / textureHeight;
+			vBottom = vTop + _height / textureHeight;
 		}
 		
 		public function get texture():BadassTexture {

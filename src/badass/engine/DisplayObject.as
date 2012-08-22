@@ -337,8 +337,15 @@ package badass.engine {
 		}
 		
 		public function set clipTop(value:Number):void {
-		
 		}
+		
+		
+		public function get clipBottom():Number {
+			return 0;
+		}
+		
+		public function set clipBottom(value:Number):void {
+		}		
 	
 	}
 

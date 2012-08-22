@@ -8,6 +8,7 @@ package badass.engine {
 		private var _pivotX:Number = 0;
 		private var _pivotY:Number = 0;
 		private var _clipTop:Number = 0;
+		private var _clipBottom:Number = 0;
 		
 		public function Sprite() {
 		}
@@ -17,38 +18,64 @@ package badass.engine {
 		}
 		
 		public function set uLeft(value:Number):void {
-			_frame.uLeft = value;
+			if (_frame) {
+				_frame.uLeft = value;
+			}
 		}
 		
 		public function set uRight(value:Number):void {
-			_frame.uRight = value;
+			if (_frame) {
+				_frame.uRight = value;
+			}
 		}
 		
 		public function set vTop(value:Number):void {
-			_frame.vTop = value;
+			if (_frame) {
+				_frame.vTop = value;
+			}
 		}
 		
 		public function set vBottom(value:Number):void {
-			_frame.vBottom = value;
+			if (_frame) {
+				_frame.vBottom = value;
+			}
 		}
 		
 		public function set width(value:Number):void {
-			_frame.width = value;
+			if (_frame) {
+				_frame.width = value;
+			}
 		}
 		
 		public function set height(value:Number):void {
-			_frame.height = value;
+			if (_frame) {
+				_frame.height = value;
+			}
 		}
 		
 		override public function set clipTop(value:Number):void {
 			_clipTop = value;
-			_frame.vTop = value;
-			_frame.height = (1 - value) * _frame.baseHeight;
+			if (_frame) {
+				_frame.vTop = value * _frame.baseHeight / _frame.textureHeight;;
+				_frame.height = (1 - value) * _frame.baseHeight;
+			}
 		}
 		
 		override public function get clipTop():Number {
 			return _clipTop;
 		}
+		
+		override public function set clipBottom(value:Number):void {
+			_clipBottom = value;
+			if (_frame) {
+				_frame.height = (1 - value) * _frame.baseHeight;
+				_frame.vBottom = value * _frame.baseHeight / _frame.textureHeight;;				
+			}
+		}
+		
+		override public function get clipBottom():Number {
+			return _clipBottom;
+		}		
 		
 		override public function get width():Number {
 			if (_frame) {
@@ -117,7 +144,7 @@ package badass.engine {
 				ba.writeFloat(gx + p + w / 2);
 				ba.writeFloat(gy + q + h / 2);
 				ba.writeFloat(_frame.uLeft);
-				ba.writeFloat(_frame.vTop + _clipTop);
+				ba.writeFloat(_frame.vTop);
 				ba.writeFloat(a);
 				
 				ba.writeFloat(gx - u + w / 2);
