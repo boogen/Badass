@@ -23,6 +23,17 @@ package badass.engine {
 			_fonts[name] = loader;
 			return loader;
 		}
+		
+		public static function getXmlFont(name:String):FontLoader {
+			if (_fonts[name]) {
+				return _fonts[name];
+			}
+			
+			var loader:FontLoader = new XmlFontLoader(_context);
+			loader.load(name);
+			_fonts[name] = loader;
+			return loader;
+		}
 	
 	}
 

@@ -11,11 +11,16 @@ package badass.engine {
 	public var hAlign:String;
 
 
-	public function TextField(w:int, h:int, text:String, f:String="Verdana",
-                                  fontSize:Number=12, color:uint=0x0, bold:Boolean=false) {	    
+	public function TextField(w:int, h:int, text:String, f:String="verdanaSmall",
+                                  fontSize:Number=12, color:uint=0x0, bold:Boolean=false, xmlFont:Boolean = false) {
 	    _text = text;
-	    _letters = new Vector.<Sprite>();		
-	    var font:FontLoader = FontManager.getFont("verdanaSmall");
+	    _letters = new Vector.<Sprite>();
+	    var font:FontLoader;
+		if (xmlFont) {
+			font = FontManager.getXmlFont(f);
+		} else {
+			font = FontManager.getFont(f);
+		}
 		if (font.loaded) {
 			_font  = font;
 			createLetters();
@@ -48,7 +53,7 @@ package badass.engine {
 	private function createLetters():void {
 	    var i:int;
 	    for (i = 0; i < _letters.length; ++i) {
-		removeChild(_letters[i]);		
+		removeChild(_letters[i]);
 	    }
 
 	    _letters.length = 0;
@@ -66,7 +71,7 @@ package badass.engine {
 		    var v1:Number = ch.srcY / _font.scaleh;
 
 		    var u2:Number = u1 + ch.srcW / _font.scalew;
-		    var v2:Number = v1 + ch.srcH / _font.scaleh; 
+		    var v2:Number = v1 + ch.srcH / _font.scaleh;
 
 		    var a:Number = ch.xAdv;
 		    var w:Number = ch.srcW;
@@ -84,11 +89,11 @@ package badass.engine {
 		    s.color = color;
 		    _letters.push(s);
 		    addChild(s);
-		    
+		
 		    dx += ch.xOff + ch.srcW + 1;
 		}
 	    }
-	    
+	
 	}
 
 	private function onFontLoaded(e:Event):void {

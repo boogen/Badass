@@ -11,8 +11,8 @@ package badass.engine {
     import flash.display.Loader;
 	import badass.engine.Context;
 
-    public class FontLoader extends EventDispatcher {		
-	private var _name:String;
+    public class FontLoader extends EventDispatcher {
+	protected var _name:String;
 	public var texture:BadassTexture;
 
 	public var font_height:int;
@@ -30,7 +30,9 @@ package badass.engine {
 	public var fx_file:String;
 
 	public var loaded:Boolean = false;
-	private var _context:badass.engine.Context;
+	protected var _context:badass.engine.Context;
+	
+	protected const path:String = "images_mobile/fonts/";
 	
 	public function FontLoader(context:badass.engine.Context) {
 	    chars = new Dictionary();
@@ -47,22 +49,22 @@ package badass.engine {
 	    var spritesheetLoader:Loader = new Loader();
 	    spritesheetLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
 		spritesheetLoader.addEventListener(IOErrorEvent.IO_ERROR, loadingIoError);
-	    spritesheetLoader.load(new URLRequest(name + ".png"));
+	    spritesheetLoader.load(new URLRequest(path + name + ".png"));
 	}
 	
-	private function loadingIoError(e:IOErrorEvent):void 
+	private function loadingIoError(e:IOErrorEvent):void
 	{
 		trace("error");
 	}
 
-	private function onSpriteSheetLoaded(e:Event):void {
+	protected function onSpriteSheetLoaded(e:Event):void {
 	    var bitmapData:BitmapData = (e.target.content as Bitmap).bitmapData;
 		
 		texture = _context.renderer.createTexture(bitmapData);
 
 	    var fntLoader:URLLoader = new URLLoader();
 	    fntLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
-	    fntLoader.load(new URLRequest(_name + ".fnt"));
+	    fntLoader.load(new URLRequest(path + _name + ".fnt"));
 	}
 
 	private function onDescriptionLoaded(e:Event):void {
@@ -291,21 +293,21 @@ package badass.engine {
 	    }
 
 	    setCommonInfo(local_fontheight, local_base, local_scalew, local_scaleh, local_pages, local_packed > 0);
-	   
+	
 	}
 
-	private function setCommonInfo(fh:int, b:int, sw:int, sh:int, pag:int, pack:Boolean):void {
+	protected function setCommonInfo(fh:int, b:int, sw:int, sh:int, pag:int, pack:Boolean):void {
 	    font_height = fh;
 	    base = b;
 	    scalew = sw;
 	    scaleh = sh;
-	    
+	
 	    if (pack && outline_thickness) {
 		has_outline = true;
 	    }
 	}
 
-	private function addChar(id:int, x:int, y:int, w:int, h:int, xoffset:int, yoffset:int, xadvance:int, page:int, chnl:int):void {
+	protected function addChar(id:int, x:int, y:int, w:int, h:int, xoffset:int, yoffset:int, xadvance:int, page:int, chnl:int):void {
 	    if (chnl == 1) {
 		chnl = 0x00010000;
 	    }
