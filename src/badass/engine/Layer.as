@@ -25,7 +25,7 @@ package badass.engine {
 		private var _indices:Vector.<uint>;
 		
 		protected var _context3D:Context3D;
-		private var _renderer:Renderer;
+		protected var _renderer:Renderer;
 		private var _lastAlpha:Number;
 		
 		private var _blendType:String;
