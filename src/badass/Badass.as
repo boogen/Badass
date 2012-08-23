@@ -3,6 +3,7 @@ package badass {
 	import badass.engine.DisplayListLayer;
 	import badass.engine.EventDispatcher;
 	import badass.engine.FontManager;
+	import badass.engine.GPUMovieClipLayer;
 	import badass.engine.MovieClip;
 	import badass.engine.Layer;
 	import badass.engine.Sprite;
@@ -11,6 +12,7 @@ package badass {
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
 	import badass.textures.BadassTexture;
+	import badass.types.LayerType;
 	import flash.display.BitmapData;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -91,12 +93,15 @@ package badass {
 			_tweener.removeTweens(target);
 		}
 		
-		public function getLayer(displayListMode:Boolean, blendType:String):badass.engine.Layer {			
+		public function getLayer(layerType:String, blendType:String):badass.engine.Layer {			
 			var result:badass.engine.Layer;
-			if (displayListMode) {
+			if (layerType == LayerType.DISPLAY_LIST) {
 				result = new DisplayListLayer(blendType);
 			}
-			else {
+			else if (layerType == LayerType.MOVIECLIP) {
+				result = new GPUMovieClipLayer();
+			}
+			else if (layerType == LayerType.FAST) {
 				result = new badass.engine.Layer(blendType);
 			}
 			_layers.push(result);
@@ -190,7 +195,9 @@ package badass {
 			_context.renderer.beginFrame();
 			
 			for (var i:int = 9; i < _layers.length; ++i) {
-				_layers[i].draw(_context.renderer);				
+	
+					_layers[i].draw(_context.renderer);				
+
 			}
 			_context.renderer.endFrame();
 			fps++;

@@ -22,7 +22,9 @@ package badass.engine {
 		private var _viewportWidth:Number = 640;
 		private var _viewportHeight:Number = 960;
 		private var _projectionMatrix:Matrix3D;
+		
 		private var _shaderProgram:Program3D;
+		private var _movieClipShaderProgram:Program3D;
 		
 		private var _ready:Boolean = false;
 		
@@ -49,6 +51,10 @@ package badass.engine {
 			_viewportHeight = h;
 		}
 		
+		public function getWorldMatrix():Matrix3D {
+			return _projectionMatrix;
+		}
+		
 		public function createTexture(bitmapData:BitmapData):BadassTexture {
 			return new BadassTexture(_context3D, bitmapData);
 		}
@@ -59,6 +65,19 @@ package badass.engine {
 			g = (value % 256) / 255.0;
 			value = value / 256;
 			r = (value % 256) / 255.0;
+		}
+		
+		public function setGPUMovieClipProgram():void 
+		{
+			_context3D.setVertexBufferAt(0, null);
+			_context3D.setVertexBufferAt(1, null);
+			_context3D.setVertexBufferAt(2, null);
+			_context3D.setProgram(_movieClipShaderProgram);
+		}
+		
+		public function setStandardProgram():void 
+		{
+			_context3D.setProgram(_shaderProgram);
 		}
 		
 		public function init(stage:Object):void {
@@ -108,9 +127,9 @@ package badass.engine {
 			resize(_viewportWidth, _viewportHeight);
 			initShaders();
 			
-			setBlendType(BlendType.NONE);			
+			setBlendType(BlendType.ONE_MINUS_SOURCE_ALPHA);
 			
-			_context3D.setProgram(_shaderProgram);
+			setStandardProgram();
 			_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
 			_ready = true;
 		
@@ -118,13 +137,13 @@ package badass.engine {
 		
 		public function setBlendType(value:String):void {
 			if (_blendType != value) {
-					_blendType = value;
-					if (_blendType == BlendType.NONE) {
-						_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO)
-					}
-					else if (_blendType == BlendType.ONE_MINUS_SOURCE_ALPHA) {
-						_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
-					}
+				_blendType = value;
+				if (_blendType == BlendType.NONE) {
+					_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
+					//_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO)
+				} else if (_blendType == BlendType.ONE_MINUS_SOURCE_ALPHA) {
+					_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
+				}
 			}
 		}
 		
@@ -138,6 +157,12 @@ package badass.engine {
 		}
 		
 		private function initShaders():void {
+			initStandardShader();
+			initGPUMovieClipShader();
+		}
+		
+		private function initStandardShader():void 
+		{
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
 			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "m44 op, va0, vc0\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
@@ -148,6 +173,18 @@ package badass.engine {
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
+		}
+			
+		private function initGPUMovieClipShader():void 
+		{				
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();			
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy", "add v0, vc6.xy, vt0.xy", "mov vt0, va0", "dp4 vt0.x, va0, vc4", "dp4 vt0.y, va0, vc5", "m44 op, vt0, vc0"]).join("\n"));
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();			
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));			
+			
+			_movieClipShaderProgram = _context3D.createProgram();
+			_movieClipShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
 		}
 		
 		public function beginFrame():void {
