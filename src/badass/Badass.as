@@ -19,6 +19,8 @@ package badass {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
+	import flash.geom.Matrix;
+	import flash.geom.Matrix3D;
 	import flash.ui.Mouse;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
@@ -63,6 +65,10 @@ package badass {
 			_stage = stage;
 		}
 		
+		public function getWorldMatrix():Matrix3D {
+			return _context.renderer.getWorldMatrix();
+		}
+		
 		private function onResize(e:Event):void {
 			var stage:Object = e.target;
 			_context.renderer.resize(stage.fullScreenWidth, stage.fullScreenHeight);
@@ -93,15 +99,13 @@ package badass {
 			_tweener.removeTweens(target);
 		}
 		
-		public function getLayer(layerType:String, blendType:String):badass.engine.Layer {			
+		public function getLayer(layerType:String, blendType:String):badass.engine.Layer {
 			var result:badass.engine.Layer;
 			if (layerType == LayerType.DISPLAY_LIST) {
 				result = new DisplayListLayer(blendType);
-			}
-			else if (layerType == LayerType.MOVIECLIP) {
+			} else if (layerType == LayerType.MOVIECLIP) {
 				result = new GPUMovieClipLayer();
-			}
-			else if (layerType == LayerType.FAST) {
+			} else if (layerType == LayerType.FAST) {
 				result = new badass.engine.Layer(blendType);
 			}
 			_layers.push(result);
@@ -194,11 +198,13 @@ package badass {
 			_tweener.advanceTime(dt / 1000.0);
 			_context.renderer.beginFrame();
 			
-			for (var i:int = 9; i < _layers.length; ++i) {
-	
-					_layers[i].draw(_context.renderer);				
-
-			}
+			_layers[17].draw(_context.renderer);
+			_layers[29].draw(_context.renderer);
+		/*	for (var i:int = 9; i < _layers.length; ++i) {
+				
+				_layers[i].draw(_context.renderer);
+				
+			}*/
 			_context.renderer.endFrame();
 			fps++;
 		}

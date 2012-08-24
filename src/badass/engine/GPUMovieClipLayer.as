@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.types.BlendType;
 	import flash.geom.Matrix;
 	
 	/**
@@ -23,12 +24,14 @@ package badass.engine {
 		override protected function clearContainer():void {
 			_displayList.length = 0;
 		}
+				
 		
 		override public function draw(renderer:Renderer):void {
 			if (!visible) {
 				return;
 			}
 			renderer.setGPUMovieClipProgram();
+			renderer.setBlendType(BlendType.ONE_MINUS_SOURCE_ALPHA);
 			
 			_context3D = renderer.getContext3D();
 			_renderer = renderer;
@@ -38,10 +41,10 @@ package badass.engine {
 				_children[i].render(this);
 			}
 			
-			for (i = 0; i < _displayList.length; ++i) {
+			for (i = 0; i < Math.min(1, _displayList.length); ++i) {
 				_displayList[i].setFrame(framecount % _displayList[i].totalFrames);
-				_displayList[i].currentMatrix.copyFrom(m[i % m.length]);
-				_displayList[i].draw(_context3D, _renderer.getWorldMatrix());
+				//_displayList[i].currentMatrix.copyFrom(m[i % m.length]);
+				_displayList[i].draw(_context3D, _renderer, _renderer.getWorldMatrix());
 			}
 			
 			renderer.setStandardProgram();

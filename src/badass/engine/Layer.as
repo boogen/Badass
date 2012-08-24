@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.textures.BadassTexture;
 	import badass.types.BlendType;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DVertexBufferFormat;
@@ -91,9 +92,9 @@ package badass.engine {
 			var batches:Vector.<DisplayObject>;
 			for (i = 0; i < _drawCalls.length; ++i) {
 				for (var key:Object in _drawCalls[i]) {
-					var texture:Texture = key as Texture;
+					var texture:BadassTexture = key as BadassTexture;
 					batches = _drawCalls[i][texture];
-					_context3D.setTextureAt(0, texture);
+					_renderer.setTexture(texture);					
 					_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
 					count += batches.length * 6;
 				}
@@ -146,7 +147,7 @@ package badass.engine {
 		}
 		
 		public function addBatch(d:DisplayObject):void {
-			var texture:Texture = d.frame.texture.nativeTexture;
+			var texture:BadassTexture = d.frame.texture;
 			
 			if (!_drawCalls[d.renderIndex]) {
 				_drawCalls[d.renderIndex] = new Dictionary();

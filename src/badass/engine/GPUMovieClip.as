@@ -23,7 +23,7 @@ package badass.engine {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;	
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display3D.Context3D;
@@ -70,20 +70,21 @@ package badass.engine {
 		
 		public var uvs:ByteArray;
 		public var name:String;
+		public var animationName:String;
 		
 		public var texture:BadassTexture;
+		private var _matrices:Vector.<ByteArray>;
+		private var _flatten:Boolean = false;
 		
 		public function GPUMovieClip() {
 		}
 		
-		public function play():void 
-		{
-			
+		public function play():void {
+		
 		}
 		
-		public function stop():void 
-		{
-			
+		public function stop():void {
+		
 		}
 		
 		override public function render(layer:badass.engine.Layer):void {
@@ -91,7 +92,7 @@ package badass.engine {
 				layer.addBatch(this);
 				super.render(layer);
 			}
-		}		
+		}
 		
 		private function nearUpPowOf2(n:uint):uint {
 			n--;
@@ -174,7 +175,7 @@ package badass.engine {
 				gpuChild.gpuParent = this;
 				gpuChild.track = tracks[name] = new GPUMovieClipAnimationTrack();
 				gpuChild.track.fillPreceedingFrames(frame);
-				childrenCount++;				
+				childrenCount++;
 			}
 			return children[name];
 		}
@@ -253,16 +254,62 @@ package badass.engine {
 		}
 		
 		public function createGPUData():void {
-
+			
 			createData();
 			
 			for each (var ch:GPUMovieClip in children) {
 				ch.createGPUData();
 			}
-			
+		
 		}
 		
+		public function flatten():void {		
+			var pos:Point = new Point(Math.random() * 320 + 100, 480);
+			for (var i:int = 0; i < totalFrames; ++i) {
+				var m:Matrix = new Matrix();				
+				m.identity();
+				m.translate(pos.x, pos.y);
+				flatFrame(i, m);
+			}
+		}
 		
+		private function flatFrame(index:int, m:Matrix):void {
+			_flatten = true;
+			if (texture) {
+				if (!_matrices) {
+					_matrices = new Vector.<ByteArray>();
+				}				
+				
+				for (var i:int = _matrices.length; i < index + 1; ++i) {
+					_matrices.push(null);
+				}
+				
+				var ba:ByteArray = new ByteArray();
+				ba.endian = Endian.LITTLE_ENDIAN;
+				ba.position = 0;
+				ba.writeFloat(m.a);
+				ba.writeFloat(m.c);
+				ba.writeFloat(0);
+				ba.writeFloat(m.tx);
+				
+				ba.writeFloat(m.b);
+				ba.writeFloat(m.d);
+				ba.writeFloat(0);
+				ba.writeFloat(m.ty);				
+				
+				_matrices[index] = ba;
+			}		
+			
+			for each (var ch:GPUMovieClip in children) {
+				var childMatrix:Matrix = new Matrix();
+				childMatrix.identity();
+				childMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
+				childMatrix.concat(ch.track.matrix[index % totalFrames]);
+				childMatrix.concat(m);
+				
+				ch.flatFrame(index, childMatrix);
+			}
+		}
 		
 		public function setFrame(f:int):void {
 			setChildrenFrame(f);
@@ -270,48 +317,59 @@ package badass.engine {
 		
 		private function setChildrenFrame(f:int):void {
 			currentFrame = f;
-			for each (var ch:GPUMovieClip in currentChildren) {
-				ch.currentMatrix.identity();
-				ch.currentMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
-				ch.currentMatrix.concat(ch.track.matrix[currentFrame]);
-				ch.currentMatrix.concat(this.currentMatrix);
-				
-				ch.setChildrenFrame(ch.currentFrame);
+			for each (var ch:GPUMovieClip in children) {
+				ch.setChildrenFrame(f);
 			}
+/*			for each (var ch:GPUMovieClip in currentChildren) {
+				if (!_flatten) {
+					ch.currentMatrix.identity();
+					ch.currentMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
+					ch.currentMatrix.concat(ch.track.matrix[currentFrame]);
+					ch.currentMatrix.concat(this.currentMatrix);					
+				}
+
+				ch.setChildrenFrame(f);				
+				
+				
+			}
+*/
 		}
 		
-		public function draw(ctx:Context3D, screenMtx:Matrix3D):void {
+		public function draw(ctx:Context3D, renderer:Renderer, screenMtx:Matrix3D):void {
 			if (texture) {
-				matrixData.position = 0;
-				matrixData.writeFloat(currentMatrix.a);
-				matrixData.writeFloat(currentMatrix.c);
-				matrixData.writeFloat(0);
-				matrixData.writeFloat(currentMatrix.tx);
+				if (_matrices) {
+					matrixData = _matrices[currentFrame % _matrices.length];					
+				}
+				else {
+					matrixData.position = 0;
+					matrixData.writeFloat(currentMatrix.a);
+					matrixData.writeFloat(currentMatrix.c);
+					matrixData.writeFloat(0);
+					matrixData.writeFloat(currentMatrix.tx);
+					
+					matrixData.writeFloat(currentMatrix.b);
+					matrixData.writeFloat(currentMatrix.d);
+					matrixData.writeFloat(0);
+					matrixData.writeFloat(currentMatrix.ty);
+				}
 				
-				matrixData.writeFloat(currentMatrix.b);
-				matrixData.writeFloat(currentMatrix.d);
-				matrixData.writeFloat(0);
-				matrixData.writeFloat(currentMatrix.ty);
-								
 				ctx.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, screenMtx, true);
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
 				
-				ctx.setTextureAt(0, texture.nativeTexture);
+				renderer.setTexture(texture);
 				
 				if (!vertexBuffer) {
 					prepareGPUStaticData(ctx);
-				}				
+				}
 				
-				ctx.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-				
-
+				ctx.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);				
 				ctx.drawTriangles(indexBuffer, 0, 2);
 			}
 			
-			if (framesChildren.length) {
-				for (var i:int = 0; i < framesChildren[currentFrame].length; ++i) {
-					framesChildren[currentFrame][i].draw(ctx, screenMtx);
+			if (framesChildren.length) {				
+				for (var i:int = 0; i < framesChildren[currentFrame % framesChildren.length].length; ++i) {
+					framesChildren[currentFrame % framesChildren.length][i].draw(ctx, renderer, screenMtx);
 				}
 			}
 		}
