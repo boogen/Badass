@@ -17,6 +17,7 @@ package badass {
 	import flash.display.BitmapData;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.display3D.Context3D;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
@@ -61,7 +62,6 @@ package badass {
 			for each (var touchEventType:String in touchEventTypes)
 				stage.addEventListener(touchEventType, onTouch, false, 0, true);
 			
-			
 			stage.addEventListener(Event.RESIZE, onResize);
 			_stage = stage;
 			
@@ -72,6 +72,11 @@ package badass {
 		private function gentlemenStartYourEngines(e:badass.events.Event):void {
 			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
 			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		public function setGPUProgram():void 
+		{
+			_context.renderer.setGPUMovieClipProgram();
 		}
 		
 		public function getWorldMatrix():Matrix3D {
@@ -132,6 +137,10 @@ package badass {
 		
 		public function createTexture(bitmapData:BitmapData):BadassTexture {
 			return _context.renderer.createTexture(bitmapData);
+		}
+		
+		public function getContext3D():Context3D {
+			return _context.renderer.getContext3D();
 		}
 		
 		private function onTouch(event:Event):void {
@@ -207,9 +216,9 @@ package badass {
 			_tweener.advanceTime(dt / 1000.0);
 			_context.renderer.beginFrame();
 			
-			for (var i:int = 0; i < _layers.length; ++i) {			
-			   _layers[i].draw(_context.renderer);
-			
+			for (var i:int = 0; i < _layers.length; ++i) {
+				_layers[i].draw(_context.renderer);
+				
 			}
 			_context.renderer.endFrame();
 			fps++;

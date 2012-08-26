@@ -103,7 +103,7 @@ package badass.engine {
 		private function onContext3DCreated(e:Object):void {
 			var stage3D:Stage3D = e.target as Stage3D;
 			_context3D = stage3D.context3D;
-			_context3D.enableErrorChecking = false;
+			_context3D.enableErrorChecking = true;
 			
 			trace("let's do this motherfuuuuuckers");
 			continueInit();
@@ -179,7 +179,7 @@ package badass.engine {
 		
 		private function initGPUMovieClipShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy", "add v0, vc6.xy, vt0.xy", "mov vt0, va0", "dp4 vt0.x, va0, vc4", "dp4 vt0.y, va0, vc5", "m44 op, vt0, vc0"]).join("\n"));
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy", "add v0, vc6.xy, vt0.xy", "mov vt0, va0", "dp4 vt0.x, va0, vc4", "dp4 vt0.y, va0, vc5", "mov vt1, vt0", "add vt0, vt1, vc7", "m44 op, vt0, vc0"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));

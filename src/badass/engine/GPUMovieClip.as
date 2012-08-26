@@ -1,4 +1,6 @@
 package badass.engine {
+	import animation.GPUMovieClipLoader;
+	import badass.Badass;
 	import badass.textures.BadassTexture;
 	import com.adobe.images.PNGEncoder;
 	import com.adobe.utils.AGALMiniAssembler;
@@ -10,6 +12,7 @@ package badass.engine {
 	import flash.display3D.Context3D;
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.textures.Texture;
+	import flash.display3D.textures.TextureBase;
 	import flash.display3D.VertexBuffer3D;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
@@ -75,9 +78,14 @@ package badass.engine {
 		public var texture:BadassTexture;
 		private var _matrices:Vector.<ByteArray>;
 		private var _flatten:Boolean = false;
-	
+		
+		private var position:Vector.<Number>;
+		private var list:Vector.<GPUMovieClip>;
+		public var baseTexture:BadassTexture;
 		
 		public function GPUMovieClip() {
+			position = new Vector.<Number>();
+			position.push(0, 0, 0, 0);
 		}
 		
 		public function play():void {
@@ -264,17 +272,26 @@ package badass.engine {
 		
 		}
 		
-		public function flatten():void {		
-			var pos:Point = new Point(Math.random() * 500 + 100, 50 + Math.random() * 480);
-			
+		public function flatten():void {
 			for (var i:int = 0; i < framesChildren.length; ++i) {
-				var m:Matrix = new Matrix();				
+				var m:Matrix = new Matrix();
 				m.identity();
-				m.translate(pos.x, pos.y);
-								
-				flatFrame(i, m);				
+				flatFrame(i, m);
 			}
 			
+			list = new Vector.<GPUMovieClip>();
+			addToList(list);
+		
+		}
+		
+		private function addToList(list:Vector.<GPUMovieClip>):void {
+			if (texture) {
+				list.push(this);
+			} else {
+				for (var i:int = 0; i < framesChildren[0].length; ++i) {
+					framesChildren[0][i].addToList(list);
+				}
+			}
 		}
 		
 		private function flatFrame(index:int, m:Matrix):void {
@@ -282,7 +299,7 @@ package badass.engine {
 			if (texture) {
 				if (!_matrices) {
 					_matrices = new Vector.<ByteArray>();
-				}				
+				}
 				
 				for (var i:int = _matrices.length; i < index + 1; ++i) {
 					_matrices.push(null);
@@ -299,10 +316,10 @@ package badass.engine {
 				ba.writeFloat(m.b);
 				ba.writeFloat(m.d);
 				ba.writeFloat(0);
-				ba.writeFloat(m.ty);				
+				ba.writeFloat(m.ty);
 				
 				_matrices[index] = ba;
-			}		
+			}
 			
 			for each (var ch:GPUMovieClip in framesChildren[0]) {
 				
@@ -317,67 +334,69 @@ package badass.engine {
 		}
 		
 		public function setFrame(f:int):void {
-			setChildrenFrame(f);
+			currentFrame = f;
+			for (var i:int = 0; i < list.length; ++i) {
+				list[i].currentFrame = f;
+			}
 		}
 		
 		private function setChildrenFrame(f:int):void {
 			currentFrame = f;
-			for each (var ch:GPUMovieClip in children) {
-				ch.setChildrenFrame(f);
-			}
-/*			for each (var ch:GPUMovieClip in currentChildren) {
-				if (!_flatten) {
-					ch.currentMatrix.identity();
-					ch.currentMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
-					ch.currentMatrix.concat(ch.track.matrix[currentFrame]);
-					ch.currentMatrix.concat(this.currentMatrix);					
-				}
-
-				ch.setChildrenFrame(f);				
-				
-				
-			}
-*/
+		/*for each (var ch:GPUMovieClip in children) {
+		   ch.setChildrenFrame(f);
+		 }*/ /*			for each (var ch:GPUMovieClip in currentChildren) {
+		   if (!_flatten) {
+		   ch.currentMatrix.identity();
+		   ch.currentMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
+		   ch.currentMatrix.concat(ch.track.matrix[currentFrame]);
+		   ch.currentMatrix.concat(this.currentMatrix);
+		   }
+		
+		   ch.setChildrenFrame(f);
+		
+		
+		   }
+		 */
 		}
 		
-		public function draw(ctx:Context3D, renderer:Renderer, screenMtx:Matrix3D):void {
-			if (texture) {
-				if (_matrices) {
-					matrixData = _matrices[currentFrame % _matrices.length];					
-				}
-				else {
-					matrixData.position = 0;
-					matrixData.writeFloat(currentMatrix.a);
-					matrixData.writeFloat(currentMatrix.c);
-					matrixData.writeFloat(0);
-					matrixData.writeFloat(currentMatrix.tx);
-					
-					matrixData.writeFloat(currentMatrix.b);
-					matrixData.writeFloat(currentMatrix.d);
-					matrixData.writeFloat(0);
-					matrixData.writeFloat(currentMatrix.ty);
-				}
-				
-				ctx.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, screenMtx, true);
-				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
-				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
-				
-				renderer.setTexture(texture);
-				
+		public function draw(ctx:Context3D, gX:Number, gY:Number):void {
+			if (list) {
 				if (!vertexBuffer) {
 					prepareGPUStaticData(ctx);
 				}
+				ctx.setTextureAt(0, baseTexture.nativeTexture);
+				ctx.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+				position[0] = gX;
+				position[1] = gY;
+				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 7, position);
 				
-				ctx.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);				
-				ctx.drawTriangles(indexBuffer, 0, 2);
-			}
-			
-			if (framesChildren.length) {				
-				for (var i:int = 0; i < framesChildren[currentFrame % framesChildren.length].length; ++i) {
-					framesChildren[currentFrame % framesChildren.length][i].draw(ctx, renderer, screenMtx);
+				for (var i:int = 0; i < list.length; ++i) {
+					list[i].drawChild(ctx);
 				}
 			}
 		}
+		
+		public function drawChild(ctx:Context3D):void {
+			if (texture) {
+				matrixData = _matrices[currentFrame % _matrices.length];
+				
+				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
+				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
+				ctx.drawTriangles(indexBuffer, 0, 2);
+			}
+						
+		
+		}
+	
+		
+		private function createWorldMatrix(viewWidth:Number, viewHeight:Number):Matrix3D {
+			var result:Matrix3D = new Matrix3D();
+			result.identity();
+			result.appendScale(2 / viewWidth, -2 / viewHeight, 1.0);
+			result.appendTranslation(-1.0, 1.0, 0.0);
+			
+			return result;
+		}		
 		
 		private static var noChildren:Vector.<GPUMovieClip> = noChildren;
 		private static var program:Program3D;

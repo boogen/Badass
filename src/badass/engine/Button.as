@@ -14,7 +14,7 @@ package badass.engine {
 		public var fontSize:int;
 		private var _isDown:Boolean;
 		private var _scaleWhenDown:Number = 0.9;
-		private var _enabled:Boolean;
+		private var _enabled:Boolean = true;
 		
 		public function Button(up:Frame, text:String = null, down:Frame = null) {
 			_frame = up;

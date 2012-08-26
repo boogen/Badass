@@ -25,12 +25,16 @@ package badass.textures {
 			_textureHeight = badass.engine.Utils.powerOfTwo(bitmapData.height);
 			_nativeTexture = context.createTexture(_textureWidth, _textureHeight, Context3DTextureFormat.BGRA, false);
 			_nativeTexture.uploadFromBitmapData(bitmapData);
-			bitmapData.dispose();		
+			bitmapData.dispose();
 		
 		}
 		
 		public function get nativeTexture():Texture {
 			return _nativeTexture;
+		}
+		
+		public function set nativeTexture(texture:Texture):void {
+			_nativeTexture = texture;
 		}
 		
 		public function get width():int {

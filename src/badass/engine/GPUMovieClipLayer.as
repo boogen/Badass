@@ -38,9 +38,8 @@ package badass.engine {
 			}
 			
 			for (i = 0; i < _displayList.length; ++i) {
-				_displayList[i].setFrame(framecount % _displayList[i].totalFrames);
-				//_displayList[i].currentMatrix.copyFrom(m[i % m.length]);
-				_displayList[i].draw(_context3D, _renderer, _renderer.getWorldMatrix());
+				_displayList[i].setFrame(framecount);
+				_displayList[i].draw(_context3D, _displayList[i].globalX, _displayList[i].globalY);
 			}
 			
 			renderer.setStandardProgram();

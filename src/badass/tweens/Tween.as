@@ -100,6 +100,10 @@ package badass.tweens {
 			}
 		}
 		
+		public function get totalTime():Number {
+			return _totalTime;
+		}
+		
 		// TODO
 		public function set delay(value:Number):void {
 			_delay = value;
