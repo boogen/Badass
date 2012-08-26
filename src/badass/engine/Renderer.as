@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.events.Event;
 	import badass.textures.BadassTexture;
 	import badass.types.BlendType;
 	import flash.events.*;
@@ -16,7 +17,7 @@ package badass.engine {
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
-	public class Renderer {
+	public class Renderer extends badass.engine.EventDispatcher {
 		
 		private var _context3D:Context3D;
 		private var _viewportWidth:Number = 640;
@@ -135,7 +136,7 @@ package badass.engine {
 			setStandardProgram();
 			_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
 			_ready = true;
-		
+			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
 		}
 		
 		public function setBlendType(value:String):void {

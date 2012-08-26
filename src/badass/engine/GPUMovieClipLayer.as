@@ -14,11 +14,7 @@ package badass.engine {
 		public function GPUMovieClipLayer() {
 			super();
 			_displayList = new Vector.<GPUMovieClip>();
-			m = new Vector.<Matrix>();
-			for (var i:int = 0; i < 13; ++i) {
-				m.push(new Matrix());
-				m[m.length - 1].translate(200 + i * 30, 480);
-			}
+
 		}
 		
 		override protected function clearContainer():void {
@@ -41,7 +37,7 @@ package badass.engine {
 				_children[i].render(this);
 			}
 			
-			for (i = 0; i < Math.min(1, _displayList.length); ++i) {
+			for (i = 0; i < _displayList.length; ++i) {
 				_displayList[i].setFrame(framecount % _displayList[i].totalFrames);
 				//_displayList[i].currentMatrix.copyFrom(m[i % m.length]);
 				_displayList[i].draw(_context3D, _renderer, _renderer.getWorldMatrix());

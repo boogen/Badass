@@ -1,5 +1,6 @@
 package badass.engine {
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	
 	public class DisplayObject extends EventDispatcher {
@@ -225,7 +226,7 @@ package badass.engine {
 		}
 		
 		public function get visible():Boolean {
-			return _visible;
+			return _visible && _alpha > 0;
 		}
 		
 		public function set visible(value:Boolean):void {
@@ -290,6 +291,11 @@ package badass.engine {
 			}
 		}
 		
+		public function getBounds(object:DisplayObject):Rectangle {
+			var bounds:Rectangle = new Rectangle(globalX - object.globalX, globalY - object.globalY, width, height);
+			return bounds;
+		}
+		
 		public function removeChildAt(i:int):void {
 			if (index < _children.length) {
 				_children.splice(i, 1);
@@ -339,12 +345,18 @@ package badass.engine {
 		public function set clipTop(value:Number):void {
 		}
 		
-		
 		public function get clipBottom():Number {
 			return 0;
 		}
 		
 		public function set clipBottom(value:Number):void {
+		}
+		
+		public function get clipLeft():Number {
+			return 0;
+		}
+		
+		public function set clipLeft(value:Number):void {
 		}		
 	
 	}

@@ -75,6 +75,7 @@ package badass.engine {
 		public var texture:BadassTexture;
 		private var _matrices:Vector.<ByteArray>;
 		private var _flatten:Boolean = false;
+	
 		
 		public function GPUMovieClip() {
 		}
@@ -264,13 +265,16 @@ package badass.engine {
 		}
 		
 		public function flatten():void {		
-			var pos:Point = new Point(Math.random() * 320 + 100, 480);
-			for (var i:int = 0; i < totalFrames; ++i) {
+			var pos:Point = new Point(Math.random() * 500 + 100, 50 + Math.random() * 480);
+			
+			for (var i:int = 0; i < framesChildren.length; ++i) {
 				var m:Matrix = new Matrix();				
 				m.identity();
 				m.translate(pos.x, pos.y);
-				flatFrame(i, m);
+								
+				flatFrame(i, m);				
 			}
+			
 		}
 		
 		private function flatFrame(index:int, m:Matrix):void {
@@ -300,11 +304,12 @@ package badass.engine {
 				_matrices[index] = ba;
 			}		
 			
-			for each (var ch:GPUMovieClip in children) {
+			for each (var ch:GPUMovieClip in framesChildren[0]) {
+				
 				var childMatrix:Matrix = new Matrix();
 				childMatrix.identity();
 				childMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
-				childMatrix.concat(ch.track.matrix[index % totalFrames]);
+				childMatrix.concat(tracks[ch.name].matrix[index % tracks[ch.name].matrix.length])
 				childMatrix.concat(m);
 				
 				ch.flatFrame(index, childMatrix);

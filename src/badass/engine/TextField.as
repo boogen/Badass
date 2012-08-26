@@ -9,11 +9,14 @@ package badass.engine {
 	private var _font:FontLoader;
 	private var _letters:Vector.<Sprite>;
 	public var hAlign:String;
+	
+	private var _fontSize:int;
 
 
 	public function TextField(w:int, h:int, text:String, f:String="verdanaSmall",
                                   fontSize:Number=12, color:uint=0x0, bold:Boolean=false, xmlFont:Boolean = false) {
 	    _text = text;
+		_fontSize = fontSize;
 	    _letters = new Vector.<Sprite>();
 	    var font:FontLoader;
 		if (xmlFont) {
@@ -32,6 +35,11 @@ package badass.engine {
 
 	public function get text():String {
 	    return _text;
+	}
+	
+	public function get fontSize():int
+	{
+		return _fontSize;
 	}
 
 	public function set text(value:String):void {

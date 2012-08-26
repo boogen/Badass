@@ -12,6 +12,7 @@ package badass {
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
 	import badass.textures.BadassTexture;
+	import badass.textures.ColorManager;
 	import badass.types.LayerType;
 	import flash.display.BitmapData;
 	import flash.display.StageAlign;
@@ -46,9 +47,9 @@ package badass {
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
 			_context = new badass.engine.Context();
-			_context.renderer.init(stage);
 			
 			FontManager.init(_context);
+			ColorManager.init(_context);
 			_tweener = new Tweener();
 			_touchProcessor = new TouchProcessor(_layers);
 			
@@ -60,9 +61,17 @@ package badass {
 			for each (var touchEventType:String in touchEventTypes)
 				stage.addEventListener(touchEventType, onTouch, false, 0, true);
 			
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			
 			stage.addEventListener(Event.RESIZE, onResize);
 			_stage = stage;
+			
+			_context.renderer.addEventListener(badass.events.Event.COMPLETE, gentlemenStartYourEngines);
+			_context.renderer.init(stage);
+		}
+		
+		private function gentlemenStartYourEngines(e:badass.events.Event):void {
+			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
+			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		public function getWorldMatrix():Matrix3D {
@@ -198,13 +207,10 @@ package badass {
 			_tweener.advanceTime(dt / 1000.0);
 			_context.renderer.beginFrame();
 			
-			_layers[17].draw(_context.renderer);
-			_layers[29].draw(_context.renderer);
-		/*	for (var i:int = 9; i < _layers.length; ++i) {
-				
-				_layers[i].draw(_context.renderer);
-				
-			}*/
+			for (var i:int = 0; i < _layers.length; ++i) {			
+			   _layers[i].draw(_context.renderer);
+			
+			}
 			_context.renderer.endFrame();
 			fps++;
 		}

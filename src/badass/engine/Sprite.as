@@ -9,6 +9,7 @@ package badass.engine {
 		private var _pivotY:Number = 0;
 		private var _clipTop:Number = 0;
 		private var _clipBottom:Number = 0;
+		private var _clipLeft:Number = 0;
 		
 		public function Sprite() {
 		}
@@ -56,7 +57,7 @@ package badass.engine {
 		override public function set clipTop(value:Number):void {
 			_clipTop = value;
 			if (_frame) {
-				_frame.vTop = value * _frame.baseHeight / _frame.textureHeight;;
+				_frame.vTop = value * _frame.baseHeight / _frame.textureHeight;
 				_frame.height = (1 - value) * _frame.baseHeight;
 			}
 		}
@@ -69,13 +70,26 @@ package badass.engine {
 			_clipBottom = value;
 			if (_frame) {
 				_frame.height = (1 - value) * _frame.baseHeight;
-				_frame.vBottom = value * _frame.baseHeight / _frame.textureHeight;;				
+				_frame.vBottom = value * _frame.baseHeight / _frame.textureHeight;
+				;
 			}
 		}
 		
 		override public function get clipBottom():Number {
 			return _clipBottom;
-		}		
+		}
+		
+		override public function set clipLeft(value:Number):void {
+			_clipLeft = value;
+			if (_frame) {
+				_frame.width = (1 - value) * _frame.baseWidth;
+				_frame.uLeft = value * _frame.baseWidth / _frame.textureWidth;				
+			}
+		}
+		
+		override public function get clipLeft():Number {
+			return _clipLeft;
+		}
 		
 		override public function get width():Number {
 			if (_frame) {

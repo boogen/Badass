@@ -14,6 +14,7 @@ package badass.engine {
 		}
 		
 		public static function getFont(name:String):FontLoader {
+			name = "verdanaSmall"
 			if (_fonts[name]) {
 				return _fonts[name];
 			}

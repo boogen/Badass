@@ -1,4 +1,6 @@
 package badass.engine {
+	import badass.textures.BadassTexture;
+	import badass.textures.ColorManager;
 	import flash.display.BitmapData;
 	import flash.utils.Dictionary;
 	
@@ -6,21 +8,16 @@ package badass.engine {
 	 * ...
 	 * @author Marcin Bugala
 	 */
-	public class Quad extends Sprite{
-		
-		private static var _colors:Dictionary = new Dictionary();
-		
-		
+	public class Quad extends Sprite {
 		public function Quad(w:int, h:int, c:uint) {
-			if (!_colors[c]) {
-				_colors[c] = new BitmapData(1, 1, false, c);
-			}
-			
-	/*		var f:Frame = new Frame(_colors[c]);
+			var texture:BadassTexture = ColorManager.getColor(c);
+			var f:Frame = new Frame(texture);
 			f.width = w;
 			f.height = h;
-			setTexture(f);*/
+			setTexture(f);	
 		}
+		
+		
 	
 	}
 
