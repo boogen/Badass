@@ -22,6 +22,8 @@ package badass.engine {
 		private var _context3D:Context3D;
 		private var _viewportWidth:Number = 640;
 		private var _viewportHeight:Number = 960;
+		private var _stageWidth:Number = 640;
+		private var _stageHeight:Number = 960;		
 		private var _projectionMatrix:Matrix3D;
 		
 		private var _shaderProgram:Program3D;
@@ -42,6 +44,8 @@ package badass.engine {
 		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
+			_stageWidth = _viewportWidth;
+			_stageHeight = _viewportHeight;
 		}
 		
 		public function getContext3D():Context3D {
@@ -110,12 +114,21 @@ package badass.engine {
 		
 		}
 		
-		public function resize(width:int, height:int):void {
+		public function resize(width:int, height:int):void {			
 			_viewportWidth = width;
 			_viewportHeight = height;
 			if (_context3D) {
 				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
-				_projectionMatrix = createWorldMatrix(_viewportWidth, _viewportHeight);
+				_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
+			}
+		}
+		
+		public function setStageSize(width:int, height:int):void {
+			_stageWidth = width;
+			_stageHeight = height;
+			_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
+			if (_ready) {
+				_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
 			}
 		}
 		
@@ -189,7 +202,7 @@ package badass.engine {
 		}
 		
 		public function beginFrame():void {
-			if (_ready) {				
+			if (_ready) {
 				_context3D.clear(r, g, b);
 			}
 		

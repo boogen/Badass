@@ -44,6 +44,8 @@ package badass {
 		private var _stage:Object;
 		public var mainLoop:Function;
 		public var tf:TextField;
+		private var _scaleX:Number = 1.0;
+		private var _scaleY:Number = 1.0;
 		
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
@@ -74,8 +76,7 @@ package badass {
 			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
-		public function setGPUProgram():void 
-		{
+		public function setGPUProgram():void {
 			_context.renderer.setGPUMovieClipProgram();
 		}
 		
@@ -91,6 +92,12 @@ package badass {
 		
 		public function setViewport(width:int, height:int):void {
 			_context.renderer.resize(width, height);
+		}
+		
+		public function setStageSize(width:int, height:int):void {
+			_context.renderer.setStageSize(width, height);
+			_scaleX = _stage.fullScreenWidth / width;
+			_scaleY = _stage.fullScreenHeight / height;
 		}
 		
 		public function get stageWidth():int {
@@ -190,7 +197,7 @@ package badass {
 			}
 			
 			// enqueue touch in touch processor         
-			_touchProcessor.enqueue(touchID, phase, globalX, globalY);
+			_touchProcessor.enqueue(touchID, phase, globalX / _scaleX, globalY / _scaleY);
 		}
 		
 		private function onEnterFrame(e:Object):void {

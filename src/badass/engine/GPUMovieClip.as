@@ -335,8 +335,10 @@ package badass.engine {
 		
 		public function setFrame(f:int):void {
 			currentFrame = f;
-			for (var i:int = 0; i < list.length; ++i) {
-				list[i].currentFrame = f;
+			if (list) {
+				for (var i:int = 0; i < list.length; ++i) {
+					list[i].currentFrame = f;
+				}
 			}
 		}
 		
