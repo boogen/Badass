@@ -335,8 +335,10 @@ package badass.engine {
 		
 		public function setFrame(f:int):void {
 			currentFrame = f;
-			for (var i:int = 0; i < list.length; ++i) {
-				list[i].currentFrame = f;
+			if (list) {
+				for (var i:int = 0; i < list.length; ++i) {
+					list[i].currentFrame = f;
+				}
 			}
 		}
 		
@@ -359,7 +361,7 @@ package badass.engine {
 		 */
 		}
 		
-		public function draw(ctx:Context3D, gX:Number, gY:Number):void {
+		public function draw(ctx:Context3D, gX:Number, gY:Number, sX:Number, sY:Number):void {
 			if (list) {
 				if (!vertexBuffer) {
 					prepareGPUStaticData(ctx);
@@ -368,6 +370,8 @@ package badass.engine {
 				ctx.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 				position[0] = gX;
 				position[1] = gY;
+				position[2] = sX;
+				position[3] = sY;
 				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 7, position);
 				
 				for (var i:int = 0; i < list.length; ++i) {
@@ -375,6 +379,7 @@ package badass.engine {
 				}
 			}
 		}
+		
 		
 		public function drawChild(ctx:Context3D):void {
 			if (texture) {
@@ -384,10 +389,8 @@ package badass.engine {
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
 				ctx.drawTriangles(indexBuffer, 0, 2);
 			}
-						
 		
 		}
-	
 		
 		private function createWorldMatrix(viewWidth:Number, viewHeight:Number):Matrix3D {
 			var result:Matrix3D = new Matrix3D();
@@ -396,7 +399,7 @@ package badass.engine {
 			result.appendTranslation(-1.0, 1.0, 0.0);
 			
 			return result;
-		}		
+		}
 		
 		private static var noChildren:Vector.<GPUMovieClip> = noChildren;
 		private static var program:Program3D;

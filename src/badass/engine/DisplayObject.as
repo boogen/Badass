@@ -234,7 +234,7 @@ package badass.engine {
 		}
 		
 		public function get visible():Boolean {
-			return _visible && _alpha > 0;
+			return _visible;
 		}
 		
 		public function set visible(value:Boolean):void {
@@ -253,7 +253,7 @@ package badass.engine {
 		}
 		
 		public function render(layer:badass.engine.Layer):void {
-			if (visible) {
+			if (visible && _alpha > 0) {
 				for (var i:int = 0; i < _children.length; ++i) {
 					_children[i].render(layer);
 				}

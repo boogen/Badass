@@ -22,6 +22,8 @@ package badass.engine {
 		private var _context3D:Context3D;
 		private var _viewportWidth:Number = 640;
 		private var _viewportHeight:Number = 960;
+		private var _stageWidth:Number = 640;
+		private var _stageHeight:Number = 960;		
 		private var _projectionMatrix:Matrix3D;
 		
 		private var _shaderProgram:Program3D;
@@ -42,6 +44,8 @@ package badass.engine {
 		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
+			_stageWidth = _viewportWidth;
+			_stageHeight = _viewportHeight;
 		}
 		
 		public function getContext3D():Context3D {
@@ -110,12 +114,21 @@ package badass.engine {
 		
 		}
 		
-		public function resize(width:int, height:int):void {
+		public function resize(width:int, height:int):void {			
 			_viewportWidth = width;
 			_viewportHeight = height;
 			if (_context3D) {
 				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
-				_projectionMatrix = createWorldMatrix(_viewportWidth, _viewportHeight);
+				_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
+			}
+		}
+		
+		public function setStageSize(width:int, height:int):void {
+			_stageWidth = width;
+			_stageHeight = height;
+			_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
+			if (_ready) {
+				_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
 			}
 		}
 		
@@ -179,7 +192,18 @@ package badass.engine {
 		
 		private function initGPUMovieClipShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy", "add v0, vc6.xy, vt0.xy", "mov vt0, va0", "dp4 vt0.x, va0, vc4", "dp4 vt0.y, va0, vc5", "mov vt1, vt0", "add vt0, vt1, vc7", "m44 op, vt0, vc0"]).join("\n"));
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy",
+																		"add v0, vc6.xy, vt0.xy",
+																		"mov vt0, va0",
+																		"mov vt4, vc4",
+																		"mul vt2, vt4, vc7.z",
+																		"mov vt5, vc5",
+																		"mul vt3, vt5, vc7.w",
+																		"dp4 vt0.x, va0, vt2",
+																		"dp4 vt0.y, va0, vt3",
+																		"mov vt1, vt0",
+																		"add vt0.xy, vt1.xy, vc7.xy",
+																		"m44 op, vt0, vc0"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));
@@ -189,7 +213,7 @@ package badass.engine {
 		}
 		
 		public function beginFrame():void {
-			if (_ready) {				
+			if (_ready) {
 				_context3D.clear(r, g, b);
 			}
 		
