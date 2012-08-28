@@ -117,6 +117,14 @@ package badass.engine {
 			_z = value;
 		}
 		
+		public function get baseScaleX():Number {
+			return _scaleX;
+		}
+		
+		public function get baseScaleY():Number {
+			return _scaleY;
+		}
+		
 		public function get scaleX():Number {
 			var value:Number = _scaleX;
 			if (_parent) {

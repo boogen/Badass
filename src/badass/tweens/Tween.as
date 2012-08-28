@@ -23,11 +23,11 @@ package badass.tweens {
 		private var _startValues:Vector.<Number>;
 		private var _endValues:Vector.<Number>;
 		
-		public function Tween(target:Object, time:Number, transition:String = "linear") {
+		public function Tween(target:Object, time:Number, transition:String = "LINEAR") {
 			reset(target, time, transition);
 		}
 		
-		public function reset(target:Object, time:Number, transition:String = "linear"):void {
+		public function reset(target:Object, time:Number, transition:String = "LINEAR"):void {
 			_target = target;
 			_currentTime = 0;
 			_totalTime = Math.max(0.0001, time);
@@ -86,9 +86,9 @@ package badass.tweens {
 				var endValue:Number = _endValues[i];
 				var delta:Number = endValue - startValue;
 				
-				//  var transitionFunc:Function = Transitions.getTransition(_transition);                
-				//var currentValue:Number = startValue + transitionFunc(ratio) * delta;
-				var currentValue:Number = startValue + ratio * delta;
+				var transitionFunc:Function = Transitions.getTransition(_transition);                
+				var currentValue:Number = startValue + transitionFunc(ratio) * delta;
+				//var currentValue:Number = startValue + ratio * delta;
 				_target[_properties[i]] = currentValue;
 			}
 			
