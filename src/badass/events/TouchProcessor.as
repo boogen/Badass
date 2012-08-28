@@ -141,7 +141,7 @@ package badass.events {
 		private function findTarget(touch:Touch):void {
 			var result:DisplayObject
 			for (var i:int = _layers.length - 1; i >= 0; --i) {			
-				result = _layers[i].hitTest(touch.globalX, touch.globalY);
+				result = _layers[i].hitTest(touch.globalX, touch.globalY);				
 				if (result) {
 					touch.setTarget(result);
 					return;

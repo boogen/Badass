@@ -192,7 +192,18 @@ package badass.engine {
 		
 		private function initGPUMovieClipShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy", "add v0, vc6.xy, vt0.xy", "mov vt0, va0", "dp4 vt0.x, va0, vc4", "dp4 vt0.y, va0, vc5", "mov vt1, vt0", "add vt0, vt1, vc7", "m44 op, vt0, vc0"]).join("\n"));
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, (["mul vt0, vc6.zw, va0.xy",
+																		"add v0, vc6.xy, vt0.xy",
+																		"mov vt0, va0",
+																		"mov vt4, vc4",
+																		"mul vt2, vt4, vc7.z",
+																		"mov vt5, vc5",
+																		"mul vt3, vt5, vc7.w",
+																		"dp4 vt0.x, va0, vt2",
+																		"dp4 vt0.y, va0, vt3",
+																		"mov vt1, vt0",
+																		"add vt0.xy, vt1.xy, vc7.xy",
+																		"m44 op, vt0, vc0"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));
