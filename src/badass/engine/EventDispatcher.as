@@ -29,7 +29,7 @@ package badass.engine {
 				}
 			}
 				
-			if (!event.stopsImmediatePropagation) {
+			if (event.bubbles && !event.stopsImmediatePropagation) {
 				var displayObject:DisplayObject = this as DisplayObject;
 				if (displayObject && displayObject.parent) {
 					displayObject.parent.dispatchEvent(event);

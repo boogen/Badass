@@ -19,9 +19,11 @@ package badass.events {
 		public var target:EventDispatcher;
 		public var currentTarget:EventDispatcher;
 		public var stopsImmediatePropagation:Boolean;
+		public var bubbles:Boolean;
 		
 		public function Event(t:String, bubbles:Boolean = false) {
 			type = t;
+			this.bubbles = bubbles;
 		}
 		
         public function stopImmediatePropagation():void {
