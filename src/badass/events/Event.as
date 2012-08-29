@@ -13,6 +13,7 @@ package badass.events {
         public static const COMPLETE:String = "COMPLETE";
 		public static const TWEEN_END:String = "TWEEN_END";
 		public static const RESIZE:String = "RESIZE";
+		public static const LOADED:String = "LOADED";
 		
 		
 		public var type:String;

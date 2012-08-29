@@ -201,7 +201,7 @@ package badass.engine {
 		}
 		
 		override public function render(layer:badass.engine.Layer):void {
-			if (visible) {
+			if (visible && _alpha > 0) {
 				if (_frame) {
 					layer.addBatch(this);
 				}

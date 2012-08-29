@@ -10,7 +10,7 @@ package badass.engine {
 		private var _z:Number;
 		private var _scaleX:Number;
 		private var _scaleY:Number;
-		private var _alpha:Number;
+		protected var _alpha:Number;
 		private var _parent:DisplayObject;
 		protected var _children:Vector.<DisplayObject>;
 		
@@ -202,7 +202,7 @@ package badass.engine {
 			var maxY:Number = Number.NEGATIVE_INFINITY;
 			
 			for (var i:int = 0; i < _children.length; ++i) {
-				var cy:Number = _children[i].y;
+				var cy:Number = _children[i].y + y;
 				var ch:Number = _children[i].height;
 				
 				if (cy < minY) {
