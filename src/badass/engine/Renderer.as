@@ -53,8 +53,7 @@ package badass.engine {
 		}
 		
 		public function setViewport(w:int, h:int):void {
-			_viewportWidth = w;
-			_viewportHeight = h;
+			resize(w, h);
 		}
 		
 		public function getWorldMatrix():Matrix3D {
@@ -115,8 +114,12 @@ package badass.engine {
 		}
 		
 		public function resize(width:int, height:int):void {			
+			if (_stageHeight == _viewportHeight && _stageWidth == _viewportWidth) {
+				_stageHeight = height;
+				_stageWidth = width;
+			}
 			_viewportWidth = width;
-			_viewportHeight = height;
+			_viewportHeight = height;			
 			if (_context3D) {
 				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
 				_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
@@ -158,7 +161,7 @@ package badass.engine {
 				if (_blendType == BlendType.NONE) {
 					_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO)
 				} else if (_blendType == BlendType.ONE_MINUS_SOURCE_ALPHA) {
-					_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
+					_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
 				}
 			}
 		}

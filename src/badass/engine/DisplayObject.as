@@ -311,6 +311,9 @@ package badass.engine {
 		}
 		
 		public function removeChildren(startIndex:int = 0):void {
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].parent = null;
+			}
 			_children.splice(startIndex, _children.length - startIndex);
 		}
 		
