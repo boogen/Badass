@@ -94,7 +94,8 @@ package badass.engine {
 				for (var key:Object in _drawCalls[i]) {
 					var texture:BadassTexture = key as BadassTexture;
 					batches = _drawCalls[i][texture];
-					_renderer.setTexture(texture);					
+					_renderer.setTexture(texture);				
+					_renderer.setColor(batches[0].color);
 					_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
 					count += batches.length * 6;
 				}

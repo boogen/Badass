@@ -39,7 +39,7 @@ package badass.engine {
 			_children = new Vector.<DisplayObject>();
 			
 			rotation = 0.0;
-			color = 0xFFFFFF;
+			color = 0xffffffff;
 		}
 		
 		public function get renderIndex():int {

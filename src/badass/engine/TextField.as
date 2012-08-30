@@ -15,12 +15,15 @@ package badass.engine {
 		private var _containerWidth:int;
 		private var _containerHeight:int;
 		
-		public function TextField(w:int, h:int, text:String, f:String = "verdanaSmall", fontSize:Number = 12, color:uint = 0x0, bold:Boolean = false, xmlFont:Boolean = false) {
+		public var breaks:Boolean = true;
+		
+		public function TextField(w:int, h:int, text:String, f:String = "verdanaSmall", fontSize:Number = 12, color:uint = 0xffffffff, bold:Boolean = false, xmlFont:Boolean = false) {
 			_text = text;
 			_fontSize = fontSize;
 			_letters = new Vector.<Sprite>();
 			_containerWidth = w;
 			_containerHeight = h;
+			super.color = color;
 			var font:FontLoader;
 			if (xmlFont) {
 				font = FontManager.getXmlFont(f);
@@ -32,16 +35,14 @@ package badass.engine {
 				createLetters();
 			} else {
 				font.addEventListener(flash.events.Event.COMPLETE, onFontLoaded);
-			}			
+			}
 		}
 		
-		override public function get index():int 
-		{
+		override public function get index():int {
 			return super.index;
 		}
 		
-		override public function set index(value:int):void 
-		{
+		override public function set index(value:int):void {
 			super.index = value;
 			if (_letters) {
 				for (var i:int = 0; i < _letters.length; ++i) {
@@ -50,22 +51,24 @@ package badass.engine {
 			}
 		}
 		
-		public function get offsetY():Number
-		{
+		public function get offsetY():Number {
 			var value:Number = 0;
 			if (_letters && _letters.length) {
-				var minY:Number = _letters[0].y;
+				var space:String = " ";
+				var dash:String = "^";
+				var minY:Number = Number.POSITIVE_INFINITY;
 				for (var i:int = 0; i < _letters.length; ++i) {
-					if (_letters[i].y < minY) {
-						minY = _letters[i].y;
+					if (text.charAt(i) != space.charAt(0) && text.charAt(i) != dash.charAt(0)) {
+						if (_letters[i].y < minY) {
+							minY = _letters[i].y;
+						}
 					}
 				}
 				
-				if (_text == "HIRE") {
-					trace("");
+				if (minY < Number.POSITIVE_INFINITY) {
+					value = minY;
 				}
-				value -= minY;
-			}			
+			}
 			
 			return value;
 		}
@@ -85,6 +88,7 @@ package badass.engine {
 					createLetters();
 				}
 			}
+						
 		}
 		
 		override public function set color(value:uint):void {
@@ -105,31 +109,30 @@ package badass.engine {
 			var n:int = _text.length;
 			var dx:Number = 0;
 			var dy:Number = 0;
-						
+			
 			var break_line:Boolean = false;
 			var space:String = " ";
 			
 			var breaks:Vector.<int> = new Vector.<int>();
 			var space_index:int = 0;
-			for (i = 0; i < n; ++i) {
-				var charid:int = _text.charCodeAt(i);
-				var ch:CharDescr = _font.getChar(charid);
-				
-				if (ch) {
+			if (this.breaks) {
+				for (i = 0; i < n; ++i) {
+					var charid:int = _text.charCodeAt(i);
+					var ch:CharDescr = _font.getChar(charid);
 					
-
-					
-					
-					dx += ch.xOff + ch.srcW + 1;
-					
-					if (_containerWidth && dx > _containerWidth) {
-						breaks.push(space_index);
-						dx = 0;
+					if (ch) {
+						
+						dx += ch.xOff + ch.srcW + 1;
+						
+						if (_containerWidth && dx > _containerWidth) {
+							breaks.push(space_index);
+							dx = 0;
+						}
+						
+						if (charid == space.charCodeAt(0)) {
+							space_index = i;
+						}
 					}
-					
-					if (charid == space.charCodeAt(0)) {
-						space_index = i;
-					}					
 				}
 			}
 			
@@ -150,7 +153,8 @@ package badass.engine {
 					var w:Number = ch.srcW;
 					
 					var s:Sprite = new Sprite();
-					var frame:Frame = new Frame(_font.texture);
+					var frame:Frame = new Frame(_font.texture);							
+					s.color = color;
 					frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
 					s.setTexture(frame);
 					s.x = dx + ch.xOff;

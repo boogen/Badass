@@ -41,11 +41,14 @@ package badass.engine {
 		
 		private var _blendType:String;
 		private var _lastTexture:BadassTexture;
+		private var _lastColor:uint = 0;
+		private var _colorVector:Vector.<Number>;
 		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
 			_stageWidth = _viewportWidth;
 			_stageHeight = _viewportHeight;
+			_colorVector = new Vector.<Number>();
 		}
 		
 		public function getContext3D():Context3D {
@@ -84,7 +87,25 @@ package badass.engine {
 		}
 		
 		public function setStandardProgram():void {
-			_context3D.setProgram(_shaderProgram);
+			_context3D.setProgram(_shaderProgram);			
+		}
+		
+		public function setColor(color:uint):void 
+		{
+			if (color != _lastColor) {
+				_lastColor = color;
+				_colorVector.length = 0;
+				var b:Number = (color % 256) / 255.0;
+				color = color / 256;
+				var g:Number = (color % 256) / 255.0;
+				color = color / 256;
+				var r:Number = (color % 256) / 255.0;
+				color = color / 256;
+				var a:Number = (color % 256) / 255.0;
+				_colorVector.push(r, g, b, a);
+				_context3D.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, _colorVector);
+				
+			}
 		}
 		
 		public function init(stage:Object):void {
@@ -187,7 +208,11 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "text ft0, v1, fs0 <2d, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "text ft0, v1, fs0 <2d, nearest, nomip>;\n" 			
+																		  + "mov ft1, ft0\n"
+																		  + "mul ft1, ft0, fc1\n"
+																		  + "mul ft1.w, v2.x, ft0.w\n"
+																		  + "mov oc, ft1\n");
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
