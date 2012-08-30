@@ -32,7 +32,42 @@ package badass.engine {
 				createLetters();
 			} else {
 				font.addEventListener(flash.events.Event.COMPLETE, onFontLoaded);
+			}			
+		}
+		
+		override public function get index():int 
+		{
+			return super.index;
+		}
+		
+		override public function set index(value:int):void 
+		{
+			super.index = value;
+			if (_letters) {
+				for (var i:int = 0; i < _letters.length; ++i) {
+					_letters[i].index = value;
+				}
 			}
+		}
+		
+		public function get offsetY():Number
+		{
+			var value:Number = 0;
+			if (_letters && _letters.length) {
+				var minY:Number = _letters[0].y;
+				for (var i:int = 0; i < _letters.length; ++i) {
+					if (_letters[i].y < minY) {
+						minY = _letters[i].y;
+					}
+				}
+				
+				if (_text == "HIRE") {
+					trace("");
+				}
+				value -= minY;
+			}			
+			
+			return value;
 		}
 		
 		public function get text():String {
