@@ -180,7 +180,7 @@ package badass.engine {
 			var maxX:Number = Number.NEGATIVE_INFINITY;
 			
 			for (var i:int = 0; i < _children.length; ++i) {
-				var cx:Number = _children[i].x;
+				var cx:Number = _children[i].x + x;
 				var cw:Number = _children[i].width;
 				
 				if (cx < minX) {
