@@ -115,10 +115,12 @@ package badass.engine {
 			
 			var breaks:Vector.<int> = new Vector.<int>();
 			var space_index:int = 0;
+			var charid:int;
+			var ch:CharDescr;			
 			if (this.breaks) {
 				for (i = 0; i < n; ++i) {
-					var charid:int = _text.charCodeAt(i);
-					var ch:CharDescr = _font.getChar(charid);
+					charid = _text.charCodeAt(i);
+					ch = _font.getChar(charid);
 					
 					if (ch) {
 						
@@ -139,8 +141,8 @@ package badass.engine {
 			dx = 0;
 			
 			for (i = 0; i < n; ++i) {
-				var charid:int = _text.charCodeAt(i);
-				var ch:CharDescr = _font.getChar(charid);
+				charid = _text.charCodeAt(i);
+				ch = _font.getChar(charid);
 				
 				if (ch) {
 					var u1:Number = ch.srcX / _font.scalew;

@@ -38,6 +38,7 @@ package badass.engine {
 			for (var i:int = 0; i < _displayList.length; ++i) {
 				var texture:Texture = _displayList[i].frame.texture.nativeTexture;
 				_context3D.setTextureAt(0, texture);
+				_renderer.setColor(_displayList[i].color);
 				_context3D.drawTriangles(_indexBuffer, count,  2);
 				count += 6;					
 			}			
