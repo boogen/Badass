@@ -90,7 +90,7 @@ package badass.engine {
 			_context3D.setProgram(_shaderProgram);			
 		}
 		
-		public function setColor(color:uint):void 
+		/*public function setColor(color:uint):void 
 		{
 			if (color != _lastColor) {
 				_lastColor = color;
@@ -106,7 +106,7 @@ package badass.engine {
 				_context3D.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, _colorVector);
 				
 			}
-		}
+		}*/
 		
 		public function init(stage:Object):void {
 			setViewport(stage.fullScreenWidth, stage.fullScreenHeight);
@@ -210,7 +210,7 @@ package badass.engine {
 			
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "text ft0, v1, fs0 <2d, nearest, nomip>;\n" 			
 																		  + "mov ft1, ft0\n"
-																		  + "mul ft1, ft0, fc1\n"
+																		 // + "mul ft1, ft0, fc1\n"
 																		  + "mul ft1.w, v2.x, ft0.w\n"
 																		  + "mov oc, ft1\n");
 			
