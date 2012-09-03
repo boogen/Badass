@@ -70,7 +70,7 @@ package badass.engine {
 			_clipBottom = value;
 			if (_frame) {
 				_frame.height = (1 - value) * _frame.baseHeight;
-				_frame.vBottom = value * _frame.baseHeight / _frame.textureHeight;
+				_frame.vBottom = (1 - value) * _frame.baseHeight / _frame.textureHeight;
 				;
 			}
 		}
