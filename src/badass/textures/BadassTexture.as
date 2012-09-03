@@ -52,6 +52,10 @@ package badass.textures {
 		public function get textureHeight():Number {
 			return _textureHeight;
 		}
+		
+		public function dispose():void {
+			_nativeTexture.dispose();
+		}
 	}
 
 }
