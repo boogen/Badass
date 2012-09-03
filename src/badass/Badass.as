@@ -23,6 +23,7 @@ package badass {
 	import flash.events.TouchEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
+	import flash.system.System;
 	import flash.ui.Mouse;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
@@ -43,7 +44,8 @@ package badass {
 		private var _leftMouseDown:Boolean;
 		private var _stage:Object;
 		public var mainLoop:Function;
-		public var tf:TextField;
+		public var fpsTf:TextField;
+		public var memoryTf:TextField;
 		private var _scaleX:Number = 1.0;
 		private var _scaleY:Number = 1.0;
 		
@@ -212,8 +214,11 @@ package badass {
 			var dt:int = t - _lastTime;
 			_lastTime = t;
 			if (t > _time + 1000) {
-				if (tf) {
-					tf.text = fps.toString();
+				if (fpsTf) {
+					fpsTf.text = "FPS: " + fps.toString();
+				}
+				if(memoryTf) {
+					memoryTf.text = (Math.round(System.totalMemory * 0.0000954)/100) + " MB"; // 1 / (1024*1024) to convert to MB
 				}
 				fps = 0;
 				_time = t;
