@@ -84,7 +84,7 @@ package badass.engine {
 		private var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
 		
-		public var animationSpeed:int = 2;
+		private var _animationSpeed:Number = 2;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
@@ -345,19 +345,29 @@ package badass.engine {
 			}
 		}
 		
-		private var _d:int;
+		private var _d:Number = 0;
 		private var _lastRenderedFrame:int;
 		
 		public function set currentFrame(value:int):void {
 			_d += (value - _lastFrame);
 			_lastFrame = value;
 			
-			if (_matrices.length) {
-				_currentFrame = _lastRenderedFrame + Math.floor(_d / animationSpeed);
-				_d -= Math.floor(_d / animationSpeed);
+			if (_matrices && _matrices.length) {
+
+				_currentFrame = (_lastRenderedFrame + Math.floor(_d / _animationSpeed)) % _matrices.length;
+				_d -= Math.floor(_d / _animationSpeed) * _animationSpeed;	
 			} else {
-				_currentFrame = value;
+				_currentFrame = value;				
 			}
+		}
+		
+		public function set animationSpeed(value:Number):void {
+			_animationSpeed = value;
+			if (list) {
+				for (var i:int = 0; i < list.length; ++i) {
+					list[i].animationSpeed = value;
+				}
+			}			
 		}
 		
 		public function get currentFrame():int {
@@ -386,6 +396,7 @@ package badass.engine {
 		public function drawChild(ctx:Context3D):void {
 			if (texture) {
 				matrixData = _matrices[currentFrame % _matrices.length];
+				_lastRenderedFrame = _currentFrame;
 				
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
