@@ -38,7 +38,7 @@ package badass.engine {
 			}
 			
 			for (i = 0; i < _displayList.length; ++i) {
-				_displayList[i].setFrame(framecount);
+				_displayList[i].setFrame(framecount / 2);
 				_displayList[i].draw(_context3D, _displayList[i].globalX, _displayList[i].globalY, _displayList[i].scaleX, _displayList[i].scaleY);
 			}
 			
