@@ -123,8 +123,10 @@ package badass.engine {
 			if (_frame) {
 				var gX:Number = globalX;
 				var gY:Number = globalY;
-				
-				if (pX >= gX && pX <= gX + width * scaleX && pY >= gY && pY <= gY + height * scaleY) {
+								
+				var xCollission:Boolean = (pX >= gX && pX <= gX + width * scaleX) || (pX <= gX && pX >= gX + width * scaleX);
+				var yCollission:Boolean = (pY >= gY && pY <= gY + height * scaleY) || (pY <= gY && pY >= gY + height * scaleY);
+				if (xCollission && yCollission) {
 					return true;
 				}
 			}
