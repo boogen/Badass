@@ -60,7 +60,8 @@ package badass.engine {
 		
 		public var gpuParent:GPUMovieClip;
 		public var currentMatrix:Matrix = new Matrix();
-		public var currentFrame:int = 0;
+		private var _currentFrame:int = 0;
+		private var _lastFrame:int = 0;
 		
 		private var matrixData:ByteArray;
 		public var bitmapScaleX:Number = 1.0;
@@ -82,6 +83,8 @@ package badass.engine {
 		private var position:Vector.<Number>;
 		private var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
+		
+		private var _animationSpeed:Number = 2;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
@@ -342,23 +345,33 @@ package badass.engine {
 			}
 		}
 		
-		private function setChildrenFrame(f:int):void {
-			currentFrame = f;
-		/*for each (var ch:GPUMovieClip in children) {
-		   ch.setChildrenFrame(f);
-		 }*/ /*			for each (var ch:GPUMovieClip in currentChildren) {
-		   if (!_flatten) {
-		   ch.currentMatrix.identity();
-		   ch.currentMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
-		   ch.currentMatrix.concat(ch.track.matrix[currentFrame]);
-		   ch.currentMatrix.concat(this.currentMatrix);
-		   }
+		private var _d:Number = 0;
+		private var _lastRenderedFrame:int;
 		
-		   ch.setChildrenFrame(f);
+		public function set currentFrame(value:int):void {
+			_d += (value - _lastFrame);
+			_lastFrame = value;
+			
+			if (_matrices && _matrices.length) {
+
+				_currentFrame = (_lastRenderedFrame + Math.floor(_d / _animationSpeed)) % _matrices.length;
+				_d -= Math.floor(_d / _animationSpeed) * _animationSpeed;	
+			} else {
+				_currentFrame = value;				
+			}
+		}
 		
+		public function set animationSpeed(value:Number):void {
+			_animationSpeed = value;
+			if (list) {
+				for (var i:int = 0; i < list.length; ++i) {
+					list[i].animationSpeed = value;
+				}
+			}			
+		}
 		
-		   }
-		 */
+		public function get currentFrame():int {
+			return _currentFrame;
 		}
 		
 		public function draw(ctx:Context3D, gX:Number, gY:Number, sX:Number, sY:Number):void {
@@ -380,10 +393,10 @@ package badass.engine {
 			}
 		}
 		
-		
 		public function drawChild(ctx:Context3D):void {
 			if (texture) {
 				matrixData = _matrices[currentFrame % _matrices.length];
+				_lastRenderedFrame = _currentFrame;
 				
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
