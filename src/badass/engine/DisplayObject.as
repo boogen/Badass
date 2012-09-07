@@ -18,11 +18,14 @@ package badass.engine {
 		private var _touchable:Boolean;
 		
 		public var rotation:Number;
-		private var _color:uint;
 		
 		protected var _frame:Frame;
 		private var _index:int;
 		private var _displayIndex:int;
+		
+		protected var _r:Number;
+		protected var _g:Number;
+		protected var _b:Number;
 		
 		public function DisplayObject() {
 			
@@ -39,7 +42,9 @@ package badass.engine {
 			_children = new Vector.<DisplayObject>();
 			
 			rotation = 0.0;
-			color = 0xffffffff;
+			_r = 0.3;
+			_g = 0.3;
+			_b = 0.3;
 		}
 		
 		public function get renderIndex():int {
@@ -156,12 +161,10 @@ package badass.engine {
 			_scaleY = value;
 		}
 		
-		public function get color():uint {
-			return _color;
-		}
-		
-		public function set color(value:uint):void {
-			_color = value;
+		public function setColor(r:Number, g:Number, b:Number):void {
+			_r = r;
+			_g = g;
+			_b = b;
 		}
 		
 		public function get parent():DisplayObject {
@@ -368,7 +371,7 @@ package badass.engine {
 		}
 		
 		public function set clipLeft(value:Number):void {
-		}		
+		}
 	
 	}
 

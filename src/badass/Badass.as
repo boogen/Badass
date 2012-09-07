@@ -73,13 +73,21 @@ package badass {
 			_context.renderer.init(stage);
 		}
 		
+		public function setTutorialMode():void {
+			for (var i:int = 0; i < _layers.length; ++i) {
+				_layers[i].setTutorialMode();
+			}
+		}
+		
+		public function setStanadrdMode():void {
+			for (var i:int = 0; i < _layers.length; ++i) {
+				_layers[i].setStandardMode();
+			}
+		}
+		
 		private function gentlemenStartYourEngines(e:badass.events.Event):void {
 			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
 			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-		}
-		
-		public function setGPUProgram():void {
-			_context.renderer.setGPUMovieClipProgram();
 		}
 		
 		public function getWorldMatrix():Matrix3D {
@@ -125,11 +133,11 @@ package badass {
 		public function getLayer(layerType:String, blendType:String):badass.engine.Layer {
 			var result:badass.engine.Layer;
 			if (layerType == LayerType.DISPLAY_LIST) {
-				result = new DisplayListLayer(blendType);
+				result = new DisplayListLayer(blendType, _context.renderer);
 			} else if (layerType == LayerType.MOVIECLIP) {
-				result = new GPUMovieClipLayer();
+				result = new GPUMovieClipLayer(_context.renderer);
 			} else if (layerType == LayerType.FAST) {
-				result = new badass.engine.Layer(blendType);
+				result = new badass.engine.Layer(blendType, _context.renderer);
 			}
 			_layers.push(result);
 			
@@ -217,8 +225,8 @@ package badass {
 				if (fpsTf) {
 					fpsTf.text = "FPS: " + fps.toString();
 				}
-				if(memoryTf) {
-					memoryTf.text = (Math.round(System.totalMemory * 0.0000954)/100) + " MB"; // 1 / (1024*1024) to convert to MB
+				if (memoryTf) {
+					memoryTf.text = (Math.round(System.totalMemory * 0.0000954) / 100) + " MB"; // 1 / (1024*1024) to convert to MB
 				}
 				fps = 0;
 				_time = t;

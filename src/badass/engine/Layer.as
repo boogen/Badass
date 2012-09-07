@@ -4,6 +4,7 @@ package badass.engine {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.display3D.IndexBuffer3D;
+	import flash.display3D.Program3D;
 	import flash.display3D.textures.Texture;
 	import flash.display3D.VertexBuffer3D;
 	import flash.utils.ByteArray;
@@ -15,7 +16,7 @@ package badass.engine {
 		protected var _byteArray:ByteArray;
 		private var _drawCalls:Array;
 		
-		private const _vertexSize:int = 5;
+		private const _vertexSize:int = 8;
 		private var _vertexCount:int = 2 * 20;
 		private var _indexSize:int = 2 * 6 * 5;
 		
@@ -31,20 +32,31 @@ package badass.engine {
 		
 		private var _blendType:String;
 		
-		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA) {
+		protected var _program:Program3D;
+		
+		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null) {
 			super();
 			_blendType = blendType;
 			_byteArray = new ByteArray();
 			_byteArray.endian = Endian.LITTLE_ENDIAN;
+			_renderer = renderer;
+			setStandardMode();
 		}
-
+		
+		public function setTutorialMode():void {
+			_program = _renderer.getColorProgram();
+		}
+		
+		public function setStandardMode():void {
+			_program = _renderer.getStandardProgram();
+		}
 		
 		public function draw(renderer:Renderer):void {
 			if (!visible) {
 				return;
 			}
-			_context3D = renderer.getContext3D();
-			_renderer = renderer;
+			_context3D = _renderer.getContext3D();
+			_renderer.setProgram(_program);
 			_renderer.setBlendType(_blendType);
 			clearContainer();
 			var i:int;
@@ -61,7 +73,7 @@ package badass.engine {
 				checkSize();
 				_context3D.setVertexBufferAt(0, _vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 				_context3D.setVertexBufferAt(1, _vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
-				_context3D.setVertexBufferAt(2, _vertexBuffer, 4, Context3DVertexBufferFormat.FLOAT_1);
+				_context3D.setVertexBufferAt(2, _vertexBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
 				
 				_vertexBuffer.uploadFromByteArray(_byteArray, 0, 0, _byteArray.position / (4 * _vertexSize));
 				
@@ -94,8 +106,8 @@ package badass.engine {
 				for (var key:Object in _drawCalls[i]) {
 					var texture:BadassTexture = key as BadassTexture;
 					batches = _drawCalls[i][texture];
-					_renderer.setTexture(texture);				
-				//	_renderer.setColor(batches[0].color);
+					_renderer.setTexture(texture);
+					//	_renderer.setColor(batches[0].color);
 					_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
 					count += batches.length * 6;
 				}

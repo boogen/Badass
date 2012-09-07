@@ -80,12 +80,15 @@ package badass.engine {
 		private var _flatten:Boolean = false;
 		
 		private var position:Vector.<Number>;
+		private var colorVec:Vector.<Number>;
 		private var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
 			position.push(0, 0, 0, 0);
+			colorVec = new Vector.<Number>();
+			colorVec.push(0.3, 0.3, 0.3, 1.0);
 		}
 		
 		public function play():void {
@@ -359,7 +362,7 @@ package badass.engine {
 		
 		   }
 		 */
-		}
+		}	
 		
 		public function draw(ctx:Context3D, gX:Number, gY:Number, sX:Number, sY:Number):void {
 			if (list) {
@@ -373,6 +376,7 @@ package badass.engine {
 				position[2] = sX;
 				position[3] = sY;
 				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 7, position);
+				ctx.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, colorVec);
 				
 				for (var i:int = 0; i < list.length; ++i) {
 					list[i].drawChild(ctx);

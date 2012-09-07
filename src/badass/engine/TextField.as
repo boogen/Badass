@@ -23,7 +23,6 @@ package badass.engine {
 			_letters = new Vector.<Sprite>();
 			_containerWidth = w;
 			_containerHeight = h;
-			super.color = color;
 			var font:FontLoader;
 			if (xmlFont) {
 				font = FontManager.getXmlFont(f);
@@ -91,12 +90,14 @@ package badass.engine {
 						
 		}
 		
-		override public function set color(value:uint):void {
-			super.color = value;
+		override public function setColor(r:Number, g:Number, b:Number):void 
+		{
+			super.setColor(r, g, b);
 			for (var i:int = 0; i < _children.length; ++i) {
-				_children[i].color = value;
-			}
+				_children[i].setColor(r, g, b);
+			}						 
 		}
+		
 		
 		private function createLetters():void {
 			var i:int;
@@ -156,13 +157,12 @@ package badass.engine {
 					
 					var s:Sprite = new Sprite();
 					var frame:Frame = new Frame(_font.texture);							
-					s.color = color;
 					frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
 					s.setTexture(frame);
+					s.setColor(_r, _g, _b);
 					s.x = dx + ch.xOff;
 					s.y = dy + ch.yOff;
 					
-					s.color = color;
 					_letters.push(s);
 					addChild(s);
 					
