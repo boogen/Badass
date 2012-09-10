@@ -13,7 +13,7 @@ package badass.engine {
 		private var _downState:Frame;
 		public var fontSize:int;
 		private var _isDown:Boolean;
-		private var _scaleWhenDown:Number = 0.9;
+		private var _scaleWhenDown:Number = -1;
 		private var _enabled:Boolean = true;
 		
 		public function Button(up:Frame, text:String = null, down:Frame = null) {
@@ -50,19 +50,31 @@ package badass.engine {
 				return;
 			}
 			
+			var obj:DisplayObject;
 			if (touch.phase == TouchPhase.BEGAN && !_isDown) {
+				_isDown = true;
 				_frame = _downState;
 				scale = _scaleWhenDown;
 				
-				x += (1 - _scaleWhenDown) / 2 * _frame.width;
-				y += (1 - _scaleWhenDown) / 2 * _frame.height;
-				_isDown = true;
+				pivotX += (1 - _scaleWhenDown) / 2 * _frame.width;
+				pivotY += (1 - _scaleWhenDown) / 2 * _frame.height;
+				
+				for each(obj in _children) {
+					obj.scaleX = -obj.baseScaleX;
+					obj.scaleY = -obj.baseScaleY;
+				}
+				
 			} else if (touch.phase == TouchPhase.ENDED && _isDown) {
-				x -= (1 - _scaleWhenDown) / 2 * _frame.width;
-				y -= (1 - _scaleWhenDown) / 2 * _frame.height;
+				_isDown = false;
+				pivotX -= (1 - _scaleWhenDown) / 2 * _frame.width;
+				pivotY -= (1 - _scaleWhenDown) / 2 * _frame.height;
 				_frame = _upState;
 				scale = 1;
-				_isDown = false;
+				
+				for each(obj in _children) {
+					obj.scaleX = -obj.baseScaleX;
+					obj.scaleY = -obj.baseScaleY;
+				}
 			}
 		}
 		
