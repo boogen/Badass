@@ -121,8 +121,8 @@ package badass.engine {
 		
 		override protected function collision(pX:Number, pY:Number):Boolean {
 			if (_frame) {
-				var gX:Number = globalX;
-				var gY:Number = globalY;
+				var gX:Number = globalX + pivotX;
+				var gY:Number = globalY + pivotY;
 								
 				var xCollission:Boolean = (pX >= gX && pX <= gX + width * scaleX) || (pX <= gX && pX >= gX + width * scaleX);
 				var yCollission:Boolean = (pY >= gY && pY <= gY + height * scaleY) || (pY <= gY && pY >= gY + height * scaleY);
