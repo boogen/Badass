@@ -341,14 +341,14 @@ package badass.engine {
 				}
 			}
 			
-			if (collision(pX, pY)) {
+			if (collision(pX, pY) && highlighted()) {
 				return this;
 			}
 			
 			return null;
 		}
 		
-		protected function collision(pX:Number, pY:Number):Boolean {
+		public function collision(pX:Number, pY:Number):Boolean {
 			return false;
 		}
 		
@@ -371,6 +371,32 @@ package badass.engine {
 		}
 		
 		public function set clipLeft(value:Number):void {
+		}
+		
+		public function highlight():void {
+			setColor(1, 1, 1);
+		}
+		
+		public function highlightAll():void {
+			highlight();
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].highlightAll();
+			}
+		}
+		
+		public function highlighted():Boolean {
+			return (_r == 1 && _g == 1 && _b == 1);
+		}
+		
+		public function greyOut():void {
+			setColor(0.3, 0.3, 0.3);
+		}
+		
+		public function greyOutAll():void {
+			greyOut();
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].greyOutAll();
+			}
 		}
 	
 	}

@@ -244,7 +244,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, nearest, nomip>;\n"
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, linear, nomip>;\n"
 																		  + "mov ft1, ft0\n"																		  
 																		  + "mul ft1, v2, ft0\n"
 																		  + "mov oc, ft1\n");

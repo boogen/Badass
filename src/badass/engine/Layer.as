@@ -51,6 +51,13 @@ package badass.engine {
 			_program = _renderer.getStandardProgram();
 		}
 		
+		protected function drawChildren():void {
+			var i:int;
+			for (i = _children.length - 1; i >= 0; --i) {
+				_children[i].render(this);
+			}		
+		}
+		
 		public function draw(renderer:Renderer):void {
 			if (!visible) {
 				return;
@@ -59,10 +66,7 @@ package badass.engine {
 			_renderer.setProgram(_program);
 			_renderer.setBlendType(_blendType);
 			clearContainer();
-			var i:int;
-			for (i = _children.length - 1; i >= 0; --i) {
-				_children[i].render(this);
-			}
+			drawChildren();
 			
 			var count:int = 0;
 			

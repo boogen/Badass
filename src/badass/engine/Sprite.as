@@ -119,7 +119,7 @@ package badass.engine {
 			return _frame.textureHeight;
 		}
 		
-		override protected function collision(pX:Number, pY:Number):Boolean {
+		override public function collision(pX:Number, pY:Number):Boolean {
 			if (_frame) {
 				var gX:Number = globalX;
 				var gY:Number = globalY;

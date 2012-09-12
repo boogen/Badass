@@ -99,6 +99,12 @@ package badass.engine {
 		
 		}
 		
+		override public function setColor(r:Number, g:Number, b:Number):void {
+			colorVec[0] = r;
+			colorVec[1] = g;
+			colorVec[2] = b;
+		}
+		
 		override public function render(layer:badass.engine.Layer):void {
 			if (visible) {
 				layer.addBatch(this);
@@ -362,7 +368,34 @@ package badass.engine {
 		
 		   }
 		 */
-		}	
+		}
+		
+		override public function get width():Number {
+			if (list && list.length) {
+				return list[0].width;				
+			} else {
+				return bitmapScaleX
+			}
+						
+		}
+		
+		override public function get height():Number {
+			if (list && list.length) {
+				return list[0].height;				
+			} else {
+				return bitmapScaleY
+			}
+		}
+		
+		override public function collision(pX:Number, pY:Number):Boolean {
+			var gX:Number = position[0];
+			var gY:Number = position[1];
+			
+			var xCollission:Boolean = (pX >= gX && pX <= gX + width * position[2]) || (pX <= gX && pX >= gX + width * position[2]);
+			var yCollission:Boolean = (pY >= gY && pY <= gY + height * position[3]) || (pY <= gY && pY >= gY + height * position[3]);
+			
+			return xCollission && yCollission;
+		}
 		
 		public function draw(ctx:Context3D, gX:Number, gY:Number, sX:Number, sY:Number):void {
 			if (list) {
@@ -383,7 +416,6 @@ package badass.engine {
 				}
 			}
 		}
-		
 		
 		public function drawChild(ctx:Context3D):void {
 			if (texture) {

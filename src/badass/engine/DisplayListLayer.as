@@ -18,6 +18,14 @@ package badass.engine {
 			super.draw(renderer);			
 		}
 		
+		override protected function drawChildren():void 
+		{
+			var i:int;			
+			for (i = 0; i < _children.length; ++i) {
+				_children[i].render(this);
+			}
+		}
+		
 		override protected function clearContainer():void 
 		{
 			_displayList.length = 0;
