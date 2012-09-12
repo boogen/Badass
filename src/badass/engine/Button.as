@@ -60,8 +60,10 @@ package badass.engine {
 				pivotY += (1 - _scaleWhenDown) / 2 * _frame.height;
 				
 				for each(obj in _children) {
-					obj.scaleX = -obj.baseScaleX;
-					obj.scaleY = -obj.baseScaleY;
+					if(_scaleWhenDown < 0) {
+						obj.scaleX = -obj.baseScaleX;
+						obj.scaleY = -obj.baseScaleY;
+					}
 				}
 				
 			} else if (touch.phase == TouchPhase.ENDED && _isDown) {
@@ -72,8 +74,10 @@ package badass.engine {
 				scale = 1;
 				
 				for each(obj in _children) {
-					obj.scaleX = -obj.baseScaleX;
-					obj.scaleY = -obj.baseScaleY;
+					if(_scaleWhenDown < 0) {
+						obj.scaleX = -obj.baseScaleX;
+						obj.scaleY = -obj.baseScaleY;
+					}
 				}
 			}
 		}
