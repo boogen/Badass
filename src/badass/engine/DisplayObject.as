@@ -42,9 +42,9 @@ package badass.engine {
 			_children = new Vector.<DisplayObject>();
 			
 			rotation = 0.0;
-			_r = 0.3;
-			_g = 0.3;
-			_b = 0.3;
+			_r = 0.18;
+			_g = 0.18;
+			_b = 0.18;
 		}
 		
 		public function get renderIndex():int {
@@ -328,7 +328,7 @@ package badass.engine {
 			return _children[i];
 		}
 		
-		public function hitTest(pX:Number, pY:Number):DisplayObject {
+		public function hitTest(pX:Number, pY:Number, onlyHighlighted:Boolean = false):DisplayObject {
 			if (!visible || !touchable) {
 				return null;
 			}
@@ -341,7 +341,7 @@ package badass.engine {
 				}
 			}
 			
-			if (collision(pX, pY) && highlighted()) {
+			if (collision(pX, pY) && (!onlyHighlighted || highlighted())) {
 				return this;
 			}
 			
@@ -389,7 +389,7 @@ package badass.engine {
 		}
 		
 		public function greyOut():void {
-			setColor(0.3, 0.3, 0.3);
+			setColor(0.18, 0.18, 0.18);
 		}
 		
 		public function greyOutAll():void {

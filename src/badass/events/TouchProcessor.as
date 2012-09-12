@@ -17,6 +17,7 @@ package badass.events {
 		private var _lastTaps:Vector.<Touch>;
 		private var _currentTouches:Vector.<Touch>;
 		private var _helperVector:Vector.<Touch>;
+		private var _tutorialMode:Boolean = false;
 		
 		private static var _processedTouchIds:Vector.<int> = new Vector.<int>();
 		
@@ -28,6 +29,10 @@ package badass.events {
 			_lastTaps = new Vector.<Touch>();
 			_currentTouches = new Vector.<Touch>();
 			_helperVector = new Vector.<Touch>();
+		}
+		
+		public function set tutorialMode(value:Boolean):void {
+			_tutorialMode = value;
 		}
 		
 		public function tick(dt:Number):void {
@@ -58,7 +63,7 @@ package badass.events {
 				}
 				
 				while (_queue.length > 0 && _processedTouchIds.indexOf(_queue[_queue.length - 1][0] == -1)) {
-					var touchArgs:Array = _queue.pop();				
+					var touchArgs:Array = _queue.pop();
 					processTouch.apply(this, touchArgs);
 					_processedTouchIds.push(touchId);
 					
@@ -78,7 +83,6 @@ package badass.events {
 					}
 				}
 				
-				
 				_offsetTime += 0.00001;
 				
 			}
@@ -86,7 +90,6 @@ package badass.events {
 		
 		private function processTouch(touchId:int, phase:String, globalX:Number, globalY:Number):void {
 			var touch:Touch = getCurrentTouch(touchId);
-
 			
 			if (touch == null) {
 				touch = new Touch(touchId, globalX, globalY, phase, null);
@@ -140,11 +143,8 @@ package badass.events {
 		
 		private function findTarget(touch:Touch):void {
 			var result:DisplayObject
-			if (touch.phase == TouchPhase.BEGAN) {
-				trace("");
-			}
-			for (var i:int = _layers.length - 1; i >= 0; --i) {			
-				result = _layers[i].hitTest(touch.globalX, touch.globalY);				
+			for (var i:int = _layers.length - 1; i >= 0; --i) {
+				result = _layers[i].hitTest(touch.globalX, touch.globalY, _tutorialMode);
 				if (result) {
 					touch.setTarget(result);
 					return;

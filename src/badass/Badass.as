@@ -74,12 +74,14 @@ package badass {
 		}
 		
 		public function setTutorialMode():void {
+			_touchProcessor.tutorialMode = true;
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setTutorialMode();
 			}
 		}
 		
-		public function setStanadrdMode():void {
+		public function setStandardMode():void {
+			_touchProcessor.tutorialMode = false;
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setStandardMode();
 			}
