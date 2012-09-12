@@ -36,7 +36,10 @@ package badass.engine {
 		}
 		
 		private function getCommon(xml:XML):void {
-			var local_fontheight:int = 32;
+			var local_fontheight:int = xml.common.@font_height;
+			if (local_fontheight == 0) {
+				local_fontheight = 32;
+			}
 			var local_base:int = 32;
 			var local_scalew:int = xml.common.@scaleW;
 			var local_scaleh:int = xml.common.@scaleH;

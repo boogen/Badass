@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.events.Event;
 	import flash.utils.ByteArray;
 	
 	public class MovieClip extends Sprite {
@@ -6,11 +7,13 @@ package badass.engine {
 		private var _animationSpeed:int;
 		private var _frameNr:int;
 		private var _playing:Boolean;
+		private var _playOnce:Boolean;
 		public var ready:Boolean;
 		
 		public function MovieClip() {
 			super();
 			_animationSpeed = 4;
+			_playOnce = false;
 		}
 		
 		public function setFrames(value:Vector.<Frame>):void {
@@ -22,6 +25,12 @@ package badass.engine {
 		
 		public function play():void {
 			_playing = true;
+		}
+		
+		public function playOnce():void {
+			_playOnce = true;
+			_frameNr = 0;
+			play();
 		}
 		
 		public function stop():void {
@@ -49,6 +58,10 @@ package badass.engine {
 				super.render(layer);
 				if (_playing) {
 					_frameNr++;
+					if (_playOnce && (_frameNr / _animationSpeed)/_frames.length == 1) {
+						stop();
+						dispatchEvent(new Event(Event.COMPLETE));
+					}
 				}
 			}
 		}

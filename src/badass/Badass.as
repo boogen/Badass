@@ -20,6 +20,7 @@ package badass {
 	import flash.display3D.Context3D;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.events.TouchEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
@@ -31,12 +32,13 @@ package badass {
 	import badass.tweens.Tween;
 	import badass.tweens.Tweener;
 	import badass.engine.Context;
+	import flash.utils.Timer;
 	
 	public class Badass extends EventDispatcher {
 		private var _context:badass.engine.Context;
 		private var _zombie:MovieClip;
 		private var _time:int;
-		public var fps:int;
+		public var currentFps:int;
 		private var _tweener:Tweener;
 		private var _touchProcessor:TouchProcessor;
 		private var _lastTime:int;
@@ -47,7 +49,8 @@ package badass {
 		public var fpsTf:TextField;
 		public var memoryTf:TextField;
 		private var _scaleX:Number = 1.0;
-		private var _scaleY:Number = 1.0;
+		private var _scaleY:Number = 1.0;	
+		public var fps:int = 30;
 		
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
@@ -225,12 +228,13 @@ package badass {
 			_lastTime = t;
 			if (t > _time + 1000) {
 				if (fpsTf) {
-					fpsTf.text = "FPS: " + fps.toString();
+					fpsTf.text = "FPS: " + currentFps.toString();
 				}
 				if (memoryTf) {
 					memoryTf.text = (Math.round(System.totalMemory * 0.0000954) / 100) + " MB"; // 1 / (1024*1024) to convert to MB
 				}
-				fps = 0;
+				fps = currentFps;
+				currentFps = 0;
 				_time = t;
 			}
 			
@@ -243,7 +247,7 @@ package badass {
 				
 			}
 			_context.renderer.endFrame();
-			fps++;
+			currentFps++;
 		}
 	
 	}
