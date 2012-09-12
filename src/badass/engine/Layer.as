@@ -36,6 +36,7 @@ package badass.engine {
 			_blendType = blendType;
 			_byteArray = new ByteArray();
 			_byteArray.endian = Endian.LITTLE_ENDIAN;
+			_drawCalls = new Array();
 		}
 
 		
@@ -71,7 +72,11 @@ package badass.engine {
 		}
 		
 		protected function clearContainer():void {
-			_drawCalls = new Array();
+			for (var i:int = 0; i < _drawCalls.length; ++i) {
+				for each (var batches:Vector.<DisplayObject> in _drawCalls[i]) {
+					batches.length = 0;
+				}
+			}
 		}
 		
 		protected function fillByteArray():void {
