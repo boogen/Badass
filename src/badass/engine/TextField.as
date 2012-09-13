@@ -107,8 +107,13 @@ package badass.engine {
 				var char:int = _text.charCodeAt(breaksCharIndex);
 				var firstCharDesc:CharDescr = _font.getChar(char);
 				
-				char = _text.charCodeAt(txtLastIndex + lastIndex);
-				var lastCharDesc:CharDescr = _font.getChar(char);
+				var last:int = txtLastIndex + lastIndex;
+				var lastCharDesc:CharDescr
+				while (!lastCharDesc) {
+					char = _text.charCodeAt(last);
+					lastCharDesc = _font.getChar(char);
+					last--;
+				}
 				
 				value = _letters[row][lastIndex].x - _letters[row][0].x + firstCharDesc.xOff + lastCharDesc.srcW;
 			}
