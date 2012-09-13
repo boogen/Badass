@@ -244,6 +244,7 @@ package badass.engine {
 					
 					_letters[row].push(s);
 					s.setColor(_r, _g, _b);
+					s.index = index;
 					addChild(s);
 					
 					dx += ch.xOff + ch.srcW + 1;
