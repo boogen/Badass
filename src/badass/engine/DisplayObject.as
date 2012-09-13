@@ -335,7 +335,7 @@ package badass.engine {
 			
 			var result:DisplayObject;
 			for (var i:int = _children.length - 1; i >= 0; --i) {
-				result = _children[i].hitTest(pX, pY);
+				result = _children[i].hitTest(pX, pY, onlyHighlighted);
 				if (result) {
 					return result;
 				}
