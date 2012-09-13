@@ -33,7 +33,6 @@ package badass.engine {
 			_breaks = new Vector.<int>();
 			//_containerWidth = w;
 			//_containerHeight = h;
-			super.color = color;
 			/*_fontStyle = f;
 			   var font:FontLoader;
 			   if (xmlFont) {
@@ -48,6 +47,16 @@ package badass.engine {
 		   } else {
 		   font.addEventListener(flash.events.Event.COMPLETE, onFontLoaded);
 		 }*/
+		}
+		
+		override public function setColor(r:Number, g:Number, b:Number):void {
+			super.setColor(r, g, b);
+			
+			for (var i:int = 0; i < _letters.length; ++i) {
+				for (var j:int = 0; j < _letters[i].length; ++j) {
+					_letters[i][j].setColor(r, g, b);
+				}
+			}
 		}
 		
 		public function setWidth(w:Number):void {
@@ -155,13 +164,6 @@ package badass.engine {
 			reset(_containerWidth, _containerHeight, _fontStyle, value);
 		}
 		
-		override public function set color(value:uint):void {
-			super.color = value;
-			for (var i:int = 0; i < _children.length; ++i) {
-				_children[i].color = value;
-			}
-		}
-		
 		private function createLetters():void {
 			var i:int;
 			for (i = 0; i < _letters.length; ++i) {
@@ -235,14 +237,13 @@ package badass.engine {
 					
 					var s:Sprite = new Sprite();
 					var frame:Frame = new Frame(_font.texture);
-					s.color = color;
 					frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
 					s.setTexture(frame);
 					s.x = dx + ch.xOff;
 					s.y = dy + ch.yOff;
 					
-					s.color = color;
 					_letters[row].push(s);
+					s.setColor(_r, _g, _b);
 					addChild(s);
 					
 					dx += ch.xOff + ch.srcW + 1;

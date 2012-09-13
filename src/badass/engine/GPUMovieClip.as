@@ -85,7 +85,7 @@ package badass.engine {
 		private var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
 		
-		private var _animationSpeed:Number = 2;
+		private var _animationSpeed:Number = 1;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
