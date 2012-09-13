@@ -49,7 +49,7 @@ package badass {
 		public var fpsTf:TextField;
 		public var memoryTf:TextField;
 		private var _scaleX:Number = 1.0;
-		private var _scaleY:Number = 1.0;	
+		private var _scaleY:Number = 1.0;
 		public var fps:int = 30;
 		
 		public function Badass(stage:Object):void {
@@ -65,12 +65,11 @@ package badass {
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.frameRate = 60;
-			
-			for each (var touchEventType:String in touchEventTypes)
-				stage.addEventListener(touchEventType, onTouch, false, 0, true);
+			_stage = stage;
+			enableTouch();
 			
 			stage.addEventListener(Event.RESIZE, onResize);
-			_stage = stage;
+			
 			
 			_context.renderer.addEventListener(badass.events.Event.COMPLETE, gentlemenStartYourEngines);
 			_context.renderer.init(stage);
@@ -88,6 +87,16 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setStandardMode();
 			}
+		}
+		
+		public function disableTouch():void {
+			for each (var touchEventType:String in touchEventTypes)
+				_stage.removeEventListener(touchEventType, onTouch);
+		}
+		
+		public function enableTouch():void {
+			for each (var touchEventType:String in touchEventTypes)
+				_stage.addEventListener(touchEventType, onTouch, false, 0, true);
 		}
 		
 		private function gentlemenStartYourEngines(e:badass.events.Event):void {

@@ -193,6 +193,7 @@ package badass.engine {
 			var space_index:int = 0;
 			var charid:int;
 			var ch:CharDescr;
+			var last_space_dx:Number = 0;
 			if (this.breaks) {
 				var forceBreak:Boolean;
 				for (i = 0; i < n; ++i) {
@@ -202,6 +203,7 @@ package badass.engine {
 					if (ch) {
 						
 						dx += ch.xOff + ch.srcW + 1;
+						last_space_dx += ch.xOff + ch.srcW + 1;
 						
 						if (_containerWidth && dx > _containerWidth) {
 							if (_breaks.length && space_index == _breaks[_breaks.length - 1]) {
@@ -209,11 +211,12 @@ package badass.engine {
 							} else {
 								_breaks.push(space_index);
 							}
-							dx = 0;
+							dx = last_space_dx;
 						}
 						
 						if (charid == space.charCodeAt(0) || forceBreak) {
 							space_index = i;
+							last_space_dx = 0;
 							forceBreak = false;
 						}
 					}
