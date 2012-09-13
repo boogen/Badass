@@ -98,11 +98,14 @@ package badass.engine {
 			for (i = 0; i < _drawCalls.length; ++i) {
 				for (var key:Object in _drawCalls[i]) {
 					var texture:BadassTexture = key as BadassTexture;
+			
 					batches = _drawCalls[i][texture];
-					_renderer.setTexture(texture);				
-				//	_renderer.setColor(batches[0].color);
-					_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
-					count += batches.length * 6;
+					if (batches.length) {
+						_renderer.setTexture(texture);
+					//	_renderer.setColor(batches[0].color);
+						_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
+						count += batches.length * 6;
+					}
 				}
 			}
 		}
