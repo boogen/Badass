@@ -110,7 +110,16 @@ package badass.engine {
 				char = _text.charCodeAt(txtLastIndex + lastIndex);
 				var lastCharDesc:CharDescr = _font.getChar(char);
 				
-				value = _letters[row][lastIndex].x - _letters[row][0].x + firstCharDesc.xOff + lastCharDesc.srcW;
+				value = _letters[row][lastIndex].x - _letters[row][0].x;
+				
+				if (firstCharDesc) {
+					value +=  firstCharDesc.xOff;
+				} 
+				
+				if (lastCharDesc) {
+					value += lastCharDesc.srcW;;
+				}
+				
 			}
 			return value;
 		}
