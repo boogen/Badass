@@ -81,14 +81,17 @@ package badass.engine {
 		private var _flatten:Boolean = false;
 		
 		private var position:Vector.<Number>;
+		private var colorVec:Vector.<Number>;
 		private var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
 		
-		private var _animationSpeed:Number = 2;
+		private var _animationSpeed:Number = 1;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
 			position.push(0, 0, 0, 0);
+			colorVec = new Vector.<Number>();
+			colorVec.push(0.3, 0.3, 0.3, 1.0);
 		}
 		
 		public function play():void {
@@ -97,6 +100,12 @@ package badass.engine {
 		
 		public function stop():void {
 		
+		}
+		
+		override public function setColor(r:Number, g:Number, b:Number):void {
+			colorVec[0] = r;
+			colorVec[1] = g;
+			colorVec[2] = b;
 		}
 		
 		override public function render(layer:badass.engine.Layer):void {
@@ -374,6 +383,33 @@ package badass.engine {
 			return _currentFrame;
 		}
 		
+		override public function get width():Number {
+			if (list && list.length) {
+				return list[0].width;				
+			} else {
+				return bitmapScaleX
+			}
+						
+		}
+		
+		override public function get height():Number {
+			if (list && list.length) {
+				return list[0].height;				
+			} else {
+				return bitmapScaleY
+			}
+		}
+		
+		override public function collision(pX:Number, pY:Number):Boolean {
+			var gX:Number = position[0];
+			var gY:Number = position[1];
+			
+			var xCollission:Boolean = (pX >= gX && pX <= gX + width * position[2]) || (pX <= gX && pX >= gX + width * position[2]);
+			var yCollission:Boolean = (pY >= gY && pY <= gY + height * position[3]) || (pY <= gY && pY >= gY + height * position[3]);
+			
+			return xCollission && yCollission;
+		}
+		
 		public function draw(ctx:Context3D, gX:Number, gY:Number, sX:Number, sY:Number):void {
 			if (list) {
 				if (!vertexBuffer) {
@@ -386,6 +422,7 @@ package badass.engine {
 				position[2] = sX;
 				position[3] = sY;
 				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 7, position);
+				ctx.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, colorVec);
 				
 				for (var i:int = 0; i < list.length; ++i) {
 					list[i].drawChild(ctx);

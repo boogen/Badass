@@ -11,22 +11,29 @@ package badass.engine {
 		private var _displayList:Vector.<GPUMovieClip>
 		private var m:Vector.<Matrix>;
 		
-		public function GPUMovieClipLayer() {
-			super();
+		public function GPUMovieClipLayer(renderer:Renderer) {
+			super(BlendType.ONE_MINUS_SOURCE_ALPHA, renderer);
 			_displayList = new Vector.<GPUMovieClip>();
-
+			setStandardMode();
+		}
+		
+		override public function setTutorialMode():void {
+			_program = _renderer.getGPUMovieClipColorProgram();
+		}
+		
+		override public function setStandardMode():void {
+			_program = _renderer.getGPUMovieClipProgram();
 		}
 		
 		override protected function clearContainer():void {
 			_displayList.length = 0;
 		}
-				
 		
 		override public function draw(renderer:Renderer):void {
 			if (!visible) {
 				return;
 			}
-			renderer.setGPUMovieClipProgram();
+			renderer.setProgram(_program);
 			renderer.setBlendType(BlendType.ONE_MINUS_SOURCE_ALPHA);
 			
 			_context3D = renderer.getContext3D();
@@ -42,7 +49,6 @@ package badass.engine {
 				_displayList[i].draw(_context3D, _displayList[i].globalX, _displayList[i].globalY, _displayList[i].scaleX, _displayList[i].scaleY);
 			}
 			
-			renderer.setStandardProgram();
 			framecount++;
 		}
 		

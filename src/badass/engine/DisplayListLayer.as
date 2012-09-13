@@ -9,13 +9,21 @@ package badass.engine {
 		
 		private var _displayList:Array;
 		
-		public function DisplayListLayer(blendType:String) {
-			super(blendType)
+		public function DisplayListLayer(blendType:String, renderer:Renderer) {
+			super(blendType, renderer)
 			_displayList = new Array();
 		}
 		
 		override public function draw(renderer:Renderer):void {
 			super.draw(renderer);			
+		}
+		
+		override protected function drawChildren():void 
+		{
+			var i:int;			
+			for (i = 0; i < _children.length; ++i) {
+				_children[i].render(this);
+			}
 		}
 		
 		override protected function clearContainer():void 

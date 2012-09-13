@@ -18,11 +18,14 @@ package badass.engine {
 		private var _touchable:Boolean;
 		
 		public var rotation:Number;
-		private var _color:uint;
 		
 		protected var _frame:Frame;
 		private var _index:int;
 		private var _displayIndex:int;
+		
+		protected var _r:Number;
+		protected var _g:Number;
+		protected var _b:Number;
 		
 		public function DisplayObject() {
 			
@@ -39,7 +42,9 @@ package badass.engine {
 			_children = new Vector.<DisplayObject>();
 			
 			rotation = 0.0;
-			color = 0xffffffff;
+			_r = 0.18;
+			_g = 0.18;
+			_b = 0.18;
 		}
 		
 		public function get renderIndex():int {
@@ -156,12 +161,10 @@ package badass.engine {
 			_scaleY = value;
 		}
 		
-		public function get color():uint {
-			return _color;
-		}
-		
-		public function set color(value:uint):void {
-			_color = value;
+		public function setColor(r:Number, g:Number, b:Number):void {
+			_r = r;
+			_g = g;
+			_b = b;
 		}
 		
 		public function get parent():DisplayObject {
@@ -325,27 +328,27 @@ package badass.engine {
 			return _children[i];
 		}
 		
-		public function hitTest(pX:Number, pY:Number):DisplayObject {
+		public function hitTest(pX:Number, pY:Number, onlyHighlighted:Boolean = false):DisplayObject {
 			if (!visible || !touchable) {
 				return null;
 			}
 			
 			var result:DisplayObject;
 			for (var i:int = _children.length - 1; i >= 0; --i) {
-				result = _children[i].hitTest(pX, pY);
+				result = _children[i].hitTest(pX, pY, onlyHighlighted);
 				if (result) {
 					return result;
 				}
 			}
 			
-			if (collision(pX, pY)) {
+			if (collision(pX, pY) && (!onlyHighlighted || highlighted())) {
 				return this;
 			}
 			
 			return null;
 		}
 		
-		protected function collision(pX:Number, pY:Number):Boolean {
+		public function collision(pX:Number, pY:Number):Boolean {
 			return false;
 		}
 		
@@ -368,7 +371,33 @@ package badass.engine {
 		}
 		
 		public function set clipLeft(value:Number):void {
-		}		
+		}
+		
+		public function highlight():void {
+			setColor(1, 1, 1);
+		}
+		
+		public function highlightAll():void {
+			highlight();
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].highlightAll();
+			}
+		}
+		
+		public function highlighted():Boolean {
+			return (_r == 1 && _g == 1 && _b == 1);
+		}
+		
+		public function greyOut():void {
+			setColor(0.18, 0.18, 0.18);
+		}
+		
+		public function greyOutAll():void {
+			greyOut();
+			for (var i:int = 0; i < _children.length; ++i) {
+				_children[i].greyOutAll();
+			}
+		}
 	
 	}
 
