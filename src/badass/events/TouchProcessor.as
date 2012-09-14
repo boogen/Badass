@@ -63,7 +63,7 @@ package badass.events {
 				}
 				
 				while (_queue.length > 0 && _processedTouchIds.indexOf(_queue[_queue.length - 1][0] == -1)) {
-					var touchArgs:Array = _queue.pop();
+					var touchArgs:Array = _queue.shift();
 					processTouch.apply(this, touchArgs);
 					_processedTouchIds.push(touchId);
 					
