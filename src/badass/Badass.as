@@ -80,6 +80,7 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setTutorialMode();
 			}
+			_context.renderer.setColor(_context.renderer.red * 0.3, _context.renderer.green * 0.3, _context.renderer.blue * 0.3);
 		}
 		
 		public function setStandardMode():void {
@@ -87,6 +88,7 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setStandardMode();
 			}
+			_context.renderer.color = 0x703502;
 		}
 		
 		public function disableTouch():void {
