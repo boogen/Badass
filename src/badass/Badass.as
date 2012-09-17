@@ -22,6 +22,9 @@ package badass {
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.events.TouchEvent;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
 	import flash.system.System;
@@ -70,7 +73,6 @@ package badass {
 			
 			stage.addEventListener(Event.RESIZE, onResize);
 			
-			
 			_context.renderer.addEventListener(badass.events.Event.COMPLETE, gentlemenStartYourEngines);
 			_context.renderer.init(stage);
 		}
@@ -80,6 +82,7 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setTutorialMode();
 			}
+			_context.renderer.setColor(0.439 * 0.18, 0.207 * 0.18, 0.007 * 0.18);
 		}
 		
 		public function setStandardMode():void {
@@ -87,6 +90,7 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setStandardMode();
 			}
+			_context.renderer.setColor(0.439, 0.207, 0.007);
 		}
 		
 		public function disableTouch():void {
@@ -134,6 +138,10 @@ package badass {
 		
 		public function set color(value:int):void {
 			_context.renderer.color = value;
+		}
+		
+		public function setColor(r:Number, g:Number, b:Number):void {
+			_context.renderer.setColor(r, g, b);
 		}
 		
 		public function addTween(t:Tween):void {
@@ -225,9 +233,19 @@ package badass {
 		}
 		
 		private function onEnterFrame(e:Object):void {
-			tick();
-			if (mainLoop != null) {
-				mainLoop();
+			try {
+				tick();
+				if (mainLoop != null) {
+					mainLoop();
+				}
+			} catch (err:Error) {
+				var fileName:String = "error.txt";
+				var text:String = err.getStackTrace();
+				var errorFile:File = File.applicationStorageDirectory.resolvePath(fileName);
+				var fileStream:FileStream = new FileStream();
+				fileStream.open(errorFile, FileMode.WRITE);
+				fileStream.writeUTFBytes(text);
+				fileStream.close();
 			}
 		}
 		
