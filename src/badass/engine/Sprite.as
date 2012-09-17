@@ -163,37 +163,41 @@ package badass.engine {
 				ba.writeFloat(gy + q + h / 2);
 				ba.writeFloat(_frame.uLeft);
 				ba.writeFloat(_frame.vTop);
+				ba.writeFloat(a);
 				ba.writeFloat(_r);
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
-				ba.writeFloat(a);
+				
 				
 				ba.writeFloat(gx - u + w / 2);
 				ba.writeFloat(gy - v + h / 2);
 				ba.writeFloat(_frame.uRight);
 				ba.writeFloat(_frame.vTop);				
+				ba.writeFloat(a);
 				ba.writeFloat(_r);
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
-				ba.writeFloat(a);
+				
 				
 				ba.writeFloat(gx - p + w / 2);
 				ba.writeFloat(gy - q + h / 2);
 				ba.writeFloat(_frame.uRight);
 				ba.writeFloat(_frame.vBottom);
+				ba.writeFloat(a);
 				ba.writeFloat(_r);
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
-				ba.writeFloat(a);
+				
 				
 				ba.writeFloat(gx + u + w / 2);
 				ba.writeFloat(gy + v + h / 2);
 				ba.writeFloat(_frame.uLeft);
 				ba.writeFloat(_frame.vBottom);
+				ba.writeFloat(a);
 				ba.writeFloat(_r);
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
-				ba.writeFloat(a);
+				
 				
 			}
 		}

@@ -230,7 +230,7 @@ package badass.engine {
 			
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, nearest, nomip>;\n"
 																		  + "mov ft1, ft0\n"
-																		  + "mul ft1.w, v2.w, ft0.w\n"																		  
+																		  + "mul ft1.w, v2.x, ft0.w\n"																		  
 																		  + "mov oc, ft1\n");
 			
 			_shaderProgram = _context3D.createProgram();
@@ -246,7 +246,7 @@ package badass.engine {
 			
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, linear, nomip>;\n"
 																		  + "mov ft1, ft0\n"																		  
-																		  + "mul ft1, v2, ft0\n"
+																		  + "mul ft1, v2.yzwx, ft0\n"
 																		  + "mov oc, ft1\n");
 			
 			_colorShaderProgram = _context3D.createProgram();
