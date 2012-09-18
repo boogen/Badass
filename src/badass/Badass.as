@@ -234,19 +234,9 @@ package badass {
 		}
 		
 		private function onEnterFrame(e:Object):void {
-			try {
-				tick();
-				if (mainLoop != null) {
-					mainLoop();
-				}
-			} catch (err:Error) {
-				var fileName:String = "error.txt";
-				var text:String = err.getStackTrace();
-				var errorFile:File = File.applicationStorageDirectory.resolvePath(fileName);
-				var fileStream:FileStream = new FileStream();
-				fileStream.open(errorFile, FileMode.WRITE);
-				fileStream.writeUTFBytes(text);
-				fileStream.close();
+			tick();
+			if (mainLoop != null) {
+				mainLoop();
 			}
 		}
 		
@@ -267,7 +257,7 @@ package badass {
 				_time = t;
 			}
 			if (vram) {
-				vram.text = BadassTexture.memory / (1024 * 1024) + " MB";
+				vram.text = Math.floor(10 * BadassTexture.memory / (1024 * 1024)) / 10 + " MB";
 			}
 			
 			_touchProcessor.tick(dt);

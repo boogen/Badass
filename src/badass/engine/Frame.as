@@ -68,8 +68,12 @@ package badass.engine {
 			return _texture.textureWidth;
 		}
 		
-		public function get textureHeight():Number {		
+		public function get textureHeight():Number {
 			return _texture.textureHeight;
+		}
+		
+		public function dispose():void {
+			_texture.dispose();
 		}
 	
 	}

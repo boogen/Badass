@@ -9,7 +9,7 @@ package badass.engine {
 		private var _pivotY:Number = 0;
 		private var _clipTop:Number = 0;
 		private var _clipBottom:Number = 0;
-		private var _clipLeft:Number = 0;		
+		private var _clipLeft:Number = 0;
 		
 		public function Sprite() {
 		}
@@ -83,7 +83,7 @@ package badass.engine {
 			_clipLeft = value;
 			if (_frame) {
 				_frame.width = (1 - value) * _frame.baseWidth;
-				_frame.uLeft = value * _frame.baseWidth / _frame.textureWidth;				
+				_frame.uLeft = value * _frame.baseWidth / _frame.textureWidth;
 			}
 		}
 		
@@ -123,7 +123,7 @@ package badass.engine {
 			if (_frame) {
 				var gX:Number = globalX + pivotX;
 				var gY:Number = globalY + pivotY;
-								
+				
 				var xCollission:Boolean = (pX >= gX && pX <= gX + width * scaleX) || (pX <= gX && pX >= gX + width * scaleX);
 				var yCollission:Boolean = (pY >= gY && pY <= gY + height * scaleY) || (pY <= gY && pY >= gY + height * scaleY);
 				if (xCollission && yCollission) {
@@ -168,16 +168,14 @@ package badass.engine {
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
 				
-				
 				ba.writeFloat(gx - u + w / 2);
 				ba.writeFloat(gy - v + h / 2);
 				ba.writeFloat(_frame.uRight);
-				ba.writeFloat(_frame.vTop);				
+				ba.writeFloat(_frame.vTop);
 				ba.writeFloat(a);
 				ba.writeFloat(_r);
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
-				
 				
 				ba.writeFloat(gx - p + w / 2);
 				ba.writeFloat(gy - q + h / 2);
@@ -188,7 +186,6 @@ package badass.engine {
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
 				
-				
 				ba.writeFloat(gx + u + w / 2);
 				ba.writeFloat(gy + v + h / 2);
 				ba.writeFloat(_frame.uLeft);
@@ -198,7 +195,12 @@ package badass.engine {
 				ba.writeFloat(_g);
 				ba.writeFloat(_b);
 				
-				
+			}
+		}
+		
+		public function dispose():void {
+			if (_frame) {
+				_frame.dispose();
 			}
 		}
 		
