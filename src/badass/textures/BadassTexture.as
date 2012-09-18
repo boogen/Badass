@@ -17,6 +17,8 @@ package badass.textures {
 		private var _textureWidth:Number;
 		private var _textureHeight:Number;
 		
+		public static var memory:int;
+		
 		public function BadassTexture(context:Context3D, bitmapData:BitmapData) {
 			_width = bitmapData.width;
 			_height = bitmapData.height;
@@ -26,6 +28,7 @@ package badass.textures {
 			_nativeTexture = context.createTexture(_textureWidth, _textureHeight, Context3DTextureFormat.BGRA, false);
 			_nativeTexture.uploadFromBitmapData(bitmapData);
 			bitmapData.dispose();
+			memory += _textureWidth * _textureHeight * 4;
 		
 		}
 		
@@ -55,6 +58,7 @@ package badass.textures {
 		
 		public function dispose():void {
 			_nativeTexture.dispose();
+			memory -= _textureWidth * _textureHeight * 4;
 		}
 	}
 
