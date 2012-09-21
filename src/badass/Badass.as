@@ -83,7 +83,7 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].setTutorialMode();
 			}
-			_context.renderer.setColor(0.439 * 0.18, 0.207 * 0.18, 0.007 * 0.18);
+			_context.renderer.setColor(0.439 * 0.3, 0.207 * 0.3, 0.007 * 0.3);
 		}
 		
 		public function setStandardMode():void {

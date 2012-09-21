@@ -21,6 +21,7 @@ package badass.engine {
 	import flash.geom.Matrix3D;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.system.System;
 	import flash.utils.ByteArray;
 	import adobe.utils.CustomActions;
 	import flash.display.Bitmap;
@@ -293,8 +294,8 @@ package badass.engine {
 			
 			list = new Vector.<GPUMovieClip>();
 			addToList(list);
-		
 		}
+		
 		
 		private function addToList(list:Vector.<GPUMovieClip>):void {
 			if (texture) {
@@ -342,6 +343,7 @@ package badass.engine {
 				childMatrix.concat(m);
 				
 				ch.flatFrame(index, childMatrix);
+				
 			}
 		}
 		
@@ -362,11 +364,11 @@ package badass.engine {
 			_lastFrame = value;
 			
 			if (_matrices && _matrices.length) {
-
+				
 				_currentFrame = (_lastRenderedFrame + Math.floor(_d / _animationSpeed)) % _matrices.length;
-				_d -= Math.floor(_d / _animationSpeed) * _animationSpeed;	
+				_d -= Math.floor(_d / _animationSpeed) * _animationSpeed;
 			} else {
-				_currentFrame = value;				
+				_currentFrame = value;
 			}
 		}
 		
@@ -376,7 +378,7 @@ package badass.engine {
 				for (var i:int = 0; i < list.length; ++i) {
 					list[i].animationSpeed = value;
 				}
-			}			
+			}
 		}
 		
 		public function get currentFrame():int {
@@ -385,16 +387,16 @@ package badass.engine {
 		
 		override public function get width():Number {
 			if (list && list.length) {
-				return list[0].width;				
+				return list[0].width;
 			} else {
 				return bitmapScaleX
 			}
-						
+		
 		}
 		
 		override public function get height():Number {
 			if (list && list.length) {
-				return list[0].height;				
+				return list[0].height;
 			} else {
 				return bitmapScaleY
 			}

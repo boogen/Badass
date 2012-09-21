@@ -145,15 +145,13 @@ package badass.engine {
 		}
 		
 		private function onStage3DError(e:ErrorEvent):void {
-			trace("a motherfuckin error");
 		}
 		
 		private function onContext3DCreated(e:Object):void {
 			var stage3D:Stage3D = e.target as Stage3D;
 			_context3D = stage3D.context3D;
 			_context3D.enableErrorChecking = false;
-			
-			trace("let's do this motherfuuuuuckers");
+
 			continueInit();
 		
 		}
@@ -234,7 +232,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);

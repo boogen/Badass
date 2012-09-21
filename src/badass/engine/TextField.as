@@ -287,7 +287,9 @@ package badass.engine {
 					var offsetX:int = 0;
 					switch (v) {
 						case HAlign.CENTER: 
-							offsetX = Math.floor((_containerWidth - getRowWidth(i)) * 0.5)
+							if (_font) {
+								offsetX = Math.floor((_containerWidth - getRowWidth(i)) * 0.5)
+							}
 							break;
 						case HAlign.LEFT: 
 							offsetX = 0;
@@ -311,7 +313,9 @@ package badass.engine {
 					var offsetY:int = 0;
 					switch (v) {
 						case VAlign.CENTER: 
-							offsetY = (_containerHeight - (_font.font_height * _letters.length)) / 2;
+							if (_font) {
+								offsetY = (_containerHeight - (_font.font_height * _letters.length)) / 2;
+							}
 							break;
 						case VAlign.TOP: 
 							offsetY = 0;

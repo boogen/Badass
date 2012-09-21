@@ -42,9 +42,9 @@ package badass.engine {
 			_children = new Vector.<DisplayObject>();
 			
 			rotation = 0.0;
-			_r = 0.18;
-			_g = 0.18;
-			_b = 0.18;
+			_r = 0.3;
+			_g = 0.3;
+			_b = 0.3;
 		}
 		
 		public function get renderIndex():int {
@@ -389,7 +389,7 @@ package badass.engine {
 		}
 		
 		public function greyOut():void {
-			setColor(0.18, 0.18, 0.18);
+			setColor(0.3, 0.3, 0.3);
 		}
 		
 		public function greyOutAll():void {
