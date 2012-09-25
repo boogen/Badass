@@ -15,9 +15,9 @@ package badass.tweens {
 		private var _totalTime:Number;
 		private var _delay:Number;
 		
-		private var _onComplete:Function;
+		protected var _onComplete:Function;
 		
-		private var _onCompleteArgs:Array;
+		protected var _onCompleteArgs:Array;
 		
 		private var _properties:Vector.<String>;
 		private var _startValues:Vector.<Number>;
@@ -86,7 +86,7 @@ package badass.tweens {
 				var endValue:Number = _endValues[i];
 				var delta:Number = endValue - startValue;
 				
-				var transitionFunc:Function = Transitions.getTransition(_transition);                
+				var transitionFunc:Function = Transitions.getTransition(_transition);
 				var currentValue:Number = startValue + transitionFunc(ratio) * delta;
 				//var currentValue:Number = startValue + ratio * delta;
 				_target[_properties[i]] = currentValue;
