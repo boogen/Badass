@@ -232,7 +232,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -245,7 +245,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
 			
 			_colorShaderProgram = _context3D.createProgram();
 			_colorShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -257,20 +257,20 @@ package badass.engine {
 																		  "add v0, vc6.xy, vt0.xy",
 																		  "mov vt0, va0",
 																		  "mov vt4, vc4",
-																		  "mul vt2, vt4, vc7.z",
+																		  "mul vt2, vt4, vc9.z",
 																		  "mov vt5, vc5",
-																		  "mul vt3, vt5, vc7.w",
-																		  "mul vt7, va0, vc8",
+																		  "mul vt3, vt5, vc9.w",
+																		  "mul vt7, va0, vc7",
 																		  "dp4 vt0.x, vt7, vt2",
 																		  "dp4 vt0.y, vt7, vt3",
 																		  "mov vt1, vt0",
-																		  "add vt0.xy, vt1.xy, vc7.xy",
-																		  "mov vt1, vt0",
 																		  "add vt0.xy, vt1.xy, vc9.xy",
+																		  "mov vt1, vt0",
+																		  "add vt0.xy, vt1.xy, vc8.xy",
 																		  "m44 op, vt0, vc0"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, nearest, nomip>"]).join("\n"));
 			
 			_movieClipShaderProgram = _context3D.createProgram();
 			_movieClipShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -282,20 +282,20 @@ package badass.engine {
 																		  "add v0, vc6.xy, vt0.xy",
 																		  "mov vt0, va0",
 																		  "mov vt4, vc4",
-																		  "mul vt2, vt4, vc7.z",
+																		  "mul vt2, vt4, vc9.z",
 																		  "mov vt5, vc5",
-																		  "mul vt3, vt5, vc7.w",
-																		  "mul vt7, va0, vc8",
+																		  "mul vt3, vt5, vc9.w",
+																		  "mul vt7, va0, vc7",
 																		  "dp4 vt0.x, vt7, vt2",
 																		  "dp4 vt0.y, vt7, vt3",
 																		  "mov vt1, vt0",
-																		  "add vt0.xy, vt1.xy, vc7.xy",
-																		  "mov vt1, vt0",
 																		  "add vt0.xy, vt1.xy, vc9.xy",
+																		  "mov vt1, vt0",
+																		  "add vt0.xy, vt1.xy, vc8.xy",
 																		  "m44 op, vt0, vc0"]).join("\n"));
 
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex ft0, v0, fs0 <2d, norepeat, linear, nomip>", "mov ft1, ft0", "mul ft1, ft0, fc0", "mov oc, ft1"]).join("\n"));
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex ft0, v0, fs0 <2d, norepeat, nearest, nomip>", "mov ft1, ft0", "mul ft1, ft0, fc0", "mov oc, ft1"]).join("\n"));
 			
 			_movieClipColorShaderProgram = _context3D.createProgram();
 			_movieClipColorShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);

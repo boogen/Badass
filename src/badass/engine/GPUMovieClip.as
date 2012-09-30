@@ -428,7 +428,7 @@ package badass.engine {
 				position[1] = gY;
 				position[2] = sX;
 				position[3] = sY;
-				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 7, position);
+				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 9, position);
 				ctx.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, colorVec);
 				
 				for (var i:int = 0; i < list.length; ++i) {
@@ -438,8 +438,10 @@ package badass.engine {
 		}
 		
 		public function setScale(sx:Number, sy:Number):void {
-			scaleData[0] = sx;
-			scaleData[1] = sy;			
+			uvs.position = 16
+			uvs.writeFloat(sx);
+			uvs.writeFloat(sy);
+
 		}
 		
 		public function drawChild(ctx:Context3D, sX:Number, sY:Number):void {
@@ -448,11 +450,16 @@ package badass.engine {
 				_lastRenderedFrame = _currentFrame;
 				
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
-				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
-				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 8, scaleData);
+				uvs.position = 32
+				uvs.writeFloat( -offset.x * sX);
+				uvs.writeFloat( -offset.y * sY);
+				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 3, uvs, 0);
+				
+				
+			/*	ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 8, scaleData);
 				offsetData[0] = -offset.x * sX;
 				offsetData[1] = -offset.y * sY;
-				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 9, offsetData);
+				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 9, offsetData);*/
 				ctx.drawTriangles(indexBuffer, 0, 2);
 			}
 		

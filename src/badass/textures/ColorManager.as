@@ -17,7 +17,7 @@ package badass.textures {
 		
 		public static function getColor(value:uint):BadassTexture {
 			if (!_colors[value]) {
-				var bd:BitmapData = new BitmapData(1, 1, false, value);
+				var bd:BitmapData = new BitmapData(2, 2, false, value);
 				var texture:BadassTexture = _context.renderer.createTexture(bd);
 				_colors[value] = texture;				
 			}
