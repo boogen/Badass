@@ -67,6 +67,8 @@ package badass.engine {
 		private var matrixData:ByteArray;
 		public var bitmapScaleX:Number = 1.0;
 		public var bitmapScaleY:Number = 1.0;
+		private var scaleData:Vector.<Number> = new Vector.<Number>();
+		private var offsetData:Vector.<Number> = new Vector.<Number>();
 		
 		public var track:GPUMovieClipAnimationTrack;
 		
@@ -78,13 +80,15 @@ package badass.engine {
 		public var animationName:String;
 		
 		public var texture:BadassTexture;
-		private var _matrices:Vector.<ByteArray>;
+		public var _matrices:Vector.<ByteArray>;
 		private var _flatten:Boolean = false;
 		
 		private var position:Vector.<Number>;
 		private var colorVec:Vector.<Number>;
-		private var list:Vector.<GPUMovieClip>;
+		public var list:Vector.<GPUMovieClip>;
 		public var baseTexture:BadassTexture;
+		
+		public var offset:Point = new Point(0, 0);
 		
 		private var _animationSpeed:Number = 1;
 		
@@ -93,6 +97,8 @@ package badass.engine {
 			position.push(0, 0, 0, 0);
 			colorVec = new Vector.<Number>();
 			colorVec.push(0.3, 0.3, 0.3, 1.0);
+			offsetData.push(0, 0, 0, 0);
+			scaleData.push(1, 1, 1, 1);
 		}
 		
 		public function play():void {
@@ -296,7 +302,6 @@ package badass.engine {
 			addToList(list);
 		}
 		
-		
 		private function addToList(list:Vector.<GPUMovieClip>):void {
 			if (texture) {
 				list.push(this);
@@ -427,18 +432,27 @@ package badass.engine {
 				ctx.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, colorVec);
 				
 				for (var i:int = 0; i < list.length; ++i) {
-					list[i].drawChild(ctx);
+					list[i].drawChild(ctx, sX, sY);
 				}
 			}
 		}
 		
-		public function drawChild(ctx:Context3D):void {
-			if (texture) {
+		public function setScale(sx:Number, sy:Number):void {
+			scaleData[0] = sx;
+			scaleData[1] = sy;			
+		}
+		
+		public function drawChild(ctx:Context3D, sX:Number, sY:Number):void {
+			if (texture && _matrices) {
 				matrixData = _matrices[currentFrame % _matrices.length];
 				_lastRenderedFrame = _currentFrame;
 				
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
 				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 6, 1, uvs, 0);
+				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 8, scaleData);
+				offsetData[0] = -offset.x * sX;
+				offsetData[1] = -offset.y * sY;
+				ctx.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 9, offsetData);
 				ctx.drawTriangles(indexBuffer, 0, 2);
 			}
 		

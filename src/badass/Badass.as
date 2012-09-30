@@ -233,7 +233,7 @@ package badass {
 			_touchProcessor.enqueue(touchID, phase, globalX / _scaleX, globalY / _scaleY);
 		}
 		
-		private function onEnterFrame(e:Object):void {
+		private function onEnterFrame(e:Object):void {		
 			tick();
 			if (mainLoop != null) {
 				mainLoop();
