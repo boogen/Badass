@@ -270,7 +270,7 @@ package badass.engine {
 																		  "m44 op, vt0, vc0"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, nearest, nomip>"]).join("\n"));
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));
 			
 			_movieClipShaderProgram = _context3D.createProgram();
 			_movieClipShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -295,7 +295,7 @@ package badass.engine {
 																		  "m44 op, vt0, vc0"]).join("\n"));
 
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex ft0, v0, fs0 <2d, norepeat, nearest, nomip>", "mov ft1, ft0", "mul ft1, ft0, fc0", "mov oc, ft1"]).join("\n"));
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex ft0, v0, fs0 <2d, norepeat, linear, nomip>", "mov ft1, ft0", "mul ft1, ft0, fc0", "mov oc, ft1"]).join("\n"));
 			
 			_movieClipColorShaderProgram = _context3D.createProgram();
 			_movieClipColorShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
