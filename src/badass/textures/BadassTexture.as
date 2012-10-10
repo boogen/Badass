@@ -25,7 +25,7 @@ package badass.textures {
 		public function BadassTexture(context:Context3D, bd:BitmapData) {
 			var bitmapData:BitmapData;
 			if (size != 1.0) {
-				var bitmapData:BitmapData = new BitmapData(Math.max(Math.floor(bd.width * size), 1), Math.max(Math.floor(bd.height * size), 1), true, 0);
+				bitmapData = new BitmapData(Math.max(Math.floor(bd.width * size), 1), Math.max(Math.floor(bd.height * size), 1), true, 0);
 				if (!_matrix) {
 					_matrix = new Matrix(size, 0, 0, size);
 				}
