@@ -79,7 +79,7 @@ package badass.textures {
 		
 		public function dispose():void {
 			_nativeTexture.dispose();
-			memory -= _textureWidth * _textureHeight * size * size;
+			memory -= _textureWidth * _textureHeight * 4 * size * size;
 		}
 	}
 
