@@ -32,7 +32,7 @@ package badass.engine {
 		
 		private var _blendType:String;
 		
-		protected var _program:Program3D;
+		protected var _program:Program3D;		
 		
 		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null) {
 			super();
@@ -59,6 +59,9 @@ package badass.engine {
 			}		
 		}
 		
+		public function turnOffMask():void {		
+		}
+
 		public function draw(renderer:Renderer):void {
 			if (!visible) {
 				return;

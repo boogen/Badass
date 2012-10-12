@@ -1,4 +1,5 @@
 package badass.engine {
+	import badass.Mask;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
@@ -26,6 +27,8 @@ package badass.engine {
 		protected var _r:Number;
 		protected var _g:Number;
 		protected var _b:Number;
+		
+		private var _mask:Mask;
 		
 		public function DisplayObject() {
 			
@@ -255,10 +258,21 @@ package badass.engine {
 		public function writeToByteArray(ba:ByteArray):void {
 		}
 		
+		public function setMask(mask:Rectangle):void {		
+			_mask = new Mask(mask.width, mask.height, 0xff00ff);
+			_mask.x = mask.left;
+			_mask.y = mask.top;
+			_mask.alpha = 0.001;
+			addChildAt(_mask, 0);			
+		}
+		
 		public function render(layer:badass.engine.Layer):void {
 			if (visible && _alpha > 0) {
 				for (var i:int = 0; i < _children.length; ++i) {
 					_children[i].render(layer);
+				}
+				if (_mask) {
+					layer.turnOffMask();
 				}
 			}
 		}

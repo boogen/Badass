@@ -47,11 +47,13 @@ package badass.engine {
 		private var _colorVector:Vector.<Number>;
 		private var _currentProgram:Program3D;
 		
+		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
 			_stageWidth = _viewportWidth;
 			_stageHeight = _viewportHeight;
 			_colorVector = new Vector.<Number>();
+			
 		}
 		
 		public function getContext3D():Context3D {
@@ -151,7 +153,7 @@ package badass.engine {
 			var stage3D:Stage3D = e.target as Stage3D;
 			_context3D = stage3D.context3D;
 			_context3D.enableErrorChecking = false;
-
+			_context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			continueInit();
 		
 		}
@@ -164,7 +166,7 @@ package badass.engine {
 			_viewportWidth = width;
 			_viewportHeight = height;
 			if (_context3D) {
-				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, false);
+				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, true);				
 				_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
 			}
 		}
@@ -303,9 +305,26 @@ package badass.engine {
 		
 		public function beginFrame():void {
 			if (_ready) {
-				_context3D.clear(r, g, b);
+				_context3D.clear(r, g, b);				
 			}
 		
+		}
+		
+		public function setMask():void {
+			_context3D.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
+			_context3D.setStencilReferenceValue(1);
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.SET);			
+		}
+		
+		public function endMask():void {
+			_context3D.setStencilReferenceValue(1);
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.ZERO);	
+		}
+		
+		public function turnOffMask():void {			
+			_context3D.setStencilReferenceValue(1);
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);	
+			_context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
 		}
 		
 		public function endFrame():void {
