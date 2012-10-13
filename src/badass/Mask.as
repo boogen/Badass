@@ -1,4 +1,5 @@
 package badass {
+	import badass.engine.DisplayObject;
 	import badass.engine.Quad;
 	/**
 	 * ...
@@ -7,7 +8,7 @@ package badass {
 	public class Mask extends Quad {
 		
 		public function Mask(w:int, h:int, c:uint) {		
-			super(w, h, c);
+			super(w, h, 0xffffffff);
 		}
 		
 	}

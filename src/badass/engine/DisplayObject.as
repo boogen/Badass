@@ -259,10 +259,13 @@ package badass.engine {
 		}
 		
 		public function setMask(mask:Rectangle):void {		
-			_mask = new Mask(mask.width, mask.height, 0xff00ff);
+			if (_mask && _mask.parent) {
+				removeChild(_mask);
+			}
+			_mask = new Mask(mask.width, mask.height, 0x0);	
+			_mask.touchable = false;
 			_mask.x = mask.left;
-			_mask.y = mask.top;
-			_mask.alpha = 0.001;
+			_mask.y = mask.top;			
 			addChildAt(_mask, 0);			
 		}
 		
@@ -271,7 +274,7 @@ package badass.engine {
 				for (var i:int = 0; i < _children.length; ++i) {
 					_children[i].render(layer);
 				}
-				if (_mask) {
+				if (_mask && _mask.parent) {
 					layer.turnOffMask();
 				}
 			}

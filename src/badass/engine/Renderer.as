@@ -305,26 +305,29 @@ package badass.engine {
 		
 		public function beginFrame():void {
 			if (_ready) {
-				_context3D.clear(r, g, b);				
+				_context3D.clear(r, g, b);
 			}
 		
 		}
 		
 		public function setMask():void {
-			_context3D.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 			_context3D.setStencilReferenceValue(1);
-			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.SET);			
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.INCREMENT_SATURATE, Context3DStencilAction.KEEP, Context3DStencilAction.ZERO);			
 		}
 		
-		public function endMask():void {
+		public function clearMask():void {
 			_context3D.setStencilReferenceValue(1);
-			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.ZERO);	
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.DECREMENT_SATURATE, Context3DStencilAction.KEEP, Context3DStencilAction.ZERO);			
+		}		
+		
+		public function endMask(value:int):void {
+			_context3D.setStencilReferenceValue(value);
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);	
 		}
 		
 		public function turnOffMask():void {			
 			_context3D.setStencilReferenceValue(1);
 			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);	
-			_context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
 		}
 		
 		public function endFrame():void {
