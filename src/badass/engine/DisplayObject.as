@@ -18,7 +18,7 @@ package badass.engine {
 		private var _visible:Boolean;
 		private var _touchable:Boolean;
 		
-		public var rotation:Number;
+		protected var _rotation:Number;
 		
 		protected var _frame:Frame;
 		private var _index:int;
@@ -44,10 +44,18 @@ package badass.engine {
 			_touchable = true;
 			_children = new Vector.<DisplayObject>();
 			
-			rotation = 0.0;
+			_rotation = 0.0;
 			_r = 0.3;
 			_g = 0.3;
 			_b = 0.3;
+		}
+		
+		public function set rotation(value:Number):void {		
+			_rotation = value;
+		}
+		
+		public function get rotation():Number {
+			return _rotation;
 		}
 		
 		public function get renderIndex():int {

@@ -144,9 +144,9 @@ package badass.engine {
 				
 				var s:Number;
 				var c:Number;
-				if (rotation != 0) {
-					s = Math.sin(rotation);
-					c = Math.cos(rotation);
+				if (_rotation != 0) {
+					s = Math.sin(_rotation);
+					c = Math.cos(_rotation);
 				} else {
 					s = 0;
 					c = 1;

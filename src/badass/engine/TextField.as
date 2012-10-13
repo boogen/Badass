@@ -1,5 +1,6 @@
 package badass.engine {
 	import flash.events.Event;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
@@ -21,6 +22,9 @@ package badass.engine {
 		private var _offsetsX:Vector.<Number>;
 		private var _offsetsY:Vector.<Number>;
 		private var _breaks:Vector.<int>;
+		
+		private var _positions:Dictionary = new Dictionary(true);
+		private var _sizes:Dictionary = new Dictionary(true);
 		
 		public var breaks:Boolean = true;
 		
@@ -179,6 +183,8 @@ package badass.engine {
 		}
 		
 		private function createLetters():void {
+			_positions = new Dictionary(true);
+			_sizes = new Dictionary(true);
 			var i:int;
 			for (i = 0; i < _letters.length; ++i) {
 				for (var j:int = 0; j < _letters[i].length; ++j) {
@@ -258,6 +264,8 @@ package badass.engine {
 					s.setTexture(frame);
 					s.x = dx + ch.xOff;
 					s.y = dy + ch.yOff;
+					_positions[s] = new Point(s.x + ch.srcW / 2, s.y + ch.srcH / 2);
+					_sizes[s] = new Point(ch.srcW, ch.srcH);
 					
 					_letters[row].push(s);
 					s.setColor(_r, _g, _b);
@@ -278,6 +286,21 @@ package badass.engine {
 				
 			}
 		
+		}
+		
+		
+		override public function set rotation(value:Number):void {
+			super.rotation = value;
+			
+			for (var i:int = 0; i < _letters.length; ++i) {
+				for (var j:int = 0; j < _letters[i].length; ++j) {
+					var letter:Sprite = _letters[i][j];
+					letter.rotation = value;
+					letter.x = _containerWidth / 2 + (_positions[letter].x -  _containerWidth / 2) * Math.cos(-value) - (_positions[letter].y - _containerHeight / 2) * Math.sin(-value) - _sizes[letter].x / 2;
+					letter.y = _containerHeight / 2 + (_positions[letter].x -  _containerWidth / 2) * Math.sin(-value) + (_positions[letter].y - _containerHeight / 2) * Math.cos(-value) - _sizes[letter].y / 2 ;
+					
+				}
+			}
 		}
 		
 		public function set hAlign(v:String):void {

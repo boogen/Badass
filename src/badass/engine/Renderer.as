@@ -27,6 +27,7 @@ package badass.engine {
 		private var _projectionMatrix:Matrix3D;
 		
 		private var _shaderProgram:Program3D;
+		private var _linearShader:Program3D;
 		private var _colorShaderProgram:Program3D;
 		private var _movieClipShaderProgram:Program3D;
 		private var _movieClipColorShaderProgram:Program3D;
@@ -101,6 +102,10 @@ package badass.engine {
 		public function getStandardProgram():Program3D {
 			return _shaderProgram;
 		}
+		
+		public function getLinearProgram():Program3D {
+			return _linearShader;
+		}		
 		
 		public function getColorProgram():Program3D {
 			return _colorShaderProgram;
@@ -222,6 +227,7 @@ package badass.engine {
 		
 		private function initShaders():void {
 			initStandardShader();
+			initLinearShader();
 			initColorShader();
 			initGPUMovieClipShader();
 			initGPUMovieClipColorShader();
@@ -239,6 +245,19 @@ package badass.engine {
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
 		}
+		
+		private function initLinearShader():void {
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "m44 op, va0, vc0\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
+			
+			_linearShader = _context3D.createProgram();
+			_linearShader.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
+		}		
 		
 		private function initColorShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();

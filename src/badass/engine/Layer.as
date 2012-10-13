@@ -52,6 +52,10 @@ package badass.engine {
 			_program = _renderer.getStandardProgram();
 		}
 		
+		public function setLinearMode():void {		
+			_program = _renderer.getLinearProgram();
+		}
+		
 		protected function drawChildren():void {
 			var i:int;
 			for (i = _children.length - 1; i >= 0; --i) {
