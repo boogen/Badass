@@ -23,13 +23,18 @@ package badass.textures {
 		public static var memory:int;
 		private static var _matrices:Dictionary = new Dictionary();
 		
-		public function BadassTexture(context:Context3D, bd:BitmapData) {
-			var bitmapData:BitmapData;
+		public function BadassTexture(context:Context3D, bd:BitmapData, scaleEnabled:Boolean = true) {
+			var bitmapData:BitmapData;			
+					
 			var xScale:Number = size;
 			var yScale:Number = size;	
+			if (!scaleEnabled) {
+				xScale = 1;
+				yScale = 1;
+			}
 			
 			if (size != 1.0) {
-				bitmapData = new BitmapData(Math.max(Math.floor(bd.width * size), 1), Math.max(Math.floor(bd.height * size), 1), true, 0);
+				bitmapData = new BitmapData(Math.max(Math.floor(bd.width * xScale), 1), Math.max(Math.floor(bd.height * yScale), 1), true, 0);
 
 				if (bd.width == bitmapData.width) {
 					xScale = 1;

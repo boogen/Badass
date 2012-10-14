@@ -17,7 +17,7 @@ package badass.engine {
 		override protected function onSpriteSheetLoaded(e:Event):void {
 			var bitmapData:BitmapData = (e.target.content as Bitmap).bitmapData;
 		
-			texture = _context.renderer.createTexture(bitmapData);
+			texture = _context.renderer.createTexture(bitmapData, false);
 
 			var xmlLoader:URLLoader = new URLLoader();
 			xmlLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);

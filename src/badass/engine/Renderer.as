@@ -73,8 +73,8 @@ package badass.engine {
 			_context3D.setTextureAt(0, texture.nativeTexture);
 		}
 		
-		public function createTexture(bitmapData:BitmapData):BadassTexture {
-			return new BadassTexture(_context3D, bitmapData);
+		public function createTexture(bitmapData:BitmapData, scaleEnabled:Boolean = true):BadassTexture {
+			return new BadassTexture(_context3D, bitmapData, scaleEnabled);
 		}
 		
 		public function set color(value:int):void {
