@@ -73,25 +73,22 @@ package badass.engine {
 				if (_maskEnds[i]) {
 					_maskEnds[i] = false;
 					var index:int = _masks.pop();
-					_renderer.clearMask();
-					_context3D.drawTriangles(_indexBuffer, index, 2);									
-					_renderer.endMask(_masks.length);					
+					_renderer.endMask(_masks.length);
 				}
 				if (_displayList[i].length) {
 					var d:DisplayObject = _displayList[i][0];
 					var texture:Texture = d.frame.texture.nativeTexture;
+					_context3D.setTextureAt(0, texture);
 					
 					if (d is Mask) {		
 						_masks.push(count);					
-						_renderer.setMask();
-						_context3D.drawTriangles(_indexBuffer, count, 2);					
-					
+						_renderer.setMask(_masks.length - 1);			
+						_context3D.drawTriangles(_indexBuffer, count, 2);										
 						_renderer.endMask(_masks.length);
 						
 						count += 6;					
 					}				
-					else {
-						_context3D.setTextureAt(0, texture);
+					else {											
 						_context3D.drawTriangles(_indexBuffer, count, _displayList[i].length * 2);
 						count += _displayList[i].length * 6;
 					}

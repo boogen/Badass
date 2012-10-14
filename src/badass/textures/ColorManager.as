@@ -10,6 +10,7 @@ package badass.textures {
 	public class ColorManager {
 		private static var _colors:Dictionary = new Dictionary();
 		private static var _context:badass.engine.Context;
+		private static var _mask:BadassTexture;
 		
 		public static function init(context:badass.engine.Context):void {
 			_context = context;
@@ -23,6 +24,15 @@ package badass.textures {
 			}
 			
 			return _colors[value];
+		}
+		
+		public static function getMask():BadassTexture {		
+			if (!_mask) {
+				var bd:BitmapData = new BitmapData(2, 2, true, 0);
+				_mask = _context.renderer.createTexture(bd);			
+			}
+			
+			return _mask;
 		}
 	}
 
