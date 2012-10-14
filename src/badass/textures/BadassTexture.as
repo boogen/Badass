@@ -5,6 +5,7 @@ package badass.textures {
 	import flash.display3D.textures.Texture;
 	import badass.engine.Utils;
 	import flash.geom.Matrix;
+	import flash.utils.Dictionary;
 	
 	/**
 	 * ...
@@ -20,16 +21,29 @@ package badass.textures {
 		
 		public static var size:Number = 1.0;
 		public static var memory:int;
-		private static var _matrix:Matrix
+		private static var _matrices:Dictionary = new Dictionary();
 		
 		public function BadassTexture(context:Context3D, bd:BitmapData) {
 			var bitmapData:BitmapData;
+			var xScale:Number = size;
+			var yScale:Number = size;	
+			
 			if (size != 1.0) {
 				bitmapData = new BitmapData(Math.max(Math.floor(bd.width * size), 1), Math.max(Math.floor(bd.height * size), 1), true, 0);
-				if (!_matrix) {
-					_matrix = new Matrix(size, 0, 0, size);
+
+				if (bd.width == bitmapData.width) {
+					xScale = 1;
 				}
-				bitmapData.draw(bd, _matrix);
+				if (bd.height == bitmapData.height) {
+					yScale = 1;
+				}
+				if (!_matrices[xScale]) {
+					_matrices[xScale] = new Dictionary();
+				}
+				if (!_matrices[xScale][yScale]) {
+					_matrices[xScale][yScale] = new Matrix(xScale, 0, 0, yScale);
+				}
+				bitmapData.draw(bd, _matrices[xScale][yScale]);
 				bd.dispose();
 			}
 			else {
@@ -45,10 +59,10 @@ package badass.textures {
 			_nativeTexture.uploadFromBitmapData(bitmapData);
 			bitmapData.dispose();
 			memory += _textureWidth * _textureHeight * 4;
-			_textureWidth /= size;
-			_textureHeight /= size;
-			_width /= size;
-			_height /= size;
+			_textureWidth /= xScale;
+			_textureHeight /= yScale;
+			_width /= xScale;
+			_height /= yScale;
 		}
 		
 		
