@@ -33,6 +33,7 @@ package badass.engine {
 		private var _blendType:String;
 		
 		protected var _program:Program3D;		
+		private var _hitTest:Function
 		
 		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null) {
 			super();
@@ -42,6 +43,18 @@ package badass.engine {
 			_drawCalls = new Array();
 			_renderer = renderer;
 			setStandardMode();
+		}
+		
+		override public function hitTest(pX:Number, pY:Number, onlyHighlighted:Boolean = false):DisplayObject {		
+			if (_hitTest) {
+				return _hitTest(pX, pY, onlyHighlighted);
+			}
+			
+			return super.hitTest(pX, pY, onlyHighlighted);
+		}
+		
+		public function setHitTest(value:Function):void {		
+			_hitTest = value;
 		}
 		
 		public function setTutorialMode():void {
