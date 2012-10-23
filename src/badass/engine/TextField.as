@@ -8,12 +8,12 @@ package badass.engine {
 	
 	public class TextField extends DisplayObject {
 		private var _text:String;
-		private var _font:FontLoader;
+		protected var _font:FontLoader;
 		private var _letters:Vector.<Vector.<Sprite>>;
 		private var _hAlign:String = HAlign.CENTER;
 		private var _vAlign:String = VAlign.TOP;
 		
-		private var _fontStyle:String;
+		protected var _fontStyle:String;
 		private var _fontSize:int;
 		private var _containerWidth:int;
 		private var _containerHeight:int;
@@ -25,32 +25,18 @@ package badass.engine {
 		
 		private var _positions:Dictionary = new Dictionary(true);
 		private var _sizes:Dictionary = new Dictionary(true);
+		protected var _format:String;
 		
 		public var breaks:Boolean = true;
 		
-		public function TextField(w:int, h:int, text:String, f:String = "verdanaSmall", fontSize:Number = 12, color:uint = 0xffffffff, bold:Boolean = false, xmlFont:Boolean = false) {
-			//_text = text;
+		public function TextField(w:int, h:int, text:String, f:String, format:String = "XML_FORMAT") {
 			_fontSize = fontSize;
+			_format = format;
 			_letters = new Vector.<Vector.<Sprite>>();
 			_offsetsX = new Vector.<Number>();
 			_offsetsY = new Vector.<Number>();
 			_breaks = new Vector.<int>();
-			//_containerWidth = w;
-			//_containerHeight = h;
-			/*_fontStyle = f;
-			   var font:FontLoader;
-			   if (xmlFont) {
-			   font = FontManager.getXmlFont(f);
-			   } else {
-			   font = FontManager.getFont(f);
-			 }*/
-			reset(w, h, f, text);
-		/*if (font.loaded) {
-		   _font = font;
-		   createLetters();
-		   } else {
-		   font.addEventListener(flash.events.Event.COMPLETE, onFontLoaded);
-		 }*/
+			reset(w, h, f, text, format);
 		}
 		
 		override public function setColor(r:Number, g:Number, b:Number):void {
@@ -64,7 +50,7 @@ package badass.engine {
 		}
 		
 		public function setWidth(w:Number):void {
-			reset(w, _containerHeight, _fontStyle, _text);
+			reset(w, _containerHeight, _fontStyle, _text, _format);
 		}
 		
 		override public function set x(value:Number):void {
@@ -123,7 +109,7 @@ package badass.engine {
 				
 				if (firstCharDesc) {
 					value +=  firstCharDesc.xOff;
-				} 
+				}
 				
 				if (lastCharDesc) {
 					value += lastCharDesc.srcW;;
@@ -141,7 +127,7 @@ package badass.engine {
 			return _fontSize;
 		}
 		
-		public function reset(w:int, h:int, fontStyle:String, text:String):void {
+		public function reset(w:int, h:int, fontStyle:String, text:String, format:String = "XML_FORMAT"):void {
 			
 			_containerWidth = w;
 			_containerHeight = h;
@@ -151,12 +137,7 @@ package badass.engine {
 			if (_fontStyle != fontStyle) {
 				_fontStyle = fontStyle;
 				_font = null;
-				var font:FontLoader;
-				if (_fontStyle != "verdanaSmall") {
-					font = FontManager.getXmlFont(fontStyle);
-				} else {
-					font = FontManager.getFont(fontStyle);
-				}
+				var font:FontLoader = FontManager.getFont(fontStyle, format);
 				if (font.loaded) {
 					_font = font;
 					createLetters();
@@ -179,10 +160,10 @@ package badass.engine {
 		}
 		
 		public function set text(value:String):void {
-			reset(_containerWidth, _containerHeight, _fontStyle, value);
+			reset(_containerWidth, _containerHeight, _fontStyle, value, _format);
 		}
 		
-		private function createLetters():void {
+		protected function createLetters():void {
 			_positions = new Dictionary(true);
 			_sizes = new Dictionary(true);
 			var i:int;
@@ -258,10 +239,11 @@ package badass.engine {
 					var a:Number = ch.xAdv;
 					var w:Number = ch.srcW;
 					
-					var s:Sprite = new Sprite();
-					var frame:Frame = new Frame(_font.texture);
-					frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
-					s.setTexture(frame);
+					//var s:Sprite = new Sprite();
+					//var frame:Frame = new Frame(_font.texture);
+					//frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
+					//s.setTexture(frame);
+					var s:Sprite = getCharSprite(charid);
 					s.x = dx + ch.xOff;
 					s.y = dy + ch.yOff;
 					_positions[s] = new Point(s.x + ch.srcW / 2, s.y + ch.srcH / 2);
@@ -288,6 +270,14 @@ package badass.engine {
 		
 		}
 		
+		protected function getCharSprite(c:int):Sprite {
+			var ch:CharDescr = _font.getChar(c);
+			var s:Sprite = new Sprite();
+			var frame:Frame = new Frame(_font.texture);
+			frame.setRegion(new Rectangle(ch.srcX, ch.srcY, ch.srcW, ch.srcH));
+			s.setTexture(frame);
+			return s;
+		}
 		
 		override public function set rotation(value:Number):void {
 			super.rotation = value;
@@ -309,15 +299,15 @@ package badass.engine {
 				for (var i:int = 0; i < _letters.length; ++i) {
 					var offsetX:int = 0;
 					switch (v) {
-						case HAlign.CENTER: 
+						case HAlign.CENTER:
 							if (_font) {
 								offsetX = Math.floor((_containerWidth - getRowWidth(i)) * 0.5)
 							}
 							break;
-						case HAlign.LEFT: 
+						case HAlign.LEFT:
 							offsetX = 0;
 							break;
-						case HAlign.RIGHT: 
+						case HAlign.RIGHT:
 							offsetX = _containerWidth - getRowWidth(i);
 							break;
 					}
@@ -335,15 +325,15 @@ package badass.engine {
 				for (var i:int = 0; i < _letters.length; ++i) {
 					var offsetY:int = 0;
 					switch (v) {
-						case VAlign.CENTER: 
+						case VAlign.CENTER:
 							if (_font) {
 								offsetY = (_containerHeight - (_font.font_height * _letters.length)) / 2;
 							}
 							break;
-						case VAlign.TOP: 
+						case VAlign.TOP:
 							offsetY = 0;
 							break;
-						case VAlign.BOTTOM: 
+						case VAlign.BOTTOM:
 							offsetY = _containerHeight - (_font.font_height * _letters.length);
 							break;
 					}
@@ -357,7 +347,7 @@ package badass.engine {
 		
 		private function onFontLoaded(e:flash.events.Event):void {
 			_font = e.target as FontLoader;
-			reset(_containerWidth, _containerHeight, _fontStyle, _text);
+			reset(_containerWidth, _containerHeight, _fontStyle, _text, _format);
 			dispatchEvent(new badass.events.Event(badass.events.Event.LOADED));
 		}
 	
