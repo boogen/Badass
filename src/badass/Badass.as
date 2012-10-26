@@ -104,9 +104,19 @@ package badass {
 				_stage.addEventListener(touchEventType, onTouch, false, 0, true);
 		}
 		
+		public function disableTick():void {
+			_stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			_stage.addEventListener(Event.ENTER_FRAME, onTick);
+		}
+		
+		public function enableTick():void {
+			_stage.removeEventListener(Event.ENTER_FRAME, onTick);
+			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
 		private function gentlemenStartYourEngines(e:badass.events.Event):void {
 			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
-			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			enableTick();
 		}
 		
 		public function getWorldMatrix():Matrix3D {
@@ -209,31 +219,35 @@ package badass {
 			
 			// figure out touch phase
 			switch (event.type) {
-				case TouchEvent.TOUCH_BEGIN: 
+				case TouchEvent.TOUCH_BEGIN:
 					phase = TouchPhase.BEGAN;
 					break;
-				case TouchEvent.TOUCH_MOVE: 
+				case TouchEvent.TOUCH_MOVE:
 					phase = TouchPhase.MOVED;
 					break;
-				case TouchEvent.TOUCH_END: 
+				case TouchEvent.TOUCH_END:
 					phase = TouchPhase.ENDED;
 					break;
-				case MouseEvent.MOUSE_DOWN: 
+				case MouseEvent.MOUSE_DOWN:
 					phase = TouchPhase.BEGAN;
 					break;
-				case MouseEvent.MOUSE_UP: 
+				case MouseEvent.MOUSE_UP:
 					phase = TouchPhase.ENDED;
 					break;
-				case MouseEvent.MOUSE_MOVE: 
+				case MouseEvent.MOUSE_MOVE:
 					phase = (_leftMouseDown ? TouchPhase.MOVED : TouchPhase.HOVER);
 					break;
 			}
 			
-			// enqueue touch in touch processor         
+			// enqueue touch in touch processor
 			_touchProcessor.enqueue(touchID, phase, globalX / _scaleX, globalY / _scaleY);
 		}
 		
-		private function onEnterFrame(e:Object):void {		
+		private function onTick(e:Object):void {
+			tick();
+		}
+		
+		private function onEnterFrame(e:Object):void {
 			tick();
 			if (mainLoop != null) {
 				mainLoop();
@@ -249,7 +263,7 @@ package badass {
 					fpsTf.text = "FPS: " + currentFps.toString();
 				}
 				if (memoryTf) {
-					memoryTf.text = (Math.round(System.totalMemory * 0.0000954) / 100) + " MB"; // 1 / (1024*1024) to convert to MB
+					memoryTf.text = (Math.round(System.privateMemory * 0.0000954) / 100) + " MB"; // 1 / (1024*1024) to convert to MB
 				}
 				
 				fps = currentFps;
