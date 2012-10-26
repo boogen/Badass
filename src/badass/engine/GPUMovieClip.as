@@ -64,7 +64,6 @@ package badass.engine {
 		private var _currentFrame:int = 0;
 		private var _lastFrame:int = 0;
 		
-		private var matrixData:ByteArray;
 		public var bitmapScaleX:Number = 1.0;
 		public var bitmapScaleY:Number = 1.0;
 		private var scaleData:Vector.<Number> = new Vector.<Number>();
@@ -80,7 +79,6 @@ package badass.engine {
 		public var animationName:String;
 		
 		public var texture:BadassTexture;
-		public var _matrices:Vector.<ByteArray>;
 		private var _flatten:Boolean = false;
 		
 		private var position:Vector.<Number>;
@@ -91,6 +89,9 @@ package badass.engine {
 		public var offset:Point = new Point(0, 0);
 		
 		private var _animationSpeed:Number = 1;
+		
+		public var byteArray:ByteArray;
+		public var byteArrayOffsets:Vector.<int>;
 		
 		public function GPUMovieClip() {
 			position = new Vector.<Number>();
@@ -276,14 +277,9 @@ package badass.engine {
 		
 		}
 		
-		public function createData():void {
-			matrixData = new ByteArray();
-			matrixData.endian = Endian.LITTLE_ENDIAN;
-		}
 		
 		public function createGPUData():void {
 			
-			createData();
 			
 			for each (var ch:GPUMovieClip in children) {
 				ch.createGPUData();
@@ -291,16 +287,6 @@ package badass.engine {
 		
 		}
 		
-		public function flatten():void {
-			for (var i:int = 0; i < framesChildren.length; ++i) {
-				var m:Matrix = new Matrix();
-				m.identity();
-				flatFrame(i, m);
-			}
-			
-			list = new Vector.<GPUMovieClip>();
-			addToList(list);
-		}
 		
 		private function addToList(list:Vector.<GPUMovieClip>):void {
 			if (texture) {
@@ -312,45 +298,6 @@ package badass.engine {
 			}
 		}
 		
-		private function flatFrame(index:int, m:Matrix):void {
-			_flatten = true;
-			if (texture) {
-				if (!_matrices) {
-					_matrices = new Vector.<ByteArray>();
-				}
-				
-				for (var i:int = _matrices.length; i < index + 1; ++i) {
-					_matrices.push(null);
-				}
-				
-				var ba:ByteArray = new ByteArray();
-				ba.endian = Endian.LITTLE_ENDIAN;
-				ba.position = 0;
-				ba.writeFloat(m.a);
-				ba.writeFloat(m.c);
-				ba.writeFloat(0);
-				ba.writeFloat(m.tx);
-				
-				ba.writeFloat(m.b);
-				ba.writeFloat(m.d);
-				ba.writeFloat(0);
-				ba.writeFloat(m.ty);
-				
-				_matrices[index] = ba;
-			}
-			
-			for each (var ch:GPUMovieClip in framesChildren[0]) {
-				
-				var childMatrix:Matrix = new Matrix();
-				childMatrix.identity();
-				childMatrix.scale(ch.bitmapScaleX, ch.bitmapScaleY);
-				childMatrix.concat(tracks[ch.name].matrix[index % tracks[ch.name].matrix.length])
-				childMatrix.concat(m);
-				
-				ch.flatFrame(index, childMatrix);
-				
-			}
-		}
 		
 		public function setFrame(f:int):void {
 			currentFrame = f;
@@ -368,9 +315,9 @@ package badass.engine {
 			_d += (value - _lastFrame);
 			_lastFrame = value;
 			
-			if (_matrices && _matrices.length) {
+			if (byteArrayOffsets && byteArrayOffsets.length) {
 				
-				_currentFrame = (_lastRenderedFrame + Math.floor(_d / _animationSpeed)) % _matrices.length;
+				_currentFrame = (_lastRenderedFrame + Math.floor(_d / _animationSpeed)) % byteArrayOffsets.length;
 				_d -= Math.floor(_d / _animationSpeed) * _animationSpeed;
 			} else {
 				_currentFrame = value;
@@ -445,11 +392,10 @@ package badass.engine {
 		}
 		
 		public function drawChild(ctx:Context3D, sX:Number, sY:Number):void {
-			if (texture && _matrices) {
-				matrixData = _matrices[currentFrame % _matrices.length];
+			if (texture && byteArrayOffsets) {				
 				_lastRenderedFrame = _currentFrame;
 				
-				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, matrixData, 0);
+				ctx.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 4, 2, byteArray, byteArrayOffsets[currentFrame % byteArrayOffsets.length]);
 				uvs.position = 32
 				uvs.writeFloat( -offset.x * sX);
 				uvs.writeFloat( -offset.y * sY);
