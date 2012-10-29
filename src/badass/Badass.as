@@ -105,12 +105,14 @@ package badass {
 		}
 		
 		public function disableTick():void {
+			_stage.removeEventListener(Event.ENTER_FRAME, onTick);
 			_stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			_stage.addEventListener(Event.ENTER_FRAME, onTick);
 		}
 		
 		public function enableTick():void {
 			_stage.removeEventListener(Event.ENTER_FRAME, onTick);
+			_stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			_stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
