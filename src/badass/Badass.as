@@ -31,6 +31,7 @@ package badass {
 	import flash.ui.Mouse;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
+	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	import badass.tweens.Tween;
 	import badass.tweens.Tweener;
@@ -188,6 +189,10 @@ package badass {
 		public function createTexture(bitmapData:BitmapData):BadassTexture {
 			return _context.renderer.createTexture(bitmapData);
 		}
+		
+		public function createCompressedTexture(ba:ByteArray):BadassTexture {
+			return _context.renderer.createCompressedTexture(ba);
+		}		
 		
 		public function getContext3D():Context3D {
 			return _context.renderer.getContext3D();

@@ -74,8 +74,12 @@ package badass.engine {
 		}
 		
 		public function createTexture(bitmapData:BitmapData, scaleEnabled:Boolean = true):BadassTexture {
-			return new BadassTexture(_context3D, bitmapData, scaleEnabled);
+			return new BadassTexture(_context3D, bitmapData, null, scaleEnabled);
 		}
+		
+		public function createCompressedTexture(ba:ByteArray, scaleEnabled:Boolean = true):BadassTexture {
+			return new BadassTexture(_context3D, null, ba, scaleEnabled);
+		}		
 		
 		public function set color(value:int):void {
 			b = (value % 256) / 255.0;
@@ -157,7 +161,7 @@ package badass.engine {
 		private function onContext3DCreated(e:Object):void {
 			var stage3D:Stage3D = e.target as Stage3D;
 			_context3D = stage3D.context3D;
-			_context3D.enableErrorChecking = false;
+			_context3D.enableErrorChecking = true;
 			_context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			continueInit();
 		
@@ -242,7 +246,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, dxt5, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1.w, v2.x, ft0.w\n" + "mov oc, ft1\n");
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -255,7 +259,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, dxt5, norepeat, linear, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
 			
 			_linearShader = _context3D.createProgram();
 			_linearShader.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -268,7 +272,7 @@ package badass.engine {
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, norepeat, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex ft0, v1, fs0 <2d, dxt5, norepeat, nearest, nomip>;\n" + "mov ft1, ft0\n" + "mul ft1, v2.yzwx, ft0\n" + "mov oc, ft1\n");
 			
 			_colorShaderProgram = _context3D.createProgram();
 			_colorShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
