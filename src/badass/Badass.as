@@ -188,8 +188,8 @@ package badass {
 			return Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
 		}
 		
-		public function createTexture(bitmapData:BitmapData):BadassTexture {
-			return _context.renderer.createTexture(bitmapData);
+		public function createTexture(bitmapData:BitmapData, scaleEnabled:Boolean = true):BadassTexture {
+			return _context.renderer.createTexture(bitmapData, scaleEnabled);
 		}
 		
 		public function createCompressedTexture(ba:ByteArray):BadassTexture {
