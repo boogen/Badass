@@ -333,7 +333,7 @@ package badass.engine {
 		}
 		
 		public function removeChildAt(i:int):void {
-			if (index < _children.length) {
+			if (i < _children.length) {
 				_children.splice(i, 1);
 			}
 		}
