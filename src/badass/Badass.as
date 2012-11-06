@@ -4,8 +4,10 @@ package badass {
 	import badass.engine.EventDispatcher;
 	import badass.engine.FontManager;
 	import badass.engine.GPUMovieClipLayer;
+	import badass.engine.HAlign;
 	import badass.engine.MovieClip;
 	import badass.engine.Layer;
+	import badass.engine.Quad;
 	import badass.engine.Sprite;
 	import badass.engine.TextField;
 	import badass.events.ResizeEvent;
@@ -13,6 +15,7 @@ package badass {
 	import badass.events.TouchProcessor;
 	import badass.textures.BadassTexture;
 	import badass.textures.ColorManager;
+	import badass.types.BlendType;
 	import badass.types.LayerType;
 	import flash.display.BitmapData;
 	import flash.display.StageAlign;
@@ -56,6 +59,11 @@ package badass {
 		private var _scaleX:Number = 1.0;
 		private var _scaleY:Number = 1.0;
 		public var fps:int = 30;
+		private var _profiler:Boolean;
+		private var _profilerLayer:Layer;
+		private var _fps:TextField;
+		private var _memory:TextField;
+		private var _quad:Quad;
 		
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
@@ -78,6 +86,39 @@ package badass {
 			_context.renderer.addEventListener(badass.events.Event.COMPLETE, gentlemenStartYourEngines);
 			_context.renderer.init(stage);
 		}
+		
+		public function get profiler():Boolean {		
+			return _profiler;
+		}
+		
+		public function set profiler(value:Boolean):void {
+			_profiler = value;
+			
+			if (_profiler) {
+				if (!_quad) {
+					_quad = new Quad(80, 50, 0);
+					_quad.alpha = 0.3;
+					_fps = new TextField(100, 30, "fps", "system_white");
+					_fps.hAlign = HAlign.LEFT;
+					_quad.addChild(_fps);
+					
+					_memory = new TextField(100, 30, "mem", "system_white");
+					_memory.hAlign = HAlign.LEFT;
+					_memory.y = 20;
+					_quad.addChild(_memory);
+				}
+				
+				_profilerLayer = getLayer(LayerType.FAST, BlendType.ONE_MINUS_SOURCE_ALPHA);
+				_profilerLayer.addChild(_quad);
+				
+			}
+			else {
+				if (_quad && _quad.parent) {
+					_profilerLayer.removeChild(_quad);
+				}
+			}
+		}
+			
 		
 		public function setTutorialMode():void {
 			_touchProcessor.tutorialMode = true;
@@ -265,21 +306,7 @@ package badass {
 			var t:int = getTimer();
 			var dt:int = t - _lastTime;
 			_lastTime = t;
-			if (t > _time + 1000) {
-				if (fpsTf) {
-					fpsTf.text = "FPS: " + currentFps.toString();
-				}
-				if (memoryTf) {
-					memoryTf.text = (Math.round(System.privateMemory * 0.0000954) / 100) + " MB"; // 1 / (1024*1024) to convert to MB
-				}
-				
-				fps = currentFps;
-				currentFps = 0;
-				_time = t;
-			}
-			if (vram) {
-				vram.text = Math.floor(10 * BadassTexture.memory / (1024 * 1024)) / 10 + " MB";
-			}
+
 			
 			_touchProcessor.tick(dt);
 			_tweener.advanceTime(dt / 1000.0);
@@ -287,10 +314,25 @@ package badass {
 			
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].draw(_context.renderer);
-				
+			}
+			
+			if (_profilerLayer) {
+				_profilerLayer.draw(_context.renderer);
 			}
 			_context.renderer.endFrame();
 			currentFps++;
+			
+			if (t > _time + 1000) {
+				
+				if (_profiler) {
+					_fps.text = "fps " + currentFps.toString();		
+					_memory.text = "mem " + (Math.round(10 * System.privateMemory / (1024 * 1024)) / 10.0).toString();
+				}
+				
+				fps = currentFps;
+				currentFps = 0;
+				_time = t;				
+			}			
 		}
 	
 	}
