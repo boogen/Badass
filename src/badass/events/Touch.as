@@ -16,14 +16,18 @@ package badass.events {
 		private var _phase:String;
 		private var _target:DisplayObject;
 		private var _timestamp:Number;
+		public var free:Boolean = true;
 		
-		public function Touch(id:int, globalX:Number, globalY:Number, phase:String, target:DisplayObject) {
+		public function Touch() {
+		}
+		
+		public function reset(id:int, globalX:Number, globalY:Number, phase:String, target:DisplayObject):void {
 			_id = id;
 			_globalX = globalX;
 			_globalY = globalY;
 			_tapCount = 0;
 			_phase = phase;
-			_target = target;
+			_target = target;			
 		}
 		
 		public function getLocation():Point {
@@ -48,14 +52,8 @@ package badass.events {
 			return "Id=" + _id.toString() + ", globalX=" + _globalX.toString() + ", globalY=" + _globalY.toString() + ", phase=" + _phase.toString();
 		}
 		
-		public function clone():Touch {
-			var clone:Touch = new Touch(_id, _globalX, _globalY, _phase, _target);
-			clone._previousGlobalX = _previousGlobalX;
-			clone._previousGlobalY = _previousGlobalY;
-			clone._tapCount = _tapCount;
-			clone._timestamp = _timestamp;
-			
-			return clone;
+		public function clone(touch:Touch):void {
+			reset(touch.id, touch.globalX, touch.globalY, touch.phase, touch.target);
 		}
 		
 		public function get id():int {
