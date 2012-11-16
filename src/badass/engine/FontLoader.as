@@ -1,6 +1,7 @@
 package badass.engine {
 	import badass.textures.BadassTexture;
-	import com.cantstopgames.filereader.FileReader;
+	import com.cantstopgames.filereader.ImageLoader;
+	import com.cantstopgames.filereader.XmlLoader;
 	import flash.events.IOErrorEvent;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
@@ -48,13 +49,10 @@ package badass.engine {
 	}
 
 	private function loadSpriteSheet(name:String):void {
-		var byteArray:ByteArray = FileReader.loadFile(path + name + ".png");
-		
-	    var spritesheetLoader:Loader = new Loader();
-	    spritesheetLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
+		var spritesheetLoader:ImageLoader = new ImageLoader();		
+	    spritesheetLoader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
 		spritesheetLoader.addEventListener(IOErrorEvent.IO_ERROR, loadingIoError);
-	    //spritesheetLoader.load(new URLRequest(path + name + ".png"));
-		spritesheetLoader.loadBytes(byteArray);
+	    spritesheetLoader.load(path + name + ".png");
 	}
 	
 	private function loadingIoError(e:IOErrorEvent):void
@@ -66,16 +64,14 @@ package badass.engine {
 	    var bitmapData:BitmapData = (e.target.content as Bitmap).bitmapData;
 		
 		texture = _context.renderer.createTexture(bitmapData);
-
-		var byteArray:ByteArray = FileReader.loadFile(path + _name + ".fnt");
-		var s:String = byteArray.readMultiByte(byteArray.bytesAvailable,  "iso-8859-1");
-		onDescriptionLoaded(s);
-	    /*var fntLoader:URLLoader = new URLLoader();
+		
+	    var fntLoader:URLLoader = new URLLoader();
 	    fntLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
-	    fntLoader.load(new URLRequest(path + _name + ".fnt"));*/
+	    fntLoader.load(new URLRequest(path + _name + ".fnt"));
 	}
 
-	private function onDescriptionLoaded(data:String):void {
+	private function onDescriptionLoaded(e:Event):void {
+		var data:String = e.target.data;
 	    var lines:Array = data.split(/\n/);
 
 	    for (var i:int = 0; i < lines.length; ++i) {
