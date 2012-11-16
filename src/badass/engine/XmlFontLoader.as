@@ -23,6 +23,7 @@ package badass.engine {
 
 			var loader:XmlLoader = new XmlLoader();
 			loader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
+			loader.load(path + _name + ".xml");
 			/*var xmlLoader:URLLoader = new URLLoader();
 			xmlLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
 			xmlLoader.load(new URLRequest(path + _name + ".xml"));*/
