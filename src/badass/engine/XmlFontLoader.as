@@ -1,9 +1,11 @@
 package badass.engine {
+	import com.cantstopgames.filereader.FileReader;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.utils.ByteArray;
 	/**
 	 * ...
 	 * @author krzyma
@@ -19,13 +21,16 @@ package badass.engine {
 		
 			texture = _context.renderer.createTexture(bitmapData, false);
 
-			var xmlLoader:URLLoader = new URLLoader();
+			var byteArray:ByteArray = FileReader.loadFile(path + _name + ".xml");
+			var data:String = byteArray.readMultiByte(byteArray.bytesAvailable, "iso-8859-1");
+			onDescriptionLoaded(data);
+			/*var xmlLoader:URLLoader = new URLLoader();
 			xmlLoader.addEventListener(Event.COMPLETE, onDescriptionLoaded);
-			xmlLoader.load(new URLRequest(path + _name + ".xml"));
+			xmlLoader.load(new URLRequest(path + _name + ".xml"));*/
 		}
 		
-		private function onDescriptionLoaded(e:Event):void {
-			var xml:XML = new XML(e.target.data);
+		private function onDescriptionLoaded(data:String):void {
+			var xml:XML = new XML(data);
 			xml.ignoreWhitespace = true;
 			
 			getCommon(xml);
