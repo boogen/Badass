@@ -24,7 +24,7 @@ package badass.engine {
 		private var _viewportHeight:Number = 960;
 		private var _stageWidth:Number = 640;
 		private var _stageHeight:Number = 960;
-		private var _projectionMatrix:Matrix3D;
+		private var _projectionMatrix:ByteArray;
 		
 		private var _shaderProgram:Program3D;
 		private var _linearShader:Program3D;
@@ -65,7 +65,7 @@ package badass.engine {
 			resize(w, h);
 		}
 		
-		public function getWorldMatrix():Matrix3D {
+		public function getWorldMatrix():ByteArray {
 			return _projectionMatrix;
 		}
 		
@@ -79,7 +79,7 @@ package badass.engine {
 		
 		public function createCompressedTexture(ba:ByteArray, scaleEnabled:Boolean = true):BadassTexture {
 			return new BadassTexture(_context3D, null, ba, scaleEnabled);
-		}		
+		}
 		
 		public function set color(value:int):void {
 			b = (value % 256) / 255.0;
@@ -109,7 +109,7 @@ package badass.engine {
 		
 		public function getLinearProgram():Program3D {
 			return _linearShader;
-		}		
+		}
 		
 		public function getColorProgram():Program3D {
 			return _colorShaderProgram;
@@ -175,7 +175,7 @@ package badass.engine {
 			_viewportWidth = width;
 			_viewportHeight = height;
 			if (_context3D) {
-				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, true);				
+				_context3D.configureBackBuffer(_viewportWidth, _viewportHeight, 0, true);
 				_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
 			}
 		}
@@ -185,7 +185,7 @@ package badass.engine {
 			_stageHeight = height;
 			_projectionMatrix = createWorldMatrix(_stageWidth, _stageHeight);
 			if (_ready) {
-				_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
+				_context3D.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 0, 2, _projectionMatrix, 0);
 			}
 		}
 		
@@ -204,7 +204,7 @@ package badass.engine {
 			setBlendType(BlendType.NONE);
 			
 			setProgram(getStandardProgram());
-			_context3D.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix, true);
+			_context3D.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, 0, 2, _projectionMatrix, 0);
 			_ready = true;
 			dispatchEvent(new badass.events.Event(badass.events.Event.COMPLETE));
 		}
@@ -222,11 +222,18 @@ package badass.engine {
 			}
 		}
 		
-		private function createWorldMatrix(viewWidth:Number, viewHeight:Number):Matrix3D {
-			var result:Matrix3D = new Matrix3D();
-			result.identity();
-			result.appendScale(2 / viewWidth, -2 / viewHeight, 1.0);
-			result.appendTranslation(-1.0, 1.0, 0.0);
+		private function createWorldMatrix(viewWidth:Number, viewHeight:Number):ByteArray {
+            var result:ByteArray = new ByteArray();
+            result.endian = Endian.LITTLE_ENDIAN;
+            result.writeFloat(2 / viewWidth);
+            result.writeFloat(0);
+            result.writeFloat(0);
+            result.writeFloat( -1);
+
+            result.writeFloat(0);
+            result.writeFloat( -2 / viewHeight);
+            result.writeFloat(0);
+            result.writeFloat(1);
 			
 			return result;
 		}
@@ -242,11 +249,11 @@ package badass.engine {
 		private function initStandardShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "m44 op, va0, vc0\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, nearest, nomip>;\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, dxt5, nearest, nomip>;\n");
 			
 			_shaderProgram = _context3D.createProgram();
 			_shaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -255,24 +262,24 @@ package badass.engine {
 		private function initLinearShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "m44 op, va0, vc0\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, nearest, nomip>;\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, dxt5, nearest, nomip>;\n");
 			
 			_linearShader = _context3D.createProgram();
 			_linearShader.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
-		}		
+		}
 		
 		private function initColorShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "m44 op, va0, vc0\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			
-			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, nearest, nomip>;\n");
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, dxt5, nearest, nomip>;\n");
 			
 			_colorShaderProgram = _context3D.createProgram();
 			_colorShaderProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
@@ -294,7 +301,9 @@ package badass.engine {
 																		  "add vt0.xy, vt1.xy, vc9.xy",
 																		  "mov vt1, vt0",
 																		  "add vt0.xy, vt1.xy, vc8.xy",
-																		  "m44 op, vt0, vc0"]).join("\n"));
+																		  "mov op, vt0\n",
+                                                                          "dp4 op.x, vt0, vc0\n",
+                                                                          "dp4 op.y, vt0, vc1\n"]).join("\n"));
 			
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex oc, v0, fs0 <2d, norepeat, linear, nomip>"]).join("\n"));
@@ -319,7 +328,9 @@ package badass.engine {
 																		  "add vt0.xy, vt1.xy, vc9.xy",
 																		  "mov vt1, vt0",
 																		  "add vt0.xy, vt1.xy, vc8.xy",
-																		  "m44 op, vt0, vc0"]).join("\n"));
+																		  "mov op, vt0\n",
+                                                                          "dp4 op.x, vt0, vc0\n",
+                                                                          "dp4 op.y, vt0, vc1\n"]).join("\n"));
 
 			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, (["tex ft0, v0, fs0 <2d, norepeat, linear, nomip>", "mov ft1, ft0", "mul ft1, ft0, fc0", "mov oc, ft1"]).join("\n"));
@@ -338,16 +349,16 @@ package badass.engine {
 		public function setMask(value:int):void {
 			_context3D.setStencilReferenceValue(value);
 			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL, Context3DStencilAction.INCREMENT_SATURATE, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
-		}	
+		}
 		
 		public function endMask(value:int):void {
 			_context3D.setStencilReferenceValue(value);
-			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.LESS_EQUAL, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);	
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.LESS_EQUAL, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
 		}
 		
-		public function turnOffMask():void {			
+		public function turnOffMask():void {
 			_context3D.setStencilReferenceValue(1);
-			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);	
+			_context3D.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP , Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
 		}
 		
 		public function endFrame():void {

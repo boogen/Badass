@@ -87,7 +87,7 @@ package badass {
 			_context.renderer.init(stage);
 		}
 		
-		public function get profiler():Boolean {		
+		public function get profiler():Boolean {
 			return _profiler;
 		}
 		
@@ -163,7 +163,7 @@ package badass {
 			enableTick();
 		}
 		
-		public function getWorldMatrix():Matrix3D {
+		public function getWorldMatrix():ByteArray {
 			return _context.renderer.getWorldMatrix();
 		}
 		
@@ -235,7 +235,7 @@ package badass {
 		
 		public function createCompressedTexture(ba:ByteArray):BadassTexture {
 			return _context.renderer.createCompressedTexture(ba);
-		}		
+		}
 		
 		public function getContext3D():Context3D {
 			return _context.renderer.getContext3D();
@@ -325,14 +325,14 @@ package badass {
 			if (t > _time + 1000) {
 				
 				if (_profiler) {
-					_fps.text = "fps " + currentFps.toString();		
+					_fps.text = "fps " + currentFps.toString();
 					_memory.text = "mem " + (Math.round(10 * System.privateMemory / (1024 * 1024)) / 10.0).toString();
 				}
 				
 				fps = currentFps;
 				currentFps = 0;
-				_time = t;				
-			}			
+				_time = t;
+			}
 		}
 	
 	}
