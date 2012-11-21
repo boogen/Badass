@@ -14,10 +14,6 @@ package badass.events {
 		public function TouchEvent(type:String, touches:Vector.<Touch>, bubbles:Boolean = true) {
 			super(type, bubbles);
 			
-			reset(touches);
-		}
-		
-		public function reset(touches:Vector.<Touch>):void {
 			_touches = touches;
 			_timestamp = 0;
 			if (_touches) {
@@ -26,7 +22,7 @@ package badass.events {
 						_timestamp = _touches[i].timestamp;
 					}
 				}
-			}			
+			}
 		}
 		
 		public function getTouch(target:DisplayObject):Touch {

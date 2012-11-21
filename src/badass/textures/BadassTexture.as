@@ -26,8 +26,6 @@ package badass.textures {
 		
 		private var _compressed:Boolean;
 		
-		private static var _bitmaps:Vector.<BitmapData> = new Vector.<BitmapData>();
-		
 		public function BadassTexture(context:Context3D, bd:BitmapData, ba:ByteArray, scaleEnabled:Boolean = true) {
 			var bitmapData:BitmapData;			
 					
@@ -79,8 +77,7 @@ package badass.textures {
 				_textureHeight = badass.engine.Utils.powerOfTwo(bitmapData.height);
 				_nativeTexture = context.createTexture(_textureWidth, _textureHeight, Context3DTextureFormat.BGRA, false);
 				_nativeTexture.uploadFromBitmapData(bitmapData);
-				//bitmapData.dispose();
-				_bitmaps.push(bitmapData);
+				bitmapData.dispose();
 				memory += _textureWidth * _textureHeight * 4;
 				_textureWidth /= xScale;
 				_textureHeight /= yScale;

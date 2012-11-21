@@ -64,10 +64,10 @@ package badass.tweens {
 			// since 'advanceTime' could modify the juggler (through a callback), we iterate
 			// over a copy of 'mObjects'.			
 			var numObjects:int = _objects.length;
-			//var objectsCopy:Vector.<Tween> = _objects.concat();
+			var objectsCopy:Vector.<Tween> = _objects.concat();
 			
-			for (var i:int = 0; i < _objects.length; ++i) {
-				_objects[i].advanceTime(time);
+			for (var i:int = 0; i < numObjects; ++i) {
+				objectsCopy[i].advanceTime(time);
 			}
 		}
 		
