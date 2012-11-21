@@ -32,16 +32,20 @@ package badass.engine {
 		
 		private var _blendType:String;
 		
-		protected var _program:Program3D;		
-		private var _hitTest:Function
+		protected var _program:Program3D;	
+		protected var _compressedProgram:Program3D;
 		
-		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null) {
+		private var _hitTest:Function;
+		
+		private var _compressed:Boolean = false;
+		
+		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null, compressed:Boolean = false) {
 			super();
 			_blendType = blendType;
 			_byteArray = new ByteArray();
 			_byteArray.endian = Endian.LITTLE_ENDIAN;
 			_drawCalls = new Array();
-			_renderer = renderer;
+			_renderer = renderer;			
 			setStandardMode();
 		}
 		
@@ -58,15 +62,18 @@ package badass.engine {
 		}
 		
 		public function setTutorialMode():void {
-			_program = _renderer.getColorProgram();
+			_program = _renderer.getColorProgram(false);
+			_compressedProgram = _renderer.getColorProgram(true);
 		}
 		
 		public function setStandardMode():void {
-			_program = _renderer.getStandardProgram();
-		}
+			_program = _renderer.getStandardProgram(false);
+			_compressedProgram = _renderer.getStandardProgram(true);
+		}	
 		
 		public function setLinearMode():void {		
-			_program = _renderer.getLinearProgram();
+			_program = _renderer.getLinearProgram(false);
+			_compressedProgram = _renderer.getLinearProgram(true);
 		}
 		
 		protected function drawChildren():void {
@@ -127,6 +134,23 @@ package badass.engine {
 			}
 		}
 		
+		protected function onSwitchProgram():void {
+			_context3D.setVertexBufferAt(0, _vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			_context3D.setVertexBufferAt(1, _vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
+			_context3D.setVertexBufferAt(2, _vertexBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);			
+		}
+		
+		protected function checkProgram(texture:BadassTexture):void {
+			if (texture.compressed && !_compressed) {
+				_renderer.setProgram(_compressedProgram);
+				onSwitchProgram();
+			}
+			else if (!texture.compressed && _compressed) {
+				_renderer.setProgram(_program);
+				onSwitchProgram();
+			}
+		}
+		
 		protected function renderDrawCalls():void {
 			var count:int = 0;
 			var i:int;
@@ -134,7 +158,8 @@ package badass.engine {
 			for (i = 0; i < _drawCalls.length; ++i) {
 				for (var key:Object in _drawCalls[i]) {
 					var texture:BadassTexture = key as BadassTexture;
-			
+					checkProgram(texture);
+					
 					batches = _drawCalls[i][texture];
 					if (batches.length) {
 						_renderer.setTexture(texture);

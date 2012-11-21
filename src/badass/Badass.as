@@ -108,7 +108,7 @@ package badass {
 					_quad.addChild(_memory);
 				}
 				
-				_profilerLayer = getLayer(LayerType.FAST, BlendType.ONE_MINUS_SOURCE_ALPHA);
+				_profilerLayer = getLayer(LayerType.FAST, BlendType.ONE_MINUS_SOURCE_ALPHA, false);
 				_profilerLayer.addChild(_quad);
 				
 			}
@@ -207,14 +207,14 @@ package badass {
 			_tweener.removeTweens(target);
 		}
 		
-		public function getLayer(layerType:String, blendType:String):badass.engine.Layer {
+		public function getLayer(layerType:String, blendType:String, compressed:Boolean):badass.engine.Layer {
 			var result:badass.engine.Layer;
 			if (layerType == LayerType.DISPLAY_LIST) {
 				result = new DisplayListLayer(blendType, _context.renderer);
 			} else if (layerType == LayerType.MOVIECLIP) {
 				result = new GPUMovieClipLayer(_context.renderer);
 			} else if (layerType == LayerType.FAST) {
-				result = new badass.engine.Layer(blendType, _context.renderer);
+				result = new badass.engine.Layer(blendType, _context.renderer, compressed);
 			}
 			_layers.push(result);
 			

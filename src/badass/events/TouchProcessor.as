@@ -78,10 +78,10 @@ package badass.events {
 					touch = getCurrentTouch(touchId);
 					if (touch.target) {
 						_touchEvent.reset(_currentTouches);
-						touch.target.dispatchEvent(_touchEvent);
+						touch.target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH, _currentTouches));
 					}
 				}
-				
+			
 				_helperVector.length = 0;
 				for (i = _currentTouches.length - 1; i >= 0; --i) {
 					if (_currentTouches[i].phase == TouchPhase.ENDED) {

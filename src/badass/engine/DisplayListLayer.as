@@ -78,6 +78,7 @@ package badass.engine {
 				if (_displayList[i].length) {
 					var d:DisplayObject = _displayList[i][0];
 					var texture:Texture = d.frame.texture.nativeTexture;
+					checkProgram(d.frame.texture);
 					if (texture) {
 						_context3D.setTextureAt(0, texture);
 						
