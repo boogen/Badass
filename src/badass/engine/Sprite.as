@@ -111,6 +111,22 @@ package badass.engine {
 			return 0;
 		}
 		
+		public function get baseWidth():Number {
+			if (_frame) {
+				return _frame.baseWidth;
+			}
+			
+			return 0;
+		}
+		
+		public function get baseHeight():Number {
+			if (_frame) {
+				return _frame.baseHeight;
+			}
+			
+			return 0;
+		}
+		
 		public function get textureWidth():Number {
 			return _frame.textureWidth;
 		}
