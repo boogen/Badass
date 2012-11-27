@@ -40,6 +40,8 @@ package badass.engine {
 			vBottom = region.bottom / textureHeight;
 			_width = region.width;
 			_height = region.height;
+			baseWidth = _width;
+			baseHeight = _height;
 		}
 		
 		public function get width():Number {
