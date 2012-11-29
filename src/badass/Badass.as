@@ -1,7 +1,9 @@
 package badass {
+    import badass.engine.Console;
 	import badass.engine.Context;
 	import badass.engine.DisplayListLayer;
 	import badass.engine.EventDispatcher;
+    import badass.engine.FontLoader;
 	import badass.engine.FontManager;
 	import badass.engine.GPUMovieClipLayer;
 	import badass.engine.HAlign;
@@ -10,6 +12,7 @@ package badass {
 	import badass.engine.Quad;
 	import badass.engine.Sprite;
 	import badass.engine.TextField;
+	import badass.engine.Console;
 	import badass.events.ResizeEvent;
 	import badass.events.TouchPhase;
 	import badass.events.TouchProcessor;
@@ -61,10 +64,8 @@ package badass {
 		public var fps:int = 30;
 		private var _profiler:Boolean;
 		private var _profilerLayer:Layer;
-		private var _fps:TextField;
-		private var _memory:TextField;
 		private var _quad:Quad;
-		
+		public var console:Console;
 		public function Badass(stage:Object):void {
 			_layers = new Vector.<badass.engine.Layer>;
 			_context = new badass.engine.Context();
@@ -95,26 +96,15 @@ package badass {
 			_profiler = value;
 			
 			if (_profiler) {
-				if (!_quad) {
-					_quad = new Quad(80, 50, 0);
-					_quad.alpha = 0.3;
-					_fps = new TextField(100, 30, "fps", "system_white");
-					_fps.hAlign = HAlign.LEFT;
-					_quad.addChild(_fps);
-					
-					_memory = new TextField(100, 30, "mem", "system_white");
-					_memory.hAlign = HAlign.LEFT;
-					_memory.y = 20;
-					_quad.addChild(_memory);
-				}
-				
+				if (!console)
+					console = new Console();
+
 				_profilerLayer = getLayer(LayerType.FAST, BlendType.ONE_MINUS_SOURCE_ALPHA);
-				_profilerLayer.addChild(_quad);
-				
+				_profilerLayer.addChild(console);
 			}
 			else {
-				if (_quad && _quad.parent) {
-					_profilerLayer.removeChild(_quad);
+				if (console && console.parent) {
+					_profilerLayer.removeChild(console);
 				}
 			}
 		}
@@ -325,8 +315,8 @@ package badass {
 			if (t > _time + 1000) {
 				
 				if (_profiler) {
-					_fps.text = "fps " + currentFps.toString();
-					_memory.text = "mem " + (Math.round(10 * System.privateMemory / (1024 * 1024)) / 10.0).toString();
+					console.fps.text = "fps " + currentFps.toString();
+					console.memory.text = "mem " + (Math.round(10 * System.privateMemory / (1024 * 1024)) / 10.0).toString();
 				}
 				
 				fps = currentFps;
