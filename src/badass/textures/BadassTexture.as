@@ -26,8 +26,6 @@ package badass.textures {
 		
 		private var _compressed:Boolean;
 		
-		private static var _bitmaps:Vector.<BitmapData> = new Vector.<BitmapData>();
-		
 		public function BadassTexture(context:Context3D, bd:BitmapData, ba:ByteArray, scaleEnabled:Boolean = true) {
 			var bitmapData:BitmapData;			
 					

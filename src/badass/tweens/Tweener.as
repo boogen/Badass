@@ -66,7 +66,7 @@ package badass.tweens {
 			var numObjects:int = _objects.length;
 			var objectsCopy:Vector.<Tween> = _objects.concat();
 			
-			for (var i:int = 0; i < objectsCopy.length; ++i) {
+			for (var i:int = 0; i < numObjects; ++i) {
 				objectsCopy[i].advanceTime(time);
 			}
 		}

@@ -18,8 +18,6 @@ package badass.events {
 		private var _currentTouches:Vector.<Touch>;
 		private var _helperVector:Vector.<Touch>;
 		private var _tutorialMode:Boolean = false;
-		private var _touchEvent:TouchEvent;
-		private var _touchPool:Vector.<Touch>;
 		
 		private static var _processedTouchIds:Vector.<int> = new Vector.<int>();
 		
@@ -31,8 +29,6 @@ package badass.events {
 			_lastTaps = new Vector.<Touch>();
 			_currentTouches = new Vector.<Touch>();
 			_helperVector = new Vector.<Touch>();
-			_touchEvent = new TouchEvent(TouchEvent.TOUCH, new Vector.<Touch>());
-			_touchPool = new Vector.<Touch>();
 		}
 		
 		public function set tutorialMode(value:Boolean):void {
@@ -49,7 +45,6 @@ package badass.events {
 			
 			for (i = _lastTaps.length - 1; i >= 0; --i) {
 				if (_elapsedTime - _lastTaps[i].timestamp > MULTITAP_TIME) {
-					_lastTaps[i].free = true;
 					_lastTaps.splice(i, 1);
 				}
 			}
@@ -77,7 +72,10 @@ package badass.events {
 				for each (touchId in _processedTouchIds) {
 					touch = getCurrentTouch(touchId);
 					if (touch.target) {
+<<<<<<< HEAD
 						_touchEvent.reset(_currentTouches);
+=======
+>>>>>>> parent of a9551f5... test
 						touch.target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH, _currentTouches));
 					}
 				}
@@ -85,7 +83,6 @@ package badass.events {
 				_helperVector.length = 0;
 				for (i = _currentTouches.length - 1; i >= 0; --i) {
 					if (_currentTouches[i].phase == TouchPhase.ENDED) {
-						_currentTouches[i].free = true;
 						_currentTouches.splice(i, 1);
 					}
 				}
@@ -95,30 +92,11 @@ package badass.events {
 			}
 		}
 		
-		private function getTouch():Touch {
-			var result:Touch;
-			for (var i:int = 0; i < _touchPool.length; ++i) {
-				if (_touchPool[i].free) {
-					result = _touchPool[i];
-					break;
-				}
-			}
-			
-			if (!result) {
-				result = new Touch();
-				_touchPool.push(result);				
-			}
-			
-			result.free = false;
-			return result;
-		}
-		
 		private function processTouch(touchId:int, phase:String, globalX:Number, globalY:Number):void {
 			var touch:Touch = getCurrentTouch(touchId);
 			
 			if (touch == null) {
-				touch = getTouch();
-				touch.reset(touchId, globalX, globalY, phase, null);
+				touch = new Touch(touchId, globalX, globalY, phase, null);
 				addCurrentTouch(touch);
 			}
 			
@@ -149,20 +127,17 @@ package badass.events {
 			
 			if (nearbyTap) {
 				touch.setTapCount(nearbyTap.tapCount + 1);
-				var index:int = _lastTaps.indexOf(nearbyTap)
-				_lastTaps[index].free = true;
-				_lastTaps.splice(index, 1);
+				_lastTaps.splice(_lastTaps.indexOf(nearbyTap), 1);
 			} else {
 				touch.setTapCount(1);
 			}
 			
-
+			_lastTaps.push(touch.clone());
 		}
 		
 		private function addCurrentTouch(touch:Touch):void {
 			for (var i:int = _currentTouches.length - 1; i >= 0; --i) {
 				if (_currentTouches[i].id == touch.id) {
-					_currentTouches[i].free = true;
 					_currentTouches.splice(i, 1);
 				}
 			}

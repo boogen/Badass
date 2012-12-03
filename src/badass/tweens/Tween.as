@@ -22,7 +22,6 @@ package badass.tweens {
 		private var _properties:Vector.<String>;
 		private var _startValues:Vector.<Number>;
 		private var _endValues:Vector.<Number>;
-		private var _tweenEnd:Event;
 		
 		public function Tween(target:Object, time:Number, transition:String = "LINEAR") {
 			reset(target, time, transition);
@@ -36,7 +35,6 @@ package badass.tweens {
 			_transition = transition;
 			_onComplete = null;
 			_onCompleteArgs = null;
-			_tweenEnd = new Event(Event.TWEEN_END);
 			
 			if (_properties) {
 				_properties.length = 0;
@@ -95,7 +93,7 @@ package badass.tweens {
 			}
 			
 			if (previousTime < _totalTime && _currentTime >= _totalTime) {
-				dispatchEvent(_tweenEnd);
+				dispatchEvent(new Event(Event.TWEEN_END));
 				if (_onComplete != null) {
 					_onComplete.apply(null, _onCompleteArgs);
 				}
