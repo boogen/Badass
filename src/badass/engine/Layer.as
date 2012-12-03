@@ -50,7 +50,7 @@ package badass.engine {
 		}
 		
 		override public function hitTest(pX:Number, pY:Number, onlyHighlighted:Boolean = false):DisplayObject {		
-			if (_hitTest) {
+			if (_hitTest != null) {
 				return _hitTest(pX, pY, onlyHighlighted);
 			}
 			
