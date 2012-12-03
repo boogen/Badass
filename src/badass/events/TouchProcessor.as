@@ -72,10 +72,6 @@ package badass.events {
 				for each (touchId in _processedTouchIds) {
 					touch = getCurrentTouch(touchId);
 					if (touch.target) {
-<<<<<<< HEAD
-						_touchEvent.reset(_currentTouches);
-=======
->>>>>>> parent of a9551f5... test
 						touch.target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH, _currentTouches));
 					}
 				}
