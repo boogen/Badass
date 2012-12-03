@@ -179,7 +179,7 @@ package badass.engine {
 		private function onContext3DCreated(e:Object):void {
 			var stage3D:Stage3D = e.target as Stage3D;
 			_context3D = stage3D.context3D;
-			_context3D.enableErrorChecking = true;
+			_context3D.enableErrorChecking = false;
 			_context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			continueInit();
 		
