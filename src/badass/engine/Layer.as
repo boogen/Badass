@@ -32,12 +32,13 @@ package badass.engine {
 		
 		private var _blendType:String;
 		
-		protected var _program:Program3D;	
-		protected var _compressedProgram:Program3D;
+		protected var _program:int;	
 		
 		private var _hitTest:Function;
 		
 		private var _compressed:Boolean = false;
+		
+		protected var _stateChanges:Array;
 		
 		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null, compressed:Boolean = false) {
 			super();
@@ -45,7 +46,8 @@ package badass.engine {
 			_byteArray = new ByteArray();
 			_byteArray.endian = Endian.LITTLE_ENDIAN;
 			_drawCalls = new Array();
-			_renderer = renderer;			
+			_stateChanges = new Array();
+			_renderer = renderer;
 			setStandardMode();
 		}
 		
@@ -62,18 +64,15 @@ package badass.engine {
 		}
 		
 		public function setTutorialMode():void {
-			_program = _renderer.getColorProgram(false);
-			_compressedProgram = _renderer.getColorProgram(true);
+			_program = badass.engine.Renderer.COLOR;
 		}
 		
 		public function setStandardMode():void {
-			_program = _renderer.getStandardProgram(false);
-			_compressedProgram = _renderer.getStandardProgram(true);
+			_program = badass.engine.Renderer.STANDARD;
 		}	
 		
 		public function setLinearMode():void {		
-			_program = _renderer.getLinearProgram(false);
-			_compressedProgram = _renderer.getLinearProgram(true);
+			_program = badass.engine.Renderer.LINEAR;
 		}
 		
 		protected function drawChildren():void {
@@ -91,7 +90,7 @@ package badass.engine {
 				return;
 			}
 			_context3D = _renderer.getContext3D();
-			_renderer.setProgram(_program);
+			_renderer.changeState(_program, false, false);
 			_renderer.setBlendType(_blendType);
 			clearContainer();
 			drawChildren();
@@ -120,15 +119,23 @@ package badass.engine {
 					batches.length = 0;
 				}
 			}
+			_stateChanges.length = 0;
 		}
 		
 		protected function fillByteArray():void {
 			var i:int;
 			var batches:Vector.<DisplayObject>;
+			var currentState:Boolean = false;
+			var counter:int = 0;
 			for (i = 0; i < _drawCalls.length; ++i) {
 				for each (batches in _drawCalls[i]) {
 					for (var j:int = 0; j < batches.length; ++j) {
+						if (batches[j].alpha < 1 != currentState) {
+							_stateChanges.push(counter);
+							currentState = !currentState;
+						}
 						batches[j].writeToByteArray(_byteArray);
+						counter++;
 					}
 				}
 			}
@@ -141,13 +148,15 @@ package badass.engine {
 		}
 		
 		protected function checkProgram(texture:BadassTexture):void {
-			if (texture.compressed && !_compressed) {
-				_renderer.setProgram(_compressedProgram);
-				onSwitchProgram();
+			if (texture.compressed) {
+				if (_renderer.changeState(_program, true, _renderer.getAlphaState())) {
+					onSwitchProgram();
+				}
 			}
-			else if (!texture.compressed && _compressed) {
-				_renderer.setProgram(_program);
-				onSwitchProgram();
+			else if (!texture.compressed) {
+				if (_renderer.changeState(_program, false, _renderer.getAlphaState())) {
+					onSwitchProgram();
+				}
 			}
 		}
 		
@@ -163,9 +172,22 @@ package badass.engine {
 					batches = _drawCalls[i][texture];
 					if (batches.length) {
 						_renderer.setTexture(texture);
-					//	_renderer.setColor(batches[0].color);
-						_context3D.drawTriangles(_indexBuffer, count, batches.length * 2);
-						count += batches.length * 6;
+						
+						var batchEnd:int = count + batches.length * 6;
+						while (_stateChanges.length > 0 && _stateChanges[0] * 6 < batchEnd && _stateChanges[0] * 6 >= count) {
+							var d:int = _stateChanges[0] * 6 - count;
+							if (d > 0) {
+								_context3D.drawTriangles(_indexBuffer, count, (_stateChanges[0] * 6 - count) / 3);
+							}							
+							count += d;
+							_stateChanges.shift();
+							_renderer.changeState(_program, _renderer.getCompressedState(), !_renderer.getAlphaState());
+							onSwitchProgram();
+						}
+						if (count < batchEnd) {
+							_context3D.drawTriangles(_indexBuffer, count, (batchEnd - count) / 3);
+						}
+						count = batchEnd;
 					}
 				}
 			}

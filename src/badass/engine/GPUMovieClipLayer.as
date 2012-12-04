@@ -18,11 +18,11 @@ package badass.engine {
 		}
 		
 		override public function setTutorialMode():void {
-			_program = _renderer.getGPUMovieClipColorProgram();
+			_program = Renderer.MOVIECLIP_COLOR;
 		}
 		
 		override public function setStandardMode():void {
-			_program = _renderer.getGPUMovieClipProgram();
+			_program = Renderer.MOVIECLIP;
 		}
 		
 		override protected function clearContainer():void {
@@ -33,7 +33,7 @@ package badass.engine {
 			if (!visible) {
 				return;
 			}
-			renderer.setProgram(_program);
+			renderer.changeState(_program, false, false);
 			renderer.setBlendType(BlendType.ONE_MINUS_SOURCE_ALPHA);
 			
 			_context3D = renderer.getContext3D();

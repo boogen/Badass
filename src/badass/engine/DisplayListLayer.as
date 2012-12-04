@@ -42,6 +42,7 @@ package badass.engine {
 			}
 			_index = -1;
 			_lastDisplayObject = null;
+			_stateChanges.length = 0;
 		}
 		
 		override public function addBatch(d:DisplayObject):void {		
@@ -58,9 +59,16 @@ package badass.engine {
 		}
 		
 		override protected function fillByteArray():void {
+			var currentState:Boolean = false;
+			var counter:int = 0;			
 			for (var i:int = 0; i < _displayList.length; ++i) {
 				for (var j:int = 0; j < _displayList[i].length; ++j) {
+					if (_displayList[i][j].alpha < 1 != currentState) {
+						_stateChanges.push(counter);
+						currentState = !currentState;
+					}					
 					_displayList[i][j].writeToByteArray(_byteArray);
+					counter++;
 				}
 			}
 		}
@@ -91,8 +99,22 @@ package badass.engine {
 							count += 6;					
 						}				
 						else {											
-							_context3D.drawTriangles(_indexBuffer, count, _displayList[i].length * 2);
-							count += _displayList[i].length * 6;
+							var batchEnd:int = count + _displayList[i].length * 6;
+							while (_stateChanges.length > 0 && _stateChanges[0] * 6 < batchEnd && _stateChanges[0] * 6 >= count) {
+								var diff:int = _stateChanges[0] * 6 - count;
+								if (diff > 0) {
+									_context3D.drawTriangles(_indexBuffer, count, (_stateChanges[0] * 6 - count) / 3);
+								}							
+								count += diff;
+								_stateChanges.shift();
+								_renderer.changeState(_program, _renderer.getCompressedState(), !_renderer.getAlphaState());
+								onSwitchProgram();
+							}
+							if (count < batchEnd) {
+								_context3D.drawTriangles(_indexBuffer, count, (batchEnd - count) / 3);
+							}
+							count = batchEnd;							
+							
 						}
 					}
 				}

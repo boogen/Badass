@@ -27,9 +27,13 @@ package badass.engine {
 		private var _projectionMatrix:ByteArray;
 		
 		private var _standardProgram:Program3D;
+		private var _noAlphaStandardProgram:Program3D;
 		private var _standardCompressedProgram:Program3D;
-		private var _linearProgram:Program3D;
+		private var _noAlphaStandardCompressedProgram:Program3D;
+		private var _linearProgram:Program3D;		
+		private var _noAlphaLinearProgram:Program3D;
 		private var _linearCompressedProgram:Program3D;
+		private var _noAlphaLinearCompressedProgram:Program3D;
 		private var _colorProgram:Program3D;
 		private var _colorCompressedProgram:Program3D;
 		private var _movieClipShaderProgram:Program3D;
@@ -50,14 +54,41 @@ package badass.engine {
 		private var _lastColor:uint = 0;
 		private var _colorVector:Vector.<Number>;
 		private var _currentProgram:Program3D;
+				
 		
+		public static const STANDARD:int = 0;
+		public static const LINEAR:int = 1;
+		public static const COLOR:int = 2;
+		public static const MOVIECLIP:int = 3;
+		public static const MOVIECLIP_COLOR:int = 4;
+		
+		private var _alphaState:Boolean = false;
+		private var _compressedState:Boolean = false;
+		private var _state:int = STANDARD;		
+		
+		private var _states:Array;
 		
 		public function Renderer() {
 			textures = new Vector.<Texture>();
 			_stageWidth = _viewportWidth;
 			_stageHeight = _viewportHeight;
 			_colorVector = new Vector.<Number>();
-			
+			_states = new Array();
+			_states[STANDARD] = new Dictionary();
+			_states[STANDARD][false] = new Dictionary();
+			_states[STANDARD][true] = new Dictionary();
+			_states[LINEAR] = new Dictionary();
+			_states[LINEAR][false] = new Dictionary();
+			_states[LINEAR][true] = new Dictionary();			
+			_states[COLOR] = new Dictionary();
+			_states[COLOR][false] = new Dictionary();
+			_states[COLOR][true] = new Dictionary();
+			_states[MOVIECLIP] = new Dictionary();
+			_states[MOVIECLIP][false] = new Dictionary();
+			_states[MOVIECLIP][true] = new Dictionary();
+			_states[MOVIECLIP_COLOR] = new Dictionary();
+			_states[MOVIECLIP_COLOR][false] = new Dictionary();
+			_states[MOVIECLIP_COLOR][true] = new Dictionary();			
 		}
 		
 		public function getContext3D():Context3D {
@@ -133,14 +164,36 @@ package badass.engine {
 			}
 		}
 		
-		public function setProgram(program:Program3D):void {
+		public function setProgram(program:Program3D):Boolean {
 			if (program != _currentProgram) {
 				_currentProgram = program;
 				_context3D.setVertexBufferAt(0, null);
 				_context3D.setVertexBufferAt(1, null);
 				_context3D.setVertexBufferAt(2, null);
 				_context3D.setProgram(program);
+				return true;
 			}
+			
+			return false;
+		}
+		
+		public function getState():int {
+			return _state;
+		}
+		
+		public function getAlphaState():Boolean {
+			return _alphaState;
+		}
+		
+		public function getCompressedState():Boolean {
+			return _compressedState;
+		}
+		
+		public function changeState(state:int, compressed:Boolean, alpha:Boolean):Boolean {
+			_state = state;
+			_compressedState = compressed;
+			_alphaState = alpha;
+			return setProgram(_states[state][compressed][alpha]);
 		}
 		
 		/*public function setColor(color:uint):void
@@ -258,13 +311,53 @@ package badass.engine {
 		
 		private function initShaders():void {
 			initStandardShader();
+			initNoAlphaStandardShader();
 			initCompressedStandardShader();
+			initNoAlphaCompressedStandardShader();
 			initLinearShader();
+			initNoAlphaLinearShader();
 			initCompressedLinearShader();
+			initNoAlphaCompressedLinearShader();
 			initColorShader();
 			initCompressedColorShader();
 			initGPUMovieClipShader();
 			initGPUMovieClipColorShader();
+			
+			_states[STANDARD][false][true] = _standardProgram;
+			_states[STANDARD][false][false] = _noAlphaStandardProgram;
+			_states[STANDARD][true][true] = _standardCompressedProgram;
+			_states[STANDARD][true][false] = _noAlphaStandardCompressedProgram
+			
+			_states[LINEAR][false][true] = _linearProgram;
+			_states[LINEAR][false][false] = _noAlphaLinearProgram;
+			_states[LINEAR][true][true] = _linearCompressedProgram;
+			_states[LINEAR][true][false] = _noAlphaLinearCompressedProgram;
+			
+			_states[COLOR][false][true] = _colorProgram;
+			_states[COLOR][false][false] = _colorProgram;
+			_states[COLOR][true][true] = _colorCompressedProgram;
+			_states[COLOR][true][false] = _colorCompressedProgram;
+			
+			_states[MOVIECLIP][false][true] = _movieClipShaderProgram;
+			_states[MOVIECLIP][false][false] = _movieClipShaderProgram;
+			_states[MOVIECLIP][true][true] = _movieClipShaderProgram;
+			_states[MOVIECLIP][true][false] = _movieClipShaderProgram;
+			
+			_states[MOVIECLIP_COLOR][false][true] = _movieClipColorShaderProgram;
+			_states[MOVIECLIP_COLOR][false][false] = _movieClipColorShaderProgram;
+			_states[MOVIECLIP_COLOR][true][true] = _movieClipColorShaderProgram;
+			_states[MOVIECLIP_COLOR][true][false] = _movieClipColorShaderProgram;			
+		}
+		
+		private function initNoAlphaStandardShader():void {
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, nearest, nomip>;\n");
+			
+			_noAlphaStandardProgram = _context3D.createProgram();
+			_noAlphaStandardProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);			
 		}
 		
 		private function initStandardShader():void {
@@ -278,6 +371,17 @@ package badass.engine {
 			_standardProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
 		}
 		
+		private function initNoAlphaCompressedStandardShader():void {
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, dxt5, nearest, nomip>;\n");
+			
+			_noAlphaStandardCompressedProgram = _context3D.createProgram();
+			_noAlphaStandardCompressedProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
+		}
+		
 		private function initCompressedStandardShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
@@ -287,6 +391,19 @@ package badass.engine {
 			
 			_standardCompressedProgram = _context3D.createProgram();
 			_standardCompressedProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
+		}		
+		
+		private function initNoAlphaLinearShader():void {
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, norepeat, linear, nomip>;\n");
+			
+			_noAlphaLinearProgram = _context3D.createProgram();
+			_noAlphaLinearProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
 		}		
 		
 		private function initLinearShader():void {
@@ -301,6 +418,19 @@ package badass.engine {
 			_linearProgram = _context3D.createProgram();
 			_linearProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
 		}
+		
+		private function initNoAlphaCompressedLinearShader():void {
+			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			
+			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, "mov op, va0\n" + "dp4 op.x, va0, vc0\n" + "dp4 op.y, va0, vc1\n" + "mov v0, va0\n" + "mov v1, va1\n" + "mov v2, va2\n");
+			
+			var fragmentShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
+			
+			fragmentShaderAssembler.assemble(Context3DProgramType.FRAGMENT, "tex oc, v1, fs0 <2d, dxt5, norepeat, linear, nomip>;\n");
+			
+			_noAlphaLinearCompressedProgram = _context3D.createProgram();
+			_noAlphaLinearCompressedProgram.upload(vertexShaderAssembler.agalcode, fragmentShaderAssembler.agalcode);
+		}			
 		
 		private function initCompressedLinearShader():void {
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
