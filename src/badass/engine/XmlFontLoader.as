@@ -1,5 +1,5 @@
 package badass.engine {
-	import com.cantstopgames.filereader.XmlLoader;
+	import com.cantstopgames.utils.XmlLoader;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;

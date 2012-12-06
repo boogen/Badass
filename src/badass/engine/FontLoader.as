@@ -1,7 +1,7 @@
 package badass.engine {
 	import badass.textures.BadassTexture;
-	import com.cantstopgames.filereader.ImageLoader;
-	import com.cantstopgames.filereader.XmlLoader;
+	import com.cantstopgames.utils.ImageLoader;
+	import com.cantstopgames.utils.XmlLoader;
 	import flash.events.IOErrorEvent;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
