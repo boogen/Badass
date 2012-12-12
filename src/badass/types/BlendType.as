@@ -6,8 +6,8 @@ package badass.types {
 	 */
 	public class BlendType {
 		public static const NONE:String = "NONE";
-		public static const ONE_MINUS_SOURCE_ALPHA:String = "ONE_MINUS_SOURCE_ALPHA";
-		public static const SOURCE_ALPHA:String = "SOURCE_ALPHA";
+		public static const SCREEN:String = "SCREEN";
+		public static const ALPHA:String = "ALPHA";
 		public static const DEFAULT:String = "DEFAULT";
 	}
 

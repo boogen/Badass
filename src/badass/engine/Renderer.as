@@ -285,9 +285,9 @@ package badass.engine {
 				_blendType = value;
 				if (_blendType == BlendType.NONE) {
 					_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO)
-				} else if (_blendType == BlendType.ONE_MINUS_SOURCE_ALPHA) {
+				} else if (_blendType == BlendType.SCREEN) {
 					_context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
-				} else if (_blendType == BlendType.SOURCE_ALPHA) {
+				} else if (_blendType == BlendType.ALPHA) {
 					_context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA)
 				}
 			}

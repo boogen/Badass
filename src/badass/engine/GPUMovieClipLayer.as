@@ -12,7 +12,7 @@ package badass.engine {
 		private var m:Vector.<Matrix>;
 		
 		public function GPUMovieClipLayer(renderer:Renderer) {
-			super(BlendType.ONE_MINUS_SOURCE_ALPHA, renderer);
+			super(BlendType.SCREEN, renderer);
 			_displayList = new Vector.<GPUMovieClip>();
 			setStandardMode();
 		}
@@ -34,7 +34,7 @@ package badass.engine {
 				return;
 			}
 			renderer.changeState(_program, false, false);
-			renderer.setBlendType(BlendType.ONE_MINUS_SOURCE_ALPHA);
+			renderer.setBlendType(BlendType.SCREEN);
 			
 			_context3D = renderer.getContext3D();
 			_renderer = renderer;

@@ -99,7 +99,7 @@ package badass {
 				if (!console)
 					console = new Console();
 
-				_profilerLayer = getLayer(LayerType.FAST, BlendType.ONE_MINUS_SOURCE_ALPHA, false);
+				_profilerLayer = getLayer(LayerType.FAST, BlendType.SCREEN, false);
 				_profilerLayer.addChild(console);
 			}
 			else {

@@ -40,7 +40,7 @@ package badass.engine {
 		
 		protected var _stateChanges:Array;
 		
-		public function Layer(blendType:String = BlendType.ONE_MINUS_SOURCE_ALPHA, renderer:Renderer = null, compressed:Boolean = false) {
+		public function Layer(blendType:String = BlendType.ALPHA, renderer:Renderer = null, compressed:Boolean = false) {
 			super();
 			_blendType = blendType;
 			_byteArray = new ByteArray();
