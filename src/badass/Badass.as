@@ -305,10 +305,10 @@ package badass {
 			for (var i:int = 0; i < _layers.length; ++i) {
 				_layers[i].draw(_context.renderer);
 			}
-			
+		/*	
 			if (_profilerLayer) {
 				_profilerLayer.draw(_context.renderer);
-			}
+			}*/
 			_context.renderer.endFrame();
 			currentFps++;
 			
