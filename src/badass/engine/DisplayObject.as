@@ -87,8 +87,8 @@ package badass.engine {
 		
 		public function get globalX():Number {
 			var value:Number = _x;
-			if (_parent) {
-				value += _parent.globalX;
+			if (_parent) {				
+				value = _x * _parent.scaleX + _parent.globalX;
 			}
 			return value;
 		}
@@ -104,7 +104,7 @@ package badass.engine {
 		public function get globalY():Number {
 			var value:Number = _y;
 			if (_parent) {
-				value += _parent.globalY;
+				value = _y * _parent.scaleY + _parent.globalY;
 			}
 			return value;
 		}

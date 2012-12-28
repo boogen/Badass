@@ -152,12 +152,26 @@ package badass.engine {
 		
 		override public function writeToByteArray(ba:ByteArray):void {
 			if (_frame && visible) {
+			
 				var w:Number = width * scaleX;
 				var h:Number = height * scaleY;
 				
-				var gx:Number = globalX + _pivotX;
-				var gy:Number = globalY + _pivotY;
+				var px:Number = _pivotX;
+				var py:Number = _pivotY;
+				if (parent && _pivotX != 0 && _pivotY != 0) {
+					px *= parent.scaleX;
+					py *= parent.scaleY;
+				}
 				
+				var gx:Number = globalX + px;
+				var gy:Number = globalY + py;
+			/*	var gx:Number = x + _pivotX;
+				var gy:Number = y + _pivotY;
+				if (parent) {
+					gx = gx * parent.scaleX + parent.globalX;
+					gy = gy * parent.scaleY + parent.globalY;
+				}
+				*/
 				var s:Number;
 				var c:Number;
 				if (_rotation != 0) {
