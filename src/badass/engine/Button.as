@@ -30,22 +30,25 @@ package badass.engine {
 		public function disablePress():void {
 			removeEventListener(TouchEvent.TOUCH, onTouch);
 			if (_isDown) {
-				var obj:DisplayObject;
 				_isDown = false;
 				pivotX -= (_defaultXScale - _scaleWhenDown) / 2 * _frame.width;
 				pivotY -= (_defaultYScale - _scaleWhenDown) / 2 * _frame.height;
 				_frame = _upState;
-				scaleX = _defaultXScale;
-				scaleY = _defaultYScale;
+
 				
-				for each(obj in _children) {
+				for each(var obj:DisplayObject in _children) {
 					if(_scaleWhenDown/_defaultXScale < 0) {
 						obj.scaleX = -obj.baseScaleX;
+						obj.x = -obj.x;
 					}
 					if(_scaleWhenDown/_defaultYScale < 0) {
 						obj.scaleY = -obj.baseScaleY;
+						obj.y = -obj.y;
 					}
-				}				
+				}
+				
+				scaleX = _defaultXScale;
+				scaleY = _defaultYScale;				
 			}
 		}
 
