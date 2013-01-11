@@ -14,7 +14,6 @@ package badass.engine {
 		private var _vAlign:String = VAlign.TOP;
 		
 		protected var _fontStyle:String;
-		private var _fontSize:int;
 		private var _containerWidth:int;
 		private var _containerHeight:int;
 		private var _baseX:Number = 0;
@@ -30,7 +29,6 @@ package badass.engine {
 		public var breaks:Boolean = true;
 		
 		public function TextField(w:int, h:int, text:String, f:String, format:String = "XML_FORMAT") {
-			_fontSize = fontSize;
 			_format = format;
 			_letters = new Vector.<Vector.<Sprite>>();
 			_offsetsX = new Vector.<Number>();
@@ -124,7 +122,11 @@ package badass.engine {
 		}
 		
 		public function get fontSize():int {
-			return _fontSize;
+			if (_font) {
+				return _font.font_height;
+			} else {
+				return 0;
+			}
 		}
 		
 		public function reset(w:int, h:int, fontStyle:String, text:String, format:String = "XML_FORMAT"):void {
