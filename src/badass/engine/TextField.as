@@ -76,7 +76,7 @@ package badass.engine {
 			}
 		}
 		
-		private function getRowWidth(row:int):Number {
+		public function getRowWidth(row:int):Number {
 			var value:Number = 0;
 			if (_letters && _letters.length > row && _letters[row].length) {
 				var lastIndex:int = _letters[row].length - 1;
